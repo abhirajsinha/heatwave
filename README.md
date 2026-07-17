@@ -1,174 +1,195 @@
-<h1 align="center">🔥 Heatwave</h1>
-
 <p align="center">
-  <em>A verification protocol for AI-written code. Plan, build, review, prove — in a loop that never silently restarts.</em>
+  <img src="assets/banner.svg" width="880" alt="Heatwave — a verification protocol for AI-written code. Plan, build, review, prove, in a loop that never silently restarts.">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/license-MIT-orange?style=flat-square" alt="MIT license">
-  <img src="https://img.shields.io/badge/works%20with-Claude%20Code%20·%20Codex%20·%20Gemini%20CLI%20·%20Cursor%20·%20any%20agent-orange?style=flat-square" alt="Works with any agent">
-  <img src="https://img.shields.io/badge/dependencies-none-orange?style=flat-square" alt="No dependencies">
-  <img src="https://img.shields.io/badge/protocol-v3.1-orange?style=flat-square" alt="Protocol v3.1">
+  <img src="https://img.shields.io/badge/license-MIT-ff6b35?style=for-the-badge" alt="MIT license">
+  <img src="https://img.shields.io/badge/dependencies-zero-ff6b35?style=for-the-badge" alt="Zero dependencies">
+  <img src="https://img.shields.io/badge/protocol-v3.1-ff6b35?style=for-the-badge" alt="Protocol v3.1">
+</p>
+
+<p align="center">
+  <strong>Works with</strong><br><br>
+  <img src="https://img.shields.io/badge/Claude%20Code-subagent%20isolation-1a1027?style=flat-square&labelColor=d97757&logoColor=white" alt="Claude Code">
+  <img src="https://img.shields.io/badge/Codex-AGENTS.md-1a1027?style=flat-square&labelColor=333333" alt="Codex">
+  <img src="https://img.shields.io/badge/Gemini%20CLI-GEMINI.md-1a1027?style=flat-square&labelColor=4285f4" alt="Gemini CLI">
+  <img src="https://img.shields.io/badge/Cursor-rules-1a1027?style=flat-square&labelColor=6c47ff" alt="Cursor">
+  <img src="https://img.shields.io/badge/any%20agent-generic%20adapter-1a1027?style=flat-square&labelColor=10b981" alt="Any agent">
 </p>
 
 ---
 
-AI coding agents are fast and confident — and confidently wrong. They review their own work and approve it. They claim "all tests pass" without running them. And when a session dies mid-task, the next one cheerfully starts over from scratch, throwing away the approved plan and the reviewed code.
+## Your AI agent is lying to you (politely)
 
-**Heatwave** fixes all three, with nothing but markdown and a folder:
+Not maliciously — structurally. Every AI coding agent has the same three failure modes:
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+### 🪞 It grades its own homework
+The same context that wrote the code decides the code is fine. That isn't review — it's a mirror. Real defects survive because the author's blind spots review the author's blind spots.
+
+</td>
+<td width="33%" valign="top">
+
+### 🗣️ It says "verified ✅"
+Ask if it tested every screen and you'll get a confident, detailed, *plausible* account of testing that never happened. No method, no output, no evidence — just vibes.
+
+</td>
+<td width="33%" valign="top">
+
+### 🔁 It restarts from zero
+Session dies at 80% done. The next session re-plans the planned, re-implements the reviewed, and every guarantee you thought you had resets to nothing.
+
+</td>
+</tr>
+</table>
+
+**Heatwave closes all three** — with nothing but markdown files and a folder. No server, no SDK, no API keys, no lock-in. If your AI tool can read files, it can run Heatwave.
 
 | Failure | Heatwave's answer |
 |---|---|
-| 🪞 **Self-review** — the author grades its own homework | Three isolated AI roles (PLANNER · IMPLEMENTER · REVIEWER). No context ever evaluates its own output. |
-| 🗣️ **Asserted verification** — "verified ✅" with no method, no output | Evidence or it didn't happen. A claim of verification without attached evidence is an automatic Blocker. |
-| 🔁 **The random restart** — a new session re-plans, re-implements, resets everything | Run state lives on disk. Any session, in any tool, resumes the loop exactly where it stopped. |
-
-It is a **specification, not a service**: no server, no SDK, no API keys, no vendor lock-in. If your AI tool can read files, it can run Heatwave.
+| Self-review | **Three isolated roles** — PLANNER, IMPLEMENTER, REVIEWER — in separate contexts. No context ever evaluates its own output. Ever. (R-1, R-2) |
+| Asserted verification | **Evidence or it didn't happen.** Every "fixed" must attach the executed verification output. A claimed verification with no evidence is an automatic Blocker — same severity as a data-loss bug. (R-65) |
+| The random restart | **The loop lives on disk**, not in any session's memory. Any session, in any tool, must resume a run exactly where it stopped. Restarting is a protocol violation, not an accident. (R-88) |
 
 ## How it works
 
-Every task walks one state machine. Each state is owned by exactly one role, and each transition produces an artifact file — the plan, the review, the fix evidence — that the next role consumes.
+One state machine. Each state owned by one role. Every transition produces an artifact file the next role consumes:
 
-```mermaid
-stateDiagram-v2
-    direction LR
-    [*] --> PLANNING
-    PLANNING --> PLAN_REVIEW : Planning Document
-    PLAN_REVIEW --> PLANNING : rejected (budget 3)
-    PLAN_REVIEW --> IMPLEMENTING : approved
-    IMPLEMENTING --> FULL_REVIEW : Implementation Package
-    FULL_REVIEW --> FINAL_REVIEW : gate met
-    FULL_REVIEW --> FIXING : findings
-    FIXING --> TARGETED_REVIEW : Fix Report + evidence
-    TARGETED_REVIEW --> FINAL_REVIEW : gate met
-    TARGETED_REVIEW --> FIXING : findings (budget 5)
-    FINAL_REVIEW --> [*] : APPROVED
-    FINAL_REVIEW --> FIXING : findings (budget 2)
-```
+<p align="center">
+  <img src="assets/loop.svg" width="920" alt="The Heatwave loop: PLANNING → PLAN_REVIEW → IMPLEMENTING → FULL_REVIEW → FIXING ⇄ TARGETED_REVIEW → FINAL_REVIEW → APPROVED, with rejection loops, budgets 3/5/2, and ESCALATED to the human owner when a budget is exhausted. Every transition lands in state.yaml first.">
+</p>
 
-**The gate is simple and absolute:** zero open Blockers, zero open Majors. The REVIEWER — never the implementer — decides severity and what may be deferred. Every loop has an iteration budget; when one runs out, the protocol escalates to you (the human OWNER) with a report ending in one specific, answerable question. You decide, counters reset, the loop resumes. Nothing is terminal except `APPROVED` and `ABANDONED`.
+**The gate is absolute:** zero open Blockers, zero open Majors — and the REVIEWER, never the implementer, decides severity and what may be deferred. Every loop has an iteration budget (3 plan rejections / 5 fix rounds / 2 final-review failures); when one runs out, Heatwave stops and asks *you* one specific, answerable question. You decide, counters reset, the loop resumes. Nothing is terminal except `APPROVED` and `ABANDONED`.
 
-### The three roles (and you)
+### The cast
 
 | Role | Played by | Owns |
 |---|---|---|
-| 🧠 **PLANNER** | an AI context | What to build and how — the Planning Document, acceptance criteria, review scope |
-| 🔨 **IMPLEMENTER** | a *different* AI context | The code, the tests, the evidence — under the [ponytail](#-ponytail-built-in) minimalism discipline |
-| 🔍 **REVIEWER** | a *different* AI context | Whether it's correct and complete — findings, severity, deferrals, final approval |
-| 👤 **OWNER** | you | Escalations, waivers, everything the roles can't resolve |
+| 🧠 **PLANNER** | an AI context | What to build — plan, acceptance criteria, review scope |
+| 🔨 **IMPLEMENTER** | a *different* AI context | The code, tests, and evidence — under the [ponytail](#-ponytail-built-in) minimalism discipline |
+| 🔍 **REVIEWER** | a *different* AI context | Whether it's correct — findings, severity, final approval |
+| 👤 **OWNER** | **you** | Escalations, waivers, judgment calls |
 
-The isolation boundary is the **context, not the model** — one model can play all three roles from fresh contexts. The REVIEWER receives artifacts, never transcripts, so it judges what was *produced*, not what was *intended*. And roles talk only through files:
+> The isolation boundary is the **context, not the model** — one model can play all three roles from fresh contexts (R-12). The REVIEWER receives *artifacts, never transcripts*: it judges what was produced, not what was intended.
 
-```mermaid
-flowchart LR
-    P[🧠 PLANNER] -->|Planning Document| R[🔍 REVIEWER]
-    R -->|approved plan| I[🔨 IMPLEMENTER]
-    I -->|Implementation Package + evidence| R
-    R -->|Review Report, findings F-001…| I
-    I -->|Fix Report + executed verification| R
-    R -->|APPROVED ✅ or escalate| O[👤 OWNER]
-```
+### The loop that survives anything
 
-### The loop that never restarts
-
-Everything a run produces lives in your repo, so **the filesystem — not any session's memory — is the source of truth**:
+Everything a run produces lives in your repo:
 
 ```
 .heatwave/runs/2026-07-18-add-export/
 ├── state.yaml                    ← current state + counters: the resume anchor
 ├── run-record.yaml               ← append-only audit trail
-├── 01-planning-document.md
-├── 02-plan-review-1.md           ← approved
-├── 03-implementation-package.md
-├── 04-review-report-1.md         ← 2 Majors found
-├── 05-fix-report-1.md            ← fixes, with executed verification output
+├── 01-planning-document.md       🧠
+├── 02-plan-review-1.md           🔍  approved
+├── 03-implementation-package.md  🔨
+├── 04-review-report-1.md         🔍  2 Majors found
+├── 05-fix-report-1.md            🔨  fixes + executed verification output
 └── ...
 ```
 
-Kill your terminal after artifact 05. Tomorrow, in a new session — even in a *different tool* — say "continue the export feature." The driver reads `state.yaml`, sees `TARGETED_REVIEW`, and dispatches a reviewer with artifacts 01–05. Nothing is re-planned, nothing re-implemented, no counter reset. The resume rule (R-88) makes restarting a protocol violation, not an accident. Deep dive: [docs/loop.md](docs/loop.md).
-
-### Evidence, not assertion
-
-The protocol's sharpest teeth, in three rules:
-
-- Every review finding states an **executable verification method** ("run `suite::test`, expect pass" — not "retest the flow").
-- The implementer must **execute that method and attach the real output** to mark a finding fixed.
-- A role that claims verification it did not perform has committed a **Blocker** — the same severity as shipping a data-loss bug. If a tool isn't available (no simulator, no load-test rig), the protocol forces the honest sentence: *this criterion is unverified*, and unverified criteria block approval until you explicitly waive them.
+Kill your terminal after artifact 05. Tomorrow — in a new session, even in a **different tool** — say *"continue the export feature."* The driver reads `state.yaml`, sees `TARGETED_REVIEW`, and dispatches a reviewer with artifacts 01–05. Nothing re-planned, nothing re-implemented, no counter reset. You can plan with Claude Code today and review with Gemini tomorrow; the files on disk are the interface. Deep dive: [docs/loop.md](docs/loop.md).
 
 ### Right-sized ceremony
 
-A one-line copy fix doesn't need a rollout plan. Three tiers (§0.5) scale the paperwork while keeping every gate:
+A one-line copy fix doesn't need a rollout plan. Three tiers scale the paperwork — never the gates:
 
-| Tier | For | Planning Document | Reviews |
+| | LIGHT | STANDARD | FULL |
 |---|---|---|---|
-| **LIGHT** | one-file fixes, copy, config | 4 sections | plan review, then one combined code+final review |
-| **STANDARD** | a normal feature or bugfix | all sections, N/A allowed | full state machine |
-| **FULL** | migrations, auth, money, user data | everything, no shortcuts | full machine + item-by-item readiness checklist |
+| **For** | one-file fixes, copy, config | a normal feature or bugfix | migrations, auth, money, user data |
+| **Planning doc** | 4 sections | all sections, N/A allowed | everything, no shortcuts |
+| **Reviews** | plan review, then one combined code+final pass | full state machine | full machine + item-by-item readiness checklist |
+| **Plan reviewed before code?** | ✅ always | ✅ always | ✅ always |
+| **Evidence required?** | ✅ always | ✅ always | ✅ always |
 
-## 🚀 Quickstart
+## 🚀 Get running in 60 seconds
 
 ```sh
 git clone https://github.com/abhirajsinha/heatwave.git
 cd heatwave
-./install.sh /path/to/your/project claude   # or: codex | gemini | cursor | generic
+./install.sh /path/to/your/project claude    # or: codex | gemini | cursor | generic
 ```
 
-The installer drops `.heatwave/` (protocol, prompts, templates, ponytail) into your project, wires up the adapter for your tool, and creates `heatwave.config.yaml` — edit that once to declare your models and which test tooling actually exists in your project. It's idempotent: re-run it anytime to update; it never touches your config or your runs.
-
-Then just ask your agent to build something:
+Then edit the generated `heatwave.config.yaml` once (your models, which test tooling actually exists), and ask your agent for a feature:
 
 > *"Add CSV export to the reports page."*
 
-The agent enters `PLANNING`, and the loop takes it from there. You'll be pulled in only when the protocol needs a human: an approval you've configured, an escalation, or a waiver.
+That's it. The agent enters `PLANNING` and the loop takes over. You're pulled in only when the protocol genuinely needs a human.
 
-## 🤖 Works with every AI coding tool
+<details>
+<summary><strong>What exactly does install.sh do?</strong></summary>
 
-Heatwave is pure markdown + a shell script. Adapters put the rules where each tool reads its standing instructions:
+<br>
+
+- Copies `PROTOCOL.md`, `prompts/`, `templates/`, and the ponytail skill into `<project>/.heatwave/`
+- Installs your tool's adapter: appends a Heatwave block to `CLAUDE.md` / `AGENTS.md` / `GEMINI.md`, or drops `.cursor/rules/heatwave.mdc`, plus three subagent definitions for Claude Code
+- Creates `heatwave.config.yaml` from the example (once — never overwritten)
+- Is idempotent: re-run anytime to update; your config and your runs are never touched
+
+</details>
+
+## 🤖 One protocol, every agent
+
+Heatwave governs **contexts and artifacts**, not vendor features — so it ports anywhere:
 
 | Tool | Adapter installs | How role isolation works |
 |---|---|---|
-| **Claude Code** | `CLAUDE.md` block + three subagents (`.claude/agents/`) | The session is the driver; each role runs as a **fresh subagent** — true isolation inside one session |
+| **Claude Code** | `CLAUDE.md` block + 3 subagents | Session = driver; each role runs as a **fresh subagent** — true isolation inside one session |
 | **Codex** | `AGENTS.md` block | Each role is a fresh session; the run directory carries state between them |
 | **Gemini CLI** | `GEMINI.md` block | Same sequential-session driver |
-| **Cursor** | `.cursor/rules/heatwave.mdc` (always-on rule) | Same sequential-session driver |
-| **Anything else** | `.heatwave/HEATWAVE-AGENT.md` — paste into your tool's system prompt or rules file | Works with any agent that can read and write files |
+| **Cursor** | `.cursor/rules/heatwave.mdc` | Same sequential-session driver |
+| **Anything else** | `.heatwave/HEATWAVE-AGENT.md` | Paste into any tool's system prompt or rules — works with anything that reads and writes files |
 
-Different tools can even share one run: plan with Claude Code today, review with Gemini tomorrow — the artifacts on disk are the interface.
+## 🧳 Zero dependencies, by design
+
+What Heatwave is made of — and everything it *doesn't* need:
+
+| | |
+|---|---|
+| **Uses** | Markdown files, one POSIX `sh` script, a folder in your repo. Nothing else. |
+| **Bundles** | The [Ponytail](https://github.com/DietrichGebert/ponytail) skill *text* (MIT, vendored with attribution) — plain instructions, portable everywhere. |
+| **Does NOT use** | ❌ MCP servers ❌ plugins ❌ frameworks ❌ SDKs ❌ API keys ❌ a server ❌ any other skill system |
+
+Your agent's own plugins (superpowers, MCP tools, whatever you've installed) can happily coexist and even make the roles better at their jobs — but Heatwave never depends on them. Clone on a bare machine; everything works.
 
 ## 🦥 Ponytail, built in
 
-Verification pressure has a side effect: implementers gold-plate. Heatwave counters it by bundling **[Ponytail](https://github.com/DietrichGebert/ponytail)** (MIT, © Dietrich Gebert — vendored with attribution in [`plugins/ponytail/`](plugins/ponytail/)), the lazy-senior-dev discipline, bound to the IMPLEMENTER role:
+Strict verification has a side effect: implementers gold-plate, because over-building *looks* like diligence. Heatwave counters it by bundling **[Ponytail](https://github.com/DietrichGebert/ponytail)** (MIT, © Dietrich Gebert) and binding it to the IMPLEMENTER role:
 
-> Does this need to exist? → Is it already in the codebase? → Stdlib? → Native platform feature? → Existing dependency? → One line? → *Only then* write the minimum code that works.
+> Does this need to exist? → Already in the codebase? → Stdlib? → Native platform feature? → Existing dependency? → One line? → *Only then* write the minimum code that works.
 
-The result: the shortest diff that meets the acceptance criteria — which is also the cheapest diff to review honestly. The reviewer's bar is untouched ("lazy" never means unverified), and over-engineering is itself a reviewable finding. Deliberate shortcuts get a `ponytail:` comment naming the ceiling, and each one lands in the Implementation Package's Known Limitations for the reviewer to judge.
+The result is the **shortest diff that meets the acceptance criteria** — which is also the cheapest diff to review honestly. The reviewer's bar is untouched ("lazy" never means unverified), over-engineering is itself a reviewable finding, and every deliberate shortcut gets a `ponytail:` comment that lands in the package's Known Limitations for the reviewer to judge.
 
 ## 📦 What's in the box
 
 ```
 heatwave/
-├── PROTOCOL.md                  # the full specification (v3.1) — the source of truth
-├── install.sh                   # one-command install into any project
-├── heatwave.config.example.yaml # models per role, budgets, your project's real tooling
-├── prompts/                     # ready-to-use prompt per role & state (driver, planner,
-│                                #   plan-reviewer, implementer, reviewer, fixer, final-reviewer)
-├── templates/                   # every artifact: planning doc, implementation package,
-│                                #   review report, fix report, escalation report, run record
-├── adapters/                    # claude-code / codex / gemini / cursor / generic
-├── plugins/ponytail/            # vendored ponytail skill + license + attribution
-└── docs/                        # loop.md (persistence deep-dive) · faq.md
+├── PROTOCOL.md                  ★ the full spec (v3.1) — 96 numbered rules, each with
+│                                  the failure it exists to prevent
+├── install.sh                   one-command install into any project
+├── heatwave.config.example.yaml models per role · budgets · your project's real tooling
+├── prompts/                     7 ready-made role prompts (driver, planner, plan-reviewer,
+│                                  implementer, reviewer, fixer, final-reviewer)
+├── templates/                   6 artifact templates (plan, package, review, fix,
+│                                  escalation, run record)
+├── adapters/                    claude-code · codex · gemini · cursor · generic
+├── plugins/ponytail/            vendored skill + license + attribution
+└── docs/                        loop.md (persistence deep-dive) · faq.md
 ```
 
-## 📖 Learn more
+## 📖 Go deeper
 
-- **[PROTOCOL.md](PROTOCOL.md)** — the full spec: 96 numbered rules, each with the failure it exists to prevent, written to be read by humans and enforced on AIs.
+- **[PROTOCOL.md](PROTOCOL.md)** — the spec itself. Readable by humans, enforceable on AIs.
 - **[docs/loop.md](docs/loop.md)** — anatomy of a run, the resume rule, crash edge cases.
-- **[docs/faq.md](docs/faq.md)** — one model? too much ceremony? what stops the AI from cheating?
+- **[docs/faq.md](docs/faq.md)** — *one model? too much ceremony? what stops the AI from cheating?*
 
 ## License
 
-MIT © Abhiraj Sinha. Vendored Ponytail skill MIT © Dietrich Gebert ([attribution](plugins/ponytail/ATTRIBUTION.md)).
+MIT © Abhiraj Sinha · vendored Ponytail skill MIT © Dietrich Gebert ([attribution](plugins/ponytail/ATTRIBUTION.md))
 
 ---
 
-<p align="center"><sub>Heatwave grew out of a real production workflow for shipping AI-built apps, hardened over three protocol versions. The failure modes it guards against are ones we hit, not ones we imagined.</sub></p>
+<p align="center"><sub>Heatwave grew out of a real production workflow for shipping AI-built apps, hardened over three protocol versions.<br>The failure modes it guards against are ones we hit — not ones we imagined.</sub></p>
