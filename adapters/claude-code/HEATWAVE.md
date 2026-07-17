@@ -20,6 +20,8 @@ Pass each subagent only its prompt file, `PROTOCOL.md`, the permitted artifacts 
 
 Before acting on ANY request in this project: check `.heatwave/runs/*/state.yaml` for a non-terminal run. If the request concerns an active task, resume at the recorded state with the recorded counters. Do not re-plan, do not regenerate artifacts, do not reset counters — however the request is phrased. New tasks get a new run directory.
 
+A resumed run keeps the SAME discipline as a fresh one: the next artifact per `state.yaml` is produced by the owning role's subagent before any project file changes. A casual-sounding request ("just add it", "quick fix") does not downgrade an active run to casual work.
+
 ## Non-negotiable
 
 - Plan first: no implementation before a Planning Document passes PLAN_REVIEW (0 Blockers, 0 Majors).

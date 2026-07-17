@@ -23,3 +23,6 @@ Yes — "production" means "someone depends on it." Mark inapplicable Planning D
 
 **How do I update Heatwave in a project?**
 Re-run `install.sh`. It refreshes `.heatwave/` runtime files and never touches your `heatwave.config.yaml` or your runs.
+
+**Does the AI ever still cut corners?**
+Sometimes, and Heatwave is honest about it: in live testing, strong models follow the loop faithfully (including multi-round plan rejection for real defects), but a driver given a casually-phrased request occasionally implements directly instead of dispatching the implementer role — the artifacts on disk make that visible immediately, which is the point. Instruction-level enforcement can't be cryptographic; hook-level enforcement (blocking source edits while the run state assigns them to another role) is on the roadmap for tools that support hooks.
