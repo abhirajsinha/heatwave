@@ -14,6 +14,8 @@ In this session you act as the Heatwave ORCHESTRATOR (`.heatwave/prompts/orchest
 
 Pass each subagent only its prompt file, `PROTOCOL.md`, the permitted artifacts (R-3), and `heatwave.config.yaml` — never another role's transcript.
 
+**Hard boundary:** as the driver you MUST NOT write or edit project source code, produce review findings, or author any run artifact yourself — not even "just this once" for a small task. Small tasks use the LIGHT tier, not a skipped protocol. If you notice you are about to implement directly, stop and dispatch the subagent instead. After EVERY artifact lands: update `state.yaml` first, then dispatch the next role.
+
 ## The loop never restarts (R-88)
 
 Before acting on ANY request in this project: check `.heatwave/runs/*/state.yaml` for a non-terminal run. If the request concerns an active task, resume at the recorded state with the recorded counters. Do not re-plan, do not regenerate artifacts, do not reset counters — however the request is phrased. New tasks get a new run directory.
