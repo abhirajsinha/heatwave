@@ -1,0 +1,33 @@
+# Heatwave project configuration.
+# Copy to heatwave.config.yaml at your project root and edit. install.sh does this for you.
+
+# Model assignment per role (PROTOCOL.md §1.4). Use your tool's model ids.
+# The same model may fill several roles — the isolation boundary is the context, not the model (R-12).
+roles:
+  planner:
+    preferred: your-best-reasoning-model
+    fallback: []
+  implementer:
+    preferred: your-best-coding-model
+    fallback: []
+  reviewer:
+    preferred: your-best-reasoning-model   # must run in a different context from planner
+    fallback: []
+
+# Default tier when the PLANNER does not argue otherwise (PROTOCOL.md §0.5).
+default_tier: STANDARD
+
+# Iteration budgets (PROTOCOL.md §2.3). Defaults are the spec's.
+budgets:
+  plan_iterations: 3
+  fix_iterations: 5
+  final_iterations: 2
+
+# Tooling available in THIS project (consumed by the §6.1 tooling declaration).
+# Declare only what actually exists — a false claim of access is a Blocker (R-63).
+tooling:
+  unit: ""            # e.g. "jest", "pytest"
+  integration: ""
+  web_e2e: ""         # e.g. "playwright"
+  mobile_e2e: ""      # e.g. "iOS Simulator + Maestro"
+  load: ""

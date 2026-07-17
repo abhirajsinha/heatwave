@@ -1,0 +1,7 @@
+Heatwave — MIT License, Copyright (c) 2026 Abhiraj Sinha (see LICENSE).
+
+Bundled third-party software:
+
+- plugins/ponytail/ — Ponytail skill, Copyright (c) Dietrich Gebert, MIT License.
+  Upstream: https://github.com/DietrichGebert/ponytail
+  See plugins/ponytail/LICENSE and plugins/ponytail/ATTRIBUTION.md.

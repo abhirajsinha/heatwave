@@ -1,0 +1,34 @@
+# Heatwave Run Record — append-only, maintained by the driver from START to terminal state.
+# Schema per PROTOCOL.md Appendix E.
+
+task_id:
+created:
+tier:                  # LIGHT | STANDARD | FULL
+terminal_state:        # APPROVED | ABANDONED (blank while active)
+roles:
+  planner:     { configured: , resolved: , substitution_reason: }
+  implementer: { configured: , resolved: , substitution_reason: }
+  reviewer:    { configured: , resolved: , substitution_reason: }
+counters:
+  plan_iterations: 0
+  fix_iterations: 0
+  final_iterations: 0
+transitions: []
+  # - { from: , to: , artifact: , timestamp: }
+findings: []
+  # - { id: , severity: , category: , introduced_iteration: , final_status: ,
+  #     severity_changes: [], reopened_count: 0 }
+deferrals: []
+  # - { finding_id: , approved_by: , reason: , iteration: }
+waivers: []
+  # - { finding_id: , waived_by: OWNER, reason: , timestamp: }
+scope_expansions: []
+  # - { category: , trigger: , iteration: , deviation_declared: false }
+deviations: []
+  # - { id: , iteration: , declared: false, scope_impact: , threat_impact: }
+unverified_criteria: []
+  # - { ac_id: , reason: , waived: false }
+escalations: []
+  # - { trigger: , decision: , resume_state: , counters_reset: , timestamp: }
+backlog: []
+  # - { finding_id: , severity: , summary: }
