@@ -143,6 +143,45 @@ Heatwave governs **contexts and artifacts**, not vendor features — so it ports
 | **Cursor** | `.cursor/rules/heatwave.mdc` | Same sequential-session driver |
 | **Anything else** | `.heatwave/HEATWAVE-AGENT.md` | Paste into any tool's system prompt or rules — works with anything that reads and writes files |
 
+## 🎛️ Which model runs which role — and how that's decided
+
+Heatwave never hardcodes a model. You declare the cast once in `heatwave.config.yaml`, and the driver resolves it per role:
+
+```yaml
+roles:
+  planner:
+    preferred: your-best-reasoning-model      # plans live or die on edge-case thinking
+    fallback: []
+  implementer:
+    preferred: your-best-coding-model         # raw code quality + tool use
+    fallback: []
+  reviewer:
+    preferred: your-best-reasoning-model      # must judge, not just pattern-match
+    fallback: []                              # different CONTEXT from planner — model may repeat
+```
+
+How the decision works, per the spec:
+
+- **You decide, in config — never the workflow.** Model names appear only here; the protocol body is model-agnostic (R-10). Swap models without touching the workflow.
+- **Fallbacks are automatic and honest.** If the preferred model is unavailable, the highest-ranked fallback is used and the substitution is recorded in the Run Record (R-11) — you can always see who actually did the work.
+- **Why reasoning-heavy for PLANNER and REVIEWER, coding-heavy for IMPLEMENTER:** plans fail on unconsidered edge cases and reviews fail on shallow judgment — both are reasoning problems. Implementation is where code-generation strength pays.
+- **One model is fine.** The isolation boundary is the *context*, not the model (R-12). One model in three fresh contexts satisfies every rule — different models per role just adds uncorrelated blind spots.
+
+## 🔌 Plays well with your existing stack
+
+Heatwave requires none of this — but the roles get better when your environment offers more. Real setup this repo was built and tested with:
+
+| Your tooling (optional) | Which role benefits | How |
+|---|---|---|
+| **Subagents** (Claude Code Task tool) | driver | True fresh-context role isolation inside one session |
+| **Planning/workflow plugins** (e.g. [superpowers](https://github.com/obra/superpowers)) | 🧠 PLANNER | Brainstorming and plan-writing disciplines sharpen the Planning Document before it ever hits review |
+| **Browser automation MCP** (e.g. Playwright MCP) | 🔍 REVIEWER | Web E2E verification produces *real* evidence — screenshots, traces — instead of narrated testing |
+| **Simulators / emulators** (iOS Simulator, Android emulator, Maestro) | 🔍 REVIEWER · 🔨 IMPLEMENTER | Mobile acceptance criteria get exercised on device, per your `tooling:` declaration |
+| **Memory plugins** (e.g. claude-mem) | all | Cross-session context on top of Heatwave's own on-disk state |
+| **Test frameworks** (jest, pytest, …) | 🔨 IMPLEMENTER | Declared in `tooling:` — the evidence rules consume their output |
+
+The contract is one-directional: your stack can *strengthen* a role's evidence, but a missing tool never silently weakens the gate — it becomes an explicit `unavailable`, and the affected criteria stay **Unverified** until you waive them (R-64–R-66).
+
 ## 🧳 Zero dependencies, by design
 
 What Heatwave is made of — and everything it *doesn't* need:
