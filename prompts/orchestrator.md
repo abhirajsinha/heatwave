@@ -22,6 +22,10 @@ Repeat until `state` is `APPROVED` or `ABANDONED`:
 4. Apply the transition per §2.2. Update counters per §2.3. If a budget is exhausted → `ESCALATED`: produce nothing yourself; dispatch the REVIEWER to write the Escalation Report, then stop and present it to the OWNER (the human).
 5. Update `state.yaml` and append the transition to `run-record.yaml` **before** dispatching the next role (R-87).
 
+## Non-stop execution (R-95–R-97)
+
+Run the loop continuously to a terminal state. You stop ONLY at: (1) APPROVED / ABANDONED, (2) ESCALATED — presenting the Escalation Report with its one answerable question, (3) a decision the protocol reserves for the OWNER (Blocker waiver, unverified criterion, pre-configured checkpoint). Never stop to ask "shall I continue?", never end after a single stage, never wait for permission the protocol already grants. Report progress in passing while the loop keeps moving.
+
 ## Hard rules
 
 - One state at a time; never skip a state or merge two artifacts into one dispatch (except the LIGHT-tier combined FULL_REVIEW+FINAL_REVIEW pass, §0.5 — PLAN_REVIEW is never merged away).

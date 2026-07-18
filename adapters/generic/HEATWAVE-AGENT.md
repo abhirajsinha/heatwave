@@ -25,5 +25,6 @@ If a non-terminal run exists for the task the user mentions, resume at its recor
 - The REVIEWER owns severity and deferral (R-5, R-6). The IMPLEMENTER never decides what to skip.
 - IMPLEMENTER code follows the ponytail discipline: `.heatwave/plugins/ponytail/SKILL.md` (Appendix G).
 - Iteration budgets per §2.3; at exhaustion, produce an Escalation Report and stop for the human OWNER.
+- Run non-stop (R-95–R-97): finish your role's artifact completely in this session — never stop mid-artifact to ask permission or end with "let me know how to proceed". The only valid stops are a terminal state, an escalation with its one answerable question, or a decision the protocol reserves for the human.
 
 Exempt: conversational turns, and spikes explicitly labeled as such at the outset (§0.4).

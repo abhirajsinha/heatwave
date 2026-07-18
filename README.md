@@ -64,6 +64,8 @@ One state machine. Each state owned by one role. Every transition produces an ar
 
 **The gate is absolute:** zero open Blockers, zero open Majors — and the REVIEWER, never the implementer, decides severity and what may be deferred. Every loop has an iteration budget (3 plan rejections / 5 fix rounds / 2 final-review failures); when one runs out, Heatwave stops and asks *you* one specific, answerable question. You decide, counters reset, the loop resumes. Nothing is terminal except `APPROVED` and `ABANDONED`.
 
+**And it runs non-stop.** Once a task starts, the loop advances continuously to the end — no "shall I continue?", no stopping after each stage to wait for a nudge (R-95–R-97). The agent interrupts you at exactly three points: the task is done, a budget escalated with one specific question, or a decision the protocol reserves for a human (a Blocker waiver, an unverifiable criterion). Your judgment is already encoded in the plan, the criteria, and the budgets — the protocol *is* the permission.
+
 ### The cast
 
 | Role | Played by | Owns |
@@ -206,7 +208,7 @@ The result is the **shortest diff that meets the acceptance criteria** — which
 
 ```
 heatwave/
-├── PROTOCOL.md                  ★ the full spec (v3.1) — 96 numbered rules, each with
+├── PROTOCOL.md                  ★ the full spec (v3.1) — 99 numbered rules, each with
 │                                  the failure it exists to prevent
 ├── install.sh                   one-command install into any project
 ├── heatwave.config.example.yaml models per role · budgets · your project's real tooling

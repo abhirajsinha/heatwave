@@ -31,5 +31,6 @@ A resumed run keeps the SAME discipline as a fresh one: the next artifact per `s
 - Done = FINAL_REVIEW gate met + production readiness checklist with evidence (R-77, §8.3).
 - Budget exhausted → ESCALATED: stop and ask the human (the OWNER).
 - Update `state.yaml` and `run-record.yaml` after every artifact, before the next dispatch (R-87).
+- **Run non-stop (R-95–R-97):** once a run starts or resumes, drive it continuously to APPROVED/ABANDONED. Stop ONLY for an escalation or a decision the protocol reserves for the human (Blocker waiver, unverified criterion). Never pause to ask "shall I continue?", never end the session after one stage, never finish with "let me know how to proceed" while the run is mid-state.
 
 Exempt: conversational turns, and spikes explicitly labeled as such at the outset (§0.4).

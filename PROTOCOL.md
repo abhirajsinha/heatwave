@@ -664,6 +664,20 @@ updated:         # timestamp of last transition
 
 > **Rationale for 9.3.** The most common failure of AI-driven workflows is not a bad review — it is the loop silently starting over: a new session re-plans a planned task, re-implements reviewed code, and every guarantee in Sections 1–8 resets to zero. Anchoring state to the filesystem makes the artifacts, not any session's memory, the source of truth. Any tool that can read a file can resume the loop exactly where it stopped.
 
+### 9.4 Non-stop execution — the loop runs to the end
+
+**R-95.** Once a run starts (or resumes), the driver MUST advance the loop continuously until one of exactly three stopping points:
+
+1. A **terminal state** — `APPROVED` or `ABANDONED`.
+2. **`ESCALATED`** — a budget exhausted or a §7.1 trigger fired; the driver stops *with the Escalation Report and its one answerable question* (R-72), never with an open-ended pause.
+3. A **blocking OWNER decision** the protocol itself requires — a Blocker waiver (R-9), an unverifiable acceptance criterion (R-66), or a checkpoint the OWNER configured in advance.
+
+**R-96.** The driver MUST NOT stop between states to ask permission to continue, report intermediate progress and wait, offer choices the protocol already decides ("shall I run the review now?"), or end its session after completing an individual stage. Progress reporting is done in passing; the loop keeps moving. Stopping anywhere other than the three points in R-95 is a protocol violation — the run is not "paused", it is abandoned mid-state, and the next session must resume it per R-88.
+
+**R-97.** When the driver stops at a valid point, it MUST state which of the three stopping points applies and, for points 2 and 3, pose the specific decision required. "Done for now, let me know how to proceed" is non-conforming.
+
+> **Rationale for 9.4.** Agents are trained to be polite, and polite looks like stopping to ask. In a gated protocol every such pause is pure loss: the human's judgment is already encoded in the plan, the criteria, and the budgets — the protocol *is* the permission. Interruptions belong only where the protocol genuinely cannot decide: escalations and waivers. Everything else runs.
+
 ---
 
 ## Appendix A — Finding Schema
