@@ -61,11 +61,41 @@ append_once() {
 case "$ADAPTER" in
   claude)
     cp "$SRC/adapters/claude-code/HEATWAVE.md" "$HW/HEATWAVE.md"
+    cp "$SRC/adapters/claude-code/GATE.md" "$HW/GATE.md"
     mkdir -p "$TARGET/.claude/agents"
     for a in heatwave-planner heatwave-implementer heatwave-reviewer; do
       cp "$SRC/adapters/claude-code/.claude/agents/$a.md" "$TARGET/.claude/agents/$a.md"
     done
     append_once "$TARGET/CLAUDE.md" "$SRC/adapters/claude-code/HEATWAVE.md"
+    # Active enforcement: inject the gate on every prompt + session start via hooks.
+    # Passive CLAUDE.md text can be rationalized past; a hook fires every time.
+    if command -v python3 >/dev/null 2>&1; then
+      python3 - "$TARGET/.claude/settings.json" <<'PYEOF'
+import json, os, sys
+path = sys.argv[1]
+cmd = "cat .heatwave/GATE.md 2>/dev/null || true"
+hook = {"hooks": [{"type": "command", "command": cmd}]}
+try:
+    with open(path) as f: cfg = json.load(f)
+except (FileNotFoundError, json.JSONDecodeError):
+    cfg = {}
+hooks = cfg.setdefault("hooks", {})
+changed = False
+for event in ("UserPromptSubmit", "SessionStart"):
+    entries = hooks.setdefault(event, [])
+    if not any(cmd == h.get("command") for e in entries for h in e.get("hooks", [])):
+        entries.append(hook); changed = True
+if changed:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f: json.dump(cfg, f, indent=2); f.write("\n")
+    print("installed protocol gate hooks in .claude/settings.json")
+else:
+    print("skipped hooks (already installed)")
+PYEOF
+    else
+      echo "note: python3 not found — add the gate hook manually to .claude/settings.json:"
+      echo '  {"hooks":{"UserPromptSubmit":[{"hooks":[{"type":"command","command":"cat .heatwave/GATE.md 2>/dev/null || true"}]}]}}'
+    fi
     ;;
   codex)
     append_once "$TARGET/AGENTS.md" "$SRC/adapters/codex/AGENTS.md"

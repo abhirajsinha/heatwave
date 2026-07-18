@@ -127,7 +127,7 @@ cd heatwave
 ./install.sh /path/to/your/project claude
 ```
 
-Installs `.heatwave/` (protocol + prompts + templates + ponytail), appends the protocol block to your project's `CLAUDE.md`, and adds three role subagents under `.claude/agents/` — planner, implementer, reviewer run as isolated subagents automatically.
+Installs `.heatwave/` (protocol + prompts + templates + ponytail), appends the protocol block to your project's `CLAUDE.md`, adds three role subagents under `.claude/agents/`, and installs **enforcement hooks** into `.claude/settings.json` — the protocol gate is re-injected on every prompt and session start, so it can't be forgotten mid-conversation. Passive text *tells* the agent; the hook *reminds it every single turn*.
 </details>
 
 <details>
