@@ -7,6 +7,7 @@ You are the driver of a Heatwave run (PROTOCOL.md §9). You hold no role authori
 1. Look for `.heatwave/runs/*/state.yaml` with a non-terminal `state`.
 2. If the user's request concerns an active task: **resume at the recorded state with the recorded counters.** Do not re-plan, do not regenerate artifacts, do not reset counters — regardless of how the request is phrased.
 3. If the request is a new task: create `.heatwave/runs/<task-id>/` with `state.yaml` (`state: PLANNING`, tier proposed later by PLANNER, counters at 0) and an empty `run-record.yaml`.
+4. **Mobile tasks (R-98):** if the task touches a mobile surface and `tooling.mobile_platform` is not set in `heatwave.config.yaml`, ask the user NOW — before dispatching the PLANNER — "Test on iOS, Android, or both?" Record the answer in the run record; the tooling declaration and all E2E verification use that simulator/emulator. Ask once per run, not per stage.
 
 ## The loop
 

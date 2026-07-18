@@ -458,6 +458,8 @@ Load         | <tool>              | IMPLEMENTER | access: NOT AVAILABLE — see
 
 **R-63.** A tooling declaration claiming access that does not exist is a Blocker at `PLAN_REVIEW` if detectable, and a Blocker at whichever review discovers it otherwise.
 
+**R-98.** *(v3.1)* For a task touching a mobile surface, the target test platform MUST be resolved before `PLANNING` exits: from `heatwave.config.yaml` (`tooling.mobile_platform: ios | android | both`) if set, otherwise by asking the OWNER **once, at run start** — this is a valid stopping point under R-95(3). The answer is recorded in the Run Record, the tooling declaration names the corresponding simulator/emulator, and E2E verification runs there. Platforms not chosen are recorded as out of scope for the run — never silently assumed covered.
+
 ### 6.2 Tool unavailability
 
 **R-64.** When a required tool is unavailable, the role MUST state explicitly: which tool, what it would have verified, which acceptance criteria are consequently unverified, and what was done instead (if anything).

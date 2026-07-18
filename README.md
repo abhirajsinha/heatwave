@@ -218,7 +218,7 @@ The result is the **shortest diff that meets the acceptance criteria** — which
 
 ```
 heatwave/
-├── PROTOCOL.md                  ★ the full spec (v3.1) — 99 numbered rules, each with
+├── PROTOCOL.md                  ★ the full spec (v3.1) — 100 numbered rules, each with
 │                                  the failure it exists to prevent
 ├── install.sh                   one-command install into any project
 ├── heatwave.config.example.yaml models per role · budgets · your project's real tooling

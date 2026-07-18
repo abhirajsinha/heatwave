@@ -30,4 +30,5 @@ tooling:
   integration: ""
   web_e2e: ""         # e.g. "playwright"
   mobile_e2e: ""      # e.g. "iOS Simulator + Maestro"
+  mobile_platform: "" # ios | android | both — leave empty to be asked once at the start of each mobile task (R-98)
   load: ""

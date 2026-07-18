@@ -39,3 +39,6 @@ If you want the loop to keep executing while you close the lid, take the work of
 | A remote machine | Run your agent inside `tmux`/`ssh` on a VPS or devcontainer; disconnecting doesn't stop it |
 
 Because runs live in the repo, these mix freely: start a run on the laptop, push, and let a remote session resume it overnight.
+
+**I'm building a mobile app — which simulator does it test on?**
+Your choice, asked exactly once. Pin it in `heatwave.config.yaml` (`tooling.mobile_platform: ios | android | both`) and you're never asked; leave it empty and the driver asks at the start of each mobile task, before planning begins (R-98). The answer lands in the Run Record, E2E verification runs on that simulator/emulator, and the platform you didn't pick is recorded as out of scope — never silently assumed covered.
