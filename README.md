@@ -93,7 +93,7 @@ Everything a run produces lives in your repo:
 └── ...
 ```
 
-Kill your terminal after artifact 05. Tomorrow — in a new session, even in a **different tool** — say *"continue the export feature."* The driver reads `state.yaml`, sees `TARGETED_REVIEW`, and dispatches a reviewer with artifacts 01–05. Nothing re-planned, nothing re-implemented, no counter reset. You can plan with Claude Code today and review with Gemini tomorrow; the files on disk are the interface. Deep dive: [docs/loop.md](docs/loop.md).
+Kill your terminal after artifact 05. Let the laptop sleep, crash, or die at 1% battery. Tomorrow — in a new session, even in a **different tool** — say *"continue the export feature."* The driver reads `state.yaml`, sees `TARGETED_REVIEW`, and dispatches a reviewer with artifacts 01–05. Nothing re-planned, nothing re-implemented, no counter reset. You can plan with Claude Code today and review with Gemini tomorrow; the files on disk are the interface. Deep dive: [docs/loop.md](docs/loop.md).
 
 ### Right-sized ceremony
 
