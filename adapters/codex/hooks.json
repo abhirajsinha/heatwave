@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "cat .heatwave/GATE.md 2>/dev/null || true" }
+        ]
+      }
+    ]
+  }
+}

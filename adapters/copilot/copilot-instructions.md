@@ -1,13 +1,10 @@
----
-description: Heatwave AI Development & Verification Protocol (binding for all production-bound changes)
-alwaysApply: true
----
-
 # Heatwave protocol (binding)
+
+<!-- GitHub Copilot reads .github/copilot-instructions.md automatically for every chat and coding-agent request. install.sh places this there. -->
 
 This project runs under the Heatwave AI Development & Verification Protocol.
 
-Before any production-bound change, read and follow, in order:
+**Before any production-bound change, read and follow, in order:**
 
 1. `.heatwave/HEATWAVE-AGENT.md` — your binding operating rules (single-context role sessions, the never-restart resume rule, the gates).
 2. `.heatwave/PROTOCOL.md` — the full specification.

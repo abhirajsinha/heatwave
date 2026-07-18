@@ -2,6 +2,24 @@
 
 An adapter is the only tool-specific piece of Heatwave: a small shim that puts the binding rules where a given agent reads its standing instructions. Everything else — PROTOCOL.md, prompts, templates, the run directory — is identical for every agent.
 
+## Supported tools
+
+| Tool | Where the rules land (auto-loaded) | Active enforcement |
+|---|---|---|
+| Claude Code | `CLAUDE.md` + `.claude/agents/` subagents | ✅ prompt hooks + `PreToolUse` write-gate |
+| Codex | `AGENTS.md` | ✅ `.codex/hooks.json` per-prompt gate |
+| Gemini CLI | `GEMINI.md` | ✅ `.gemini/settings.json` BeforeAgent gate |
+| Cursor | `.cursor/rules/heatwave.mdc` | passive (always-on rule) |
+| GitHub Copilot | `.github/copilot-instructions.md` | passive (always applied) |
+| Windsurf / Devin | `.windsurf/rules/` + `.devin/rules/` | passive (`always_on`) |
+| Cline | `.clinerules/` | passive (every session) |
+| Zed | `.rules` | passive (first-match) |
+| Amp / opencode | `AGENTS.md` standard | passive |
+| Aider | `CONVENTIONS.md` + `.aider.conf.yml` | passive |
+| Generic | `.heatwave/HEATWAVE-AGENT.md` | passive (paste anywhere) |
+
+"Active enforcement" means a hook re-injects the protocol every turn (and, on Claude Code, physically blocks source edits during plan/review states) — the rules can't fade from a long conversation. "Passive" means always-on instruction text, which every listed file already is.
+
 ## Writing an adapter for a new tool
 
 Any agent qualifies if it can (1) read/write files and (2) follow project instructions. To support one:

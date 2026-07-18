@@ -14,7 +14,7 @@ Heatwave makes your AI coding agent **prove its work** instead of just claiming 
 
 You ask for a feature the way you always do. Behind the scenes, the work is split between three separate AI roles — one plans, one builds, one reviews — and nothing ships until the reviewer approves it with real evidence. Everything is tracked in plain files inside your repo, so the work can never be silently lost or restarted.
 
-It works with **Claude Code, Codex, Gemini CLI, Cursor, and any other coding agent**. No server, no API keys, no dependencies — just markdown files and one install script.
+It works with **Claude Code, Codex, Gemini CLI, Cursor, GitHub Copilot, Windsurf, Cline, Zed, Amp, opencode, Aider — and any other coding agent**. No server, no API keys, no dependencies — just markdown files and one install script. Install it, and your agent follows the protocol automatically; you never have to tell it to.
 
 Here's what a task looks like from your side — you type one line, and the rest just happens:
 
@@ -101,22 +101,40 @@ cd heatwave
 ./install.sh /path/to/your/project codex      # Codex
 ./install.sh /path/to/your/project gemini     # Gemini CLI
 ./install.sh /path/to/your/project cursor     # Cursor
+./install.sh /path/to/your/project copilot    # GitHub Copilot
+./install.sh /path/to/your/project windsurf   # Windsurf / Devin
+./install.sh /path/to/your/project cline      # Cline
+./install.sh /path/to/your/project zed        # Zed
+./install.sh /path/to/your/project amp        # Amp
+./install.sh /path/to/your/project opencode   # opencode
+./install.sh /path/to/your/project aider      # Aider
 ./install.sh /path/to/your/project generic    # anything else
 ```
+
+**After installing, there is nothing left to type.** The rules go into the exact file each tool reads on its own — so your agent follows Heatwave automatically, without you ever telling it to. Just ask for a feature.
 
 <details>
 <summary>What the installer does per tool</summary>
 
 <br>
 
-Every install puts the protocol, role prompts, and templates in `<project>/.heatwave/` and creates a `heatwave.config.yaml`.
+Every install puts the protocol, role prompts, and templates in `<project>/.heatwave/`, drops the [ponytail](https://github.com/DietrichGebert/ponytail) skill into the cross-tool `.agents/skills/` standard, and creates an optional `heatwave.config.yaml`.
 
-- **Claude Code** — adds the rules to `CLAUDE.md`, three role subagents, and *enforcement hooks* that re-inject the rules on every prompt (so they can't fade mid-conversation). Also fetches the [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design skill so UI work meets a professional bar, and prints the official commands to add [ECC](https://github.com/affaan-m/ECC) security scanning and [claude-mem](https://github.com/thedotmack/claude-mem) cross-session memory.
-- **Codex / Gemini CLI** — appends the rules to `AGENTS.md` / `GEMINI.md`.
-- **Cursor** — adds an always-on rule in `.cursor/rules/`.
-- **Generic** — gives you `.heatwave/HEATWAVE-AGENT.md` to paste into any tool's instructions.
+Then, per tool, it writes the rules where that tool auto-loads them — no manual "follow Heatwave" ever needed:
 
-Re-running the installer upgrades Heatwave's files and never touches your config or your task history.
+- **Claude Code** — `CLAUDE.md` + three role subagents + **enforcement hooks** in `.claude/settings.json`: the rules re-inject on every prompt, and a `PreToolUse` gate physically blocks source edits while a run is in a plan/review state. Also fetches the [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design skill and prints official commands for the [verified companions](COMPANIONS.md).
+- **Codex** — `AGENTS.md` + a **per-prompt gate hook** in `.codex/hooks.json`.
+- **Gemini CLI** — `GEMINI.md` + a **BeforeAgent gate hook** in `.gemini/settings.json`.
+- **Cursor** — an always-on rule in `.cursor/rules/`.
+- **GitHub Copilot** — `.github/copilot-instructions.md` (always applied to every request).
+- **Windsurf / Devin** — an `always_on` rule in `.windsurf/rules/` (mirrored to `.devin/rules/`).
+- **Cline** — a rule in `.clinerules/` (loaded every session).
+- **Zed** — a project `.rules` file.
+- **Amp / opencode** — the `AGENTS.md` standard.
+- **Aider** — `CONVENTIONS.md`, wired into `.aider.conf.yml` so it auto-loads.
+- **Generic** — `.heatwave/HEATWAVE-AGENT.md` to point any other tool at.
+
+Tools with a hook system (Claude Code, Codex, Gemini CLI) get **active enforcement** — the rules can't fade from a long conversation. Everything else gets always-on passive instructions. Re-running the installer upgrades Heatwave's files and never touches your config or task history.
 </details>
 
 **Step 3 — there is no step 3.** No config needed: every role runs on the model your session already uses, and your project's test tools (jest, vitest, pytest, playwright, go test, simulators…) are **auto-detected from the project itself** — the plan even cites the file that proves each tool exists. A `heatwave.config.yaml` full of commented-out overrides is created in case you ever want to pin something: different models per role, a tool detection can't see (like a load-test rig), or iOS/Android/both for mobile apps.
@@ -126,7 +144,7 @@ Re-running the installer upgrades Heatwave's files and never touches your config
 ## Good to know
 
 - **One model is enough.** Roles are separated by *context*, not by model — the same model planning in one context and reviewing in a fresh one still can't grade its own work.
-- **Works with your existing setup.** Skills, MCP servers, and plugins you already use make the roles stronger (design skills for UI criteria, browsers/simulators for real test evidence, security scanners for security review). None are required — a missing tool is honestly reported as "couldn't verify this," never papered over.
+- **Works with your existing setup, and points you at the best add-ons.** Skills, MCP servers, and plugins make the roles stronger — real browser evidence, security scanners, current library docs, cross-session memory. The installer prints a [verified companions list](COMPANIONS.md) (official channels only, licenses checked). None are required — a missing tool is honestly reported as "couldn't verify this," never papered over.
 - **When it can't converge, it asks you well.** If reviews keep failing past a set budget, you get a short report ending in one specific question — you answer, and the loop resumes. No infinite loops, no vague "please advise."
 - **It's honest about its limits.** This is enforcement by instructions, files, and hooks — strong, visible, auditable — not cryptographic. The [FAQ](docs/faq.md) covers what that means in practice.
 
@@ -139,6 +157,7 @@ Re-running the installer upgrades Heatwave's files and never touches your config
 | **[The loop](docs/loop.md)** | How never-losing-progress works under the hood |
 | **[FAQ](docs/faq.md)** | One model? Too much ceremony? What stops the AI from cheating? |
 | **[PROTOCOL.md](PROTOCOL.md)** | The full specification — 102 numbered rules, each explaining the failure it prevents |
+| **[Companions](COMPANIONS.md)** | Verified plugins, skills, and MCP servers that strengthen each role — official channels, licenses checked |
 | **[Adapters](adapters/README.md)** | How to add support for a new AI tool (~20 lines) |
 
 ## License

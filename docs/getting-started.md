@@ -108,7 +108,7 @@ You answer, counters reset per your decision, the loop resumes. Escalation is a 
 
 ## Uninstalling
 
-Delete `.heatwave/`, `heatwave.config.yaml`, and the Heatwave block from your instruction file. On Claude Code, also delete `.claude/agents/heatwave-*.md`, `.claude/skills/ui-ux-pro-max/` (if you don't want to keep the companion skill), and remove the two Heatwave hook entries (the ones running `cat .heatwave/GATE.md …`) from `.claude/settings.json`. Runs are plain files — archive them if you want the audit history.
+Delete `.heatwave/`, `heatwave.config.yaml`, `.agents/skills/ponytail/`, and the Heatwave block from your instruction file. On Claude Code, also delete `.claude/agents/heatwave-*.md`, `.claude/skills/ui-ux-pro-max/` (if you don't want to keep the companion skill), and remove the Heatwave hook entries (the ones running `cat .heatwave/GATE.md …` and `sh .heatwave/role-gate.sh`) from `.claude/settings.json`. Runs are plain files — archive them if you want the audit history.
 
 ## Troubleshooting
 
