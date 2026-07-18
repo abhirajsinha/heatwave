@@ -40,6 +40,8 @@ Say you ask: *"Add CSV export to the reports page."*
 4. **🔍 Review & fix** — the reviewer checks the code against the plan and files findings. The implementer must fix each one **and attach proof the fix works** (real test output, not promises). This loops until zero serious findings remain.
 5. **✅ Approved** — a final review confirms every acceptance criterion with evidence. Done means *proven done*.
 
+Want to see every command and every file this produces for a real task? **[Read the complete worked example →](docs/example.md)**
+
 **It runs without stopping.** The loop only interrupts you for three things: it finished, it's stuck and needs one specific decision from you, or a choice only a human may make (like waiving a security finding). No "shall I continue?" every five minutes.
 
 **And it never loses progress.** Every step is saved to `.heatwave/runs/<task>/` in your repo *before* the next step starts. Kill the terminal, let the laptop sleep, come back next week, even switch from Claude Code to Gemini — say "continue the export feature" and it picks up at the exact step it stopped. Starting over is against the rules, literally.
@@ -118,6 +120,7 @@ Re-running the installer upgrades Heatwave's files and never touches your config
 
 | | |
 |---|---|
+| **[Complete example](docs/example.md)** | One real task, start to finish — every command you type and every file the loop produces |
 | **[Getting started](docs/getting-started.md)** | Full walkthrough: install → config → first task → resuming → troubleshooting |
 | **[The loop](docs/loop.md)** | How never-losing-progress works under the hood |
 | **[FAQ](docs/faq.md)** | One model? Too much ceremony? What stops the AI from cheating? |
