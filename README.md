@@ -128,6 +128,8 @@ cd heatwave
 ```
 
 Installs `.heatwave/` (protocol + prompts + templates + ponytail), appends the protocol block to your project's `CLAUDE.md`, adds three role subagents under `.claude/agents/`, and installs **enforcement hooks** into `.claude/settings.json` — the protocol gate is re-injected on every prompt and session start, so it can't be forgotten mid-conversation. Passive text *tells* the agent; the hook *reminds it every single turn*.
+
+Also fetches the **ui-ux-pro-max** design skill (MIT) from its official repo into `.claude/skills/`, so UI work gets professional design intelligence out of the box (skipped gracefully when offline), and prints the official-channel command for adding **ECC** security scanning.
 </details>
 
 <details>
@@ -259,6 +261,7 @@ The contract is one-directional: your stack can *strengthen* a role's evidence, 
 | **Mobile / desktop apps** | [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) skill | Gives the PLANNER and IMPLEMENTER real design intelligence — styles, palettes, font pairings, UX guidelines — so UI acceptance criteria are written and met to a professional bar, not improvised |
 | **Web apps** | [framer-motion](https://www.framer.com/motion/) (as a project dependency) + ui-ux-pro-max | Declarative, reviewable animation — motion behavior becomes something acceptance criteria can pin ("panel springs in ≤ 300ms") and the reviewer can verify in the browser |
 | **APIs / backends** | your test framework + a load-test tool in `tooling:` | Non-functional criteria (p95 latency, throughput) only gate if a declared tool can measure them |
+| **Anything security-sensitive** | [ECC](https://github.com/affaan-m/ECC) security tooling | Gives the REVIEWER a real scanner for the security categories — tool-backed evidence instead of narrated inspection. Install from **official channels only** (`/plugin marketplace add affaan-m/ECC`, then `/plugin install ecc@ecc`) — ECC's own security policy warns that third-party mirrors may carry malware |
 
 Ponytail still applies: reach for these when the plan calls for design or motion quality — not as default weight on every task.
 
@@ -270,7 +273,8 @@ What Heatwave is made of — and everything it *doesn't* need:
 |---|---|
 | **Uses** | Markdown files, one POSIX `sh` script, a folder in your repo. Nothing else. |
 | **Bundles** | The [Ponytail](https://github.com/DietrichGebert/ponytail) skill *text* (MIT, vendored with attribution) — plain instructions, portable everywhere. |
-| **Does NOT use** | ❌ MCP servers ❌ plugins ❌ frameworks ❌ SDKs ❌ API keys ❌ a server ❌ any other skill system |
+| **Fetches (Claude Code install, optional)** | The [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design skill (MIT © nextlevelbuilder), cloned from its official repo into your project's `.claude/skills/` at install time so it arrives together with Heatwave. Offline or no git? Skipped gracefully — nothing breaks. |
+| **Does NOT use** | ❌ MCP servers ❌ frameworks ❌ SDKs ❌ API keys ❌ a server — the protocol itself depends on nothing |
 
 Your agent's own plugins (superpowers, MCP tools, whatever you've installed) can happily coexist and even make the roles better at their jobs — but Heatwave never depends on them. Clone on a bare machine; everything works.
 

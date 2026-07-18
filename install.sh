@@ -107,6 +107,29 @@ PYEOF
       echo "note: python3 not found — add the gate hooks manually to .claude/settings.json:"
       echo '  {"hooks":{"UserPromptSubmit":[{"hooks":[{"type":"command","command":"cat .heatwave/GATE.md 2>/dev/null || true"}]}],"SessionStart":[{"hooks":[{"type":"command","command":"cat .heatwave/GATE.md 2>/dev/null || true"}]}]}}'
     fi
+    # Companion skill: ui-ux-pro-max (MIT © nextlevelbuilder) — fetched from upstream at
+    # install time, not vendored, so this repo stays lean and the skill stays current.
+    # Offline or no git? Skipped gracefully — Heatwave itself needs neither.
+    SKILL_DIR="$TARGET/.claude/skills/ui-ux-pro-max"
+    if [ -d "$SKILL_DIR" ]; then
+      echo "skipped companion skill ui-ux-pro-max (already installed)"
+    elif command -v git >/dev/null 2>&1 && git clone --depth 1 --quiet https://github.com/nextlevelbuilder/ui-ux-pro-max-skill "$HW/.uiux-tmp" 2>/dev/null; then
+      if [ -d "$HW/.uiux-tmp/.claude/skills/ui-ux-pro-max" ]; then
+        mkdir -p "$TARGET/.claude/skills"
+        cp "$HW/.uiux-tmp/LICENSE" "$HW/.uiux-tmp/.claude/skills/ui-ux-pro-max/LICENSE" 2>/dev/null || true
+        mv "$HW/.uiux-tmp/.claude/skills/ui-ux-pro-max" "$SKILL_DIR"
+        echo "installed companion skill ui-ux-pro-max into .claude/skills/ (MIT © nextlevelbuilder — github.com/nextlevelbuilder/ui-ux-pro-max-skill)"
+      else
+        echo "note: ui-ux-pro-max upstream layout changed — install it manually from github.com/nextlevelbuilder/ui-ux-pro-max-skill"
+      fi
+      rm -rf "$HW/.uiux-tmp"
+    else
+      echo "note: could not fetch companion skill ui-ux-pro-max (offline or git missing) — install later from github.com/nextlevelbuilder/ui-ux-pro-max-skill"
+    fi
+    # Suggested (not auto-installed — plugin installs are user-level, and ECC's own
+    # policy says official channels only): security scanning for the REVIEWER.
+    echo "suggested: for tool-backed security review, install ECC inside Claude Code:"
+    echo "  /plugin marketplace add affaan-m/ECC   then   /plugin install ecc@ecc"
     ;;
   codex)
     append_once "$TARGET/AGENTS.md" "$SRC/adapters/codex/AGENTS.md"

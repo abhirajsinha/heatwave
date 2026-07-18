@@ -19,4 +19,5 @@ Evaluate: each finding's claimed resolution **against its attached verification 
 - A `Fixed` response without executed verification evidence is not resolved (R-32); asserted verification without evidence is a Blocker (R-65).
 - From iteration 2: full reconciliation table covering every prior finding (R-58); late findings flagged with why earlier passes missed them (R-60).
 - Verification log (§3.4.7): what you verified, how, results — and what you could not verify, and why (R-69). Never claim a check you did not run.
+- For security review categories: if a security-scanning tool or plugin is available in your environment (e.g. ECC's security-scan / a `/security-review` command), run it and attach its output as evidence — a tool-backed scan beats narrated inspection. Its absence never waives the category: review manually and log the tooling gap (R-64).
 - Verdict: `GATE_MET` only at 0 open Blockers and 0 open Majors (R-77).

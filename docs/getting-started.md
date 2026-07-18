@@ -34,8 +34,10 @@ your-project/
 ├── heatwave.config.yaml     ← yours to edit (created once, never overwritten)
 ├── CLAUDE.md                ← adapter block appended (AGENTS.md / GEMINI.md / .cursor/rules per tool)
 ├── .claude/agents/          ← 3 role subagents (Claude Code only)
-└── .claude/settings.json    ← gate hooks merged in (Claude Code only): the protocol gate is
-                               re-injected on every prompt + session start via .heatwave/GATE.md
+├── .claude/settings.json    ← gate hooks merged in (Claude Code only): the protocol gate is
+│                              re-injected on every prompt + session start via .heatwave/GATE.md
+└── .claude/skills/ui-ux-pro-max/  ← companion design skill (Claude Code only), fetched from its
+                               official repo at install time; skipped gracefully when offline
 ```
 
 Re-running `install.sh` later upgrades `.heatwave/` and never touches your config or runs.
@@ -112,7 +114,7 @@ You answer, counters reset per your decision, the loop resumes. Escalation is a 
 
 ## Uninstalling
 
-Delete `.heatwave/`, `heatwave.config.yaml`, and the Heatwave block from your instruction file. On Claude Code, also delete `.claude/agents/heatwave-*.md` and remove the two Heatwave hook entries (the ones running `cat .heatwave/GATE.md …`) from `.claude/settings.json`. Runs are plain files — archive them if you want the audit history.
+Delete `.heatwave/`, `heatwave.config.yaml`, and the Heatwave block from your instruction file. On Claude Code, also delete `.claude/agents/heatwave-*.md`, `.claude/skills/ui-ux-pro-max/` (if you don't want to keep the companion skill), and remove the two Heatwave hook entries (the ones running `cat .heatwave/GATE.md …`) from `.claude/settings.json`. Runs are plain files — archive them if you want the audit history.
 
 ## Troubleshooting
 
