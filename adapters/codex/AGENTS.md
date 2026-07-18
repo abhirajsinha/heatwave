@@ -1,7 +1,6 @@
 # Heatwave protocol (binding)
 
-<!-- Codex reads AGENTS.md at the repo root. Append this block to your existing AGENTS.md,
-     or let install.sh do it. -->
+<!-- Codex reads AGENTS.md at the repo root. Append this block to your existing AGENTS.md, or let install.sh do it. -->
 
 This project runs under the Heatwave AI Development & Verification Protocol.
 

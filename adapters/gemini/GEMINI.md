@@ -1,7 +1,6 @@
 # Heatwave protocol (binding)
 
-<!-- Gemini CLI reads GEMINI.md at the repo root. Append this block to your existing GEMINI.md,
-     or let install.sh do it. -->
+<!-- Gemini CLI reads GEMINI.md at the repo root. Append this block to your existing GEMINI.md, or let install.sh do it. -->
 
 This project runs under the Heatwave AI Development & Verification Protocol.
 
