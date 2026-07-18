@@ -107,31 +107,99 @@ A one-line copy fix doesn't need a rollout plan. Three tiers scale the paperwork
 | **Plan reviewed before code?** | ✅ always | ✅ always | ✅ always |
 | **Evidence required?** | ✅ always | ✅ always | ✅ always |
 
-## 🚀 Get running in 60 seconds
+## 🚀 Setup — 3 steps, ~3 minutes
+
+> Full walkthrough with troubleshooting: **[docs/getting-started.md](docs/getting-started.md)**
+
+### 1 · Get Heatwave
 
 ```sh
 git clone https://github.com/abhirajsinha/heatwave.git
-cd heatwave
-./install.sh /path/to/your/project claude    # or: codex | gemini | cursor | generic
 ```
 
-Then edit the generated `heatwave.config.yaml` once (your models, which test tooling actually exists), and ask your agent for a feature:
+### 2 · Install into your project (pick your tool)
+
+<details>
+<summary><strong>Claude Code</strong></summary>
+
+```sh
+cd heatwave
+./install.sh /path/to/your/project claude
+```
+
+Installs `.heatwave/` (protocol + prompts + templates + ponytail), appends the protocol block to your project's `CLAUDE.md`, and adds three role subagents under `.claude/agents/` — planner, implementer, reviewer run as isolated subagents automatically.
+</details>
+
+<details>
+<summary><strong>Codex</strong></summary>
+
+```sh
+cd heatwave
+./install.sh /path/to/your/project codex
+```
+
+Installs `.heatwave/` and appends the protocol block to your project's `AGENTS.md`. Each role runs as a fresh session; the run directory carries state between them.
+</details>
+
+<details>
+<summary><strong>Gemini CLI</strong></summary>
+
+```sh
+cd heatwave
+./install.sh /path/to/your/project gemini
+```
+
+Installs `.heatwave/` and appends the protocol block to your project's `GEMINI.md`.
+</details>
+
+<details>
+<summary><strong>Cursor</strong></summary>
+
+```sh
+cd heatwave
+./install.sh /path/to/your/project cursor
+```
+
+Installs `.heatwave/` and drops an always-on rule at `.cursor/rules/heatwave.mdc`.
+</details>
+
+<details>
+<summary><strong>Any other agent</strong></summary>
+
+```sh
+cd heatwave
+./install.sh /path/to/your/project generic
+```
+
+Installs `.heatwave/` — then paste (or reference) `.heatwave/HEATWAVE-AGENT.md` wherever your tool reads standing instructions or a system prompt.
+</details>
+
+The installer is idempotent — re-run it anytime to upgrade; your config and runs are never touched.
+
+### 3 · Configure once
+
+Edit the generated `heatwave.config.yaml` (2 minutes):
+
+```yaml
+roles:                      # which model plays which role — one model for all three is fine
+  planner:     { preferred: your-best-reasoning-model, fallback: [] }
+  implementer: { preferred: your-best-coding-model,    fallback: [] }
+  reviewer:    { preferred: your-best-reasoning-model, fallback: [] }
+tooling:                    # declare ONLY tools that actually exist in this project
+  unit: "jest"
+  web_e2e: "playwright"
+  mobile_platform: ""       # ios | android | both — empty = asked once per mobile task
+```
+
+### ▶️ Use it
+
+There is no special command. Just ask your agent for a feature, in the project:
 
 > *"Add CSV export to the reports page."*
 
-That's it. The agent enters `PLANNING` and the loop takes over. You're pulled in only when the protocol genuinely needs a human.
+The adapter routes it into the loop: a run directory appears at `.heatwave/runs/<task>/`, the plan is written and independently reviewed **before any code**, implementation follows the approved plan, reviews iterate with evidence until 0 Blockers / 0 Majors, then `APPROVED`. Non-stop — you're pulled in only for the mobile-platform question, an escalation, or a human-reserved decision.
 
-<details>
-<summary><strong>What exactly does install.sh do?</strong></summary>
-
-<br>
-
-- Copies `PROTOCOL.md`, `prompts/`, `templates/`, and the ponytail skill into `<project>/.heatwave/`
-- Installs your tool's adapter: appends a Heatwave block to `CLAUDE.md` / `AGENTS.md` / `GEMINI.md`, or drops `.cursor/rules/heatwave.mdc`, plus three subagent definitions for Claude Code
-- Creates `heatwave.config.yaml` from the example (once — never overwritten)
-- Is idempotent: re-run anytime to update; your config and your runs are never touched
-
-</details>
+**Check on a run:** `cat .heatwave/runs/*/state.yaml` · **Resume anytime, any tool:** just mention the task in a new session — it continues exactly where it stopped.
 
 ## 🤖 One protocol, every agent
 
@@ -234,6 +302,7 @@ heatwave/
 ## 📖 Go deeper
 
 - **[PROTOCOL.md](PROTOCOL.md)** — the spec itself. Readable by humans, enforceable on AIs.
+- **[docs/getting-started.md](docs/getting-started.md)** — zero-to-first-feature walkthrough: setup, config, first task, resuming, troubleshooting.
 - **[docs/loop.md](docs/loop.md)** — anatomy of a run, the resume rule, crash edge cases.
 - **[docs/faq.md](docs/faq.md)** — *one model? too much ceremony? what stops the AI from cheating?*
 
