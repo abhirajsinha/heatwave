@@ -46,9 +46,14 @@ append_once() {
     echo "skipped $file (Heatwave block already present)"
   else
     [ -f "$file" ] && printf '\n' >> "$file"
-    # strip installer-facing HTML comment lines (whole single-line comments only;
-    # a range delete /<!--/,/-->/ wipes to EOF when the comment is one line)
-    sed '/^[[:space:]]*<!--.*-->[[:space:]]*$/d' "$block" >> "$file"
+    # strip installer-facing HTML comments (single-line AND multi-line) from the
+    # block. A range delete /<!--/,/-->/d wipes to EOF on a one-line comment, so
+    # use an awk state machine that closes inline comments and spans multi-line ones.
+    awk '{ l=$0
+      while (match(l,/<!--.*-->/)) { l=substr(l,1,RSTART-1) substr(l,RSTART+RLENGTH) }
+      if (c) { if (match(l,/-->/)) { l=substr(l,RSTART+RLENGTH); c=0 } else next }
+      if (match(l,/<!--/)) { l=substr(l,1,RSTART-1); c=1 }
+      print l }' "$block" >> "$file"
     echo "updated $file"
   fi
 }
