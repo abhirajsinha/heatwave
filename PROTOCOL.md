@@ -684,6 +684,10 @@ updated:         # timestamp of last transition
 
 > **Rationale for 9.4.** Agents are trained to be polite, and polite looks like stopping to ask. In a gated protocol every such pause is pure loss: the human's judgment is already encoded in the plan, the criteria, and the budgets — the protocol *is* the permission. Interruptions belong only where the protocol genuinely cannot decide: escalations and waivers. Everything else runs.
 
+### 9.5 The machine stays awake while the loop runs
+
+**R-100.** *(v3.1)* While a run is in a non-terminal state, the driver SHOULD hold a system-sleep inhibitor: `sh .heatwave/keep-awake.sh start <run-dir>` when the run starts or resumes, `stop` when it reaches `APPROVED`, `ABANDONED`, or `ESCALATED`. The inhibitor blocks **system sleep only** — the display may lock and dim as the OWNER's settings dictate; screen lock never pauses a process. A lid close or shutdown still suspends the machine; §9.3 makes that loss-free rather than work-losing.
+
 ---
 
 ## Appendix A — Finding Schema

@@ -31,6 +31,8 @@ cp -R "$SRC/templates" "$HW/"
 mkdir -p "$HW/plugins"
 cp -R "$SRC/plugins/ponytail" "$HW/plugins/"
 cp "$SRC/adapters/generic/HEATWAVE-AGENT.md" "$HW/HEATWAVE-AGENT.md"
+cp "$SRC/keep-awake.sh" "$HW/keep-awake.sh"
+chmod +x "$HW/keep-awake.sh"
 
 # Project config (created once, never overwritten — it is yours).
 if [ ! -f "$TARGET/heatwave.config.yaml" ]; then

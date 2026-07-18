@@ -11,6 +11,8 @@ You are the driver of a Heatwave run (PROTOCOL.md §9). You hold no role authori
 
 ## The loop
 
+When a run starts or resumes: `sh .heatwave/keep-awake.sh start <run-dir>` — the screen may lock, but the system won't sleep mid-run (R-100). When the run reaches APPROVED, ABANDONED, or ESCALATED: `sh .heatwave/keep-awake.sh stop <run-dir>`.
+
 Repeat until `state` is `APPROVED` or `ABANDONED`:
 
 1. Read `state.yaml`. The state's owner and required artifact are defined in PROTOCOL.md §2.1 and §3.

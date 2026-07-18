@@ -138,7 +138,7 @@ Re-running the installer upgrades Heatwave's files and never touches your config
 | **[Getting started](docs/getting-started.md)** | Full walkthrough: install → config → first task → resuming → troubleshooting |
 | **[The loop](docs/loop.md)** | How never-losing-progress works under the hood |
 | **[FAQ](docs/faq.md)** | One model? Too much ceremony? What stops the AI from cheating? |
-| **[PROTOCOL.md](PROTOCOL.md)** | The full specification — 101 numbered rules, each explaining the failure it prevents |
+| **[PROTOCOL.md](PROTOCOL.md)** | The full specification — 102 numbered rules, each explaining the failure it prevents |
 | **[Adapters](adapters/README.md)** | How to add support for a new AI tool (~20 lines) |
 
 ## License
