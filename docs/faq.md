@@ -26,3 +26,16 @@ Re-run `install.sh`. It refreshes `.heatwave/` runtime files and never touches y
 
 **Does the AI ever still cut corners?**
 Sometimes, and Heatwave is honest about it: in live testing, strong models follow the loop faithfully (including multi-round plan rejection for real defects), but a driver given a casually-phrased request occasionally implements directly instead of dispatching the implementer role — the artifacts on disk make that visible immediately, which is the point. Instruction-level enforcement can't be cryptographic; hook-level enforcement (blocking source edits while the run state assigns them to another role) is on the roadmap for tools that support hooks.
+
+**What happens if my laptop goes to sleep mid-run?**
+Nothing is lost — and nothing is running, either. Be clear about the physics: when the OS sleeps, every local process pauses (any tool, any vendor — no software can compute on a sleeping CPU). Heatwave's guarantee is that sleep can only *pause* a run, never break one: every artifact and `state.yaml` are already on disk before the next step starts (R-87), so on wake — or days later, in a fresh session — the run resumes at exactly the recorded state (R-88). Zero work is repeated.
+
+If you want the loop to keep executing while you close the lid, take the work off the local CPU:
+
+| Option | How |
+|---|---|
+| Keep the machine awake | `caffeinate -dims` on macOS (`systemd-inhibit` on Linux) for the duration of the run |
+| Cloud agents | Run the session in your tool's cloud/remote mode (e.g. Claude Code on the web / remote agents) — the loop executes server-side and your laptop is just a viewer |
+| A remote machine | Run your agent inside `tmux`/`ssh` on a VPS or devcontainer; disconnecting doesn't stop it |
+
+Because runs live in the repo, these mix freely: start a run on the laptop, push, and let a remote session resume it overnight.
