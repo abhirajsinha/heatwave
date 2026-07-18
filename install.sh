@@ -126,10 +126,10 @@ PYEOF
     else
       echo "note: could not fetch companion skill ui-ux-pro-max (offline or git missing) — install later from github.com/nextlevelbuilder/ui-ux-pro-max-skill"
     fi
-    # Suggested (not auto-installed — plugin installs are user-level, and ECC's own
-    # policy says official channels only): security scanning for the REVIEWER.
-    echo "suggested: for tool-backed security review, install ECC inside Claude Code:"
-    echo "  /plugin marketplace add affaan-m/ECC   then   /plugin install ecc@ecc"
+    # Suggested (not auto-installed — plugin installs are user-level; official channels only):
+    echo "suggested companions, installed inside Claude Code:"
+    echo "  security review:      /plugin marketplace add affaan-m/ECC   then   /plugin install ecc@ecc"
+    echo "  cross-session memory: /plugin marketplace add thedotmack/claude-mem   then   /plugin install claude-mem"
     ;;
   codex)
     append_once "$TARGET/AGENTS.md" "$SRC/adapters/codex/AGENTS.md"

@@ -97,7 +97,7 @@ cd heatwave
 
 Every install puts the protocol, role prompts, and templates in `<project>/.heatwave/` and creates a `heatwave.config.yaml`.
 
-- **Claude Code** — adds the rules to `CLAUDE.md`, three role subagents, and *enforcement hooks* that re-inject the rules on every prompt (so they can't fade mid-conversation). Also fetches the [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design skill so UI work meets a professional bar, and prints the official command to add [ECC](https://github.com/affaan-m/ECC) security scanning.
+- **Claude Code** — adds the rules to `CLAUDE.md`, three role subagents, and *enforcement hooks* that re-inject the rules on every prompt (so they can't fade mid-conversation). Also fetches the [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design skill so UI work meets a professional bar, and prints the official commands to add [ECC](https://github.com/affaan-m/ECC) security scanning and [claude-mem](https://github.com/thedotmack/claude-mem) cross-session memory.
 - **Codex / Gemini CLI** — appends the rules to `AGENTS.md` / `GEMINI.md`.
 - **Cursor** — adds an always-on rule in `.cursor/rules/`.
 - **Generic** — gives you `.heatwave/HEATWAVE-AGENT.md` to paste into any tool's instructions.
