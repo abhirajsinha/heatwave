@@ -42,27 +42,21 @@ your-project/
 
 Re-running `install.sh` later upgrades `.heatwave/` and never touches your config or runs.
 
-## Step 3 — Configure (2 minutes, once per project)
+## Step 3 — Configure (usually: nothing)
 
-Open `heatwave.config.yaml`:
+Out of the box, no configuration is needed:
 
-```yaml
-roles:
-  planner:     { preferred: your-best-reasoning-model, fallback: [] }
-  implementer: { preferred: your-best-coding-model,    fallback: [] }
-  reviewer:    { preferred: your-best-reasoning-model, fallback: [] }
+- **Models** — every role runs on the model your session already uses. One model in three fresh contexts satisfies the isolation rules; different models per role is an upgrade, not a requirement.
+- **Test tooling** — auto-detected from your project by the planner (R-99): `package.json` scripts and devDependencies (jest, vitest, mocha, playwright, cypress), `pytest.ini`/`pyproject.toml`, `go.mod`, `Cargo.toml`, `.maestro/`, `ios/` and `android/` folders, CI workflows. The plan cites the file proving each tool exists, and the plan reviewer checks those citations against the repo — so nothing can be "declared" that isn't really there.
 
-tooling:
-  unit: "jest"                      # ← declare ONLY what actually exists in this project
-  web_e2e: "playwright"
-  mobile_e2e: "iOS Simulator + Maestro"
-  mobile_platform: ""               # ios | android | both — empty = you get asked per task
-```
+The generated `heatwave.config.yaml` is entirely commented-out overrides. Open it only when you want to:
 
-Two rules of thumb:
+- run different models per role (uncorrelated blind spots),
+- declare a tool that leaves no trace in the repo (a load-test rig, a device farm),
+- pin `mobile_platform: ios | android | both` so mobile tasks never ask,
+- change iteration budgets or the default tier.
 
-- **Models:** put your strongest reasoning model on planner + reviewer, strongest coding model on implementer. One model for all three is fine — isolation comes from contexts, not model identity.
-- **Tooling:** never declare a tool you don't have. A false claim of access is a Blocker by protocol (R-63); an honest gap just means those criteria are reported as *Unverified* for you to waive.
+If a test type genuinely has no tool (nothing detected, nothing configured), Heatwave says so honestly: affected criteria are reported *Unverified* for you to waive — never silently marked passed.
 
 ## Step 4 — Start your first task
 

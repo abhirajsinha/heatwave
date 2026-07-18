@@ -35,7 +35,7 @@ cp "$SRC/adapters/generic/HEATWAVE-AGENT.md" "$HW/HEATWAVE-AGENT.md"
 # Project config (created once, never overwritten — it is yours).
 if [ ! -f "$TARGET/heatwave.config.yaml" ]; then
   cp "$SRC/heatwave.config.example.yaml" "$TARGET/heatwave.config.yaml"
-  echo "created heatwave.config.yaml — edit it for your project"
+  echo "created heatwave.config.yaml — all optional: models default to your session's model, test tooling is auto-detected"
 fi
 
 # Append an adapter block to an instruction file exactly once.

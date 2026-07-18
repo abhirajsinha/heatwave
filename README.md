@@ -105,7 +105,7 @@ Every install puts the protocol, role prompts, and templates in `<project>/.heat
 Re-running the installer upgrades Heatwave's files and never touches your config or your task history.
 </details>
 
-**Step 3 — edit `heatwave.config.yaml`** (once per project): which model plays which role (one model for all three is fine), and which test tools your project actually has. For mobile apps you can also pin iOS / Android / both — or leave it empty and get asked once per task.
+**Step 3 — there is no step 3.** No config needed: every role runs on the model your session already uses, and your project's test tools (jest, vitest, pytest, playwright, go test, simulators…) are **auto-detected from the project itself** — the plan even cites the file that proves each tool exists. A `heatwave.config.yaml` full of commented-out overrides is created in case you ever want to pin something: different models per role, a tool detection can't see (like a load-test rig), or iOS/Android/both for mobile apps.
 
 **That's it.** No new commands to learn — just ask your agent to build something. If it's real work, the loop starts automatically; casual questions and quick experiments stay casual.
 
@@ -124,7 +124,7 @@ Re-running the installer upgrades Heatwave's files and never touches your config
 | **[Getting started](docs/getting-started.md)** | Full walkthrough: install → config → first task → resuming → troubleshooting |
 | **[The loop](docs/loop.md)** | How never-losing-progress works under the hood |
 | **[FAQ](docs/faq.md)** | One model? Too much ceremony? What stops the AI from cheating? |
-| **[PROTOCOL.md](PROTOCOL.md)** | The full specification — 100 numbered rules, each explaining the failure it prevents |
+| **[PROTOCOL.md](PROTOCOL.md)** | The full specification — 101 numbered rules, each explaining the failure it prevents |
 | **[Adapters](adapters/README.md)** | How to add support for a new AI tool (~20 lines) |
 
 ## License

@@ -460,6 +460,8 @@ Load         | <tool>              | IMPLEMENTER | access: NOT AVAILABLE — see
 
 **R-98.** *(v3.1)* For a task touching a mobile surface, the target test platform MUST be resolved before `PLANNING` exits: from `heatwave.config.yaml` (`tooling.mobile_platform: ios | android | both`) if set, otherwise by asking the OWNER **once, at run start** — this is a valid stopping point under R-95(3). The answer is recorded in the Run Record, the tooling declaration names the corresponding simulator/emulator, and E2E verification runs there. Platforms not chosen are recorded as out of scope for the run — never silently assumed covered.
 
+**R-99.** *(v3.1)* The tooling declaration SHOULD be **derived by the PLANNER from project evidence**, not typed by the OWNER: test frameworks from manifests and config files (`package.json` scripts and devDependencies, `pytest.ini`/`pyproject.toml`, `go.mod`, `Cargo.toml`, `playwright.config.*`, `cypress.config.*`, `.maestro/`, `ios/`/`android/` directories, CI workflows), each entry citing the file that proves the tool exists. Entries in `heatwave.config.yaml` override detection where present. A tool declared with neither project evidence nor a config entry is a false access claim under R-63. Where a required test type has no detectable tool, the declaration says so explicitly (R-64) — detection failure is stated, never papered over.
+
 ### 6.2 Tool unavailability
 
 **R-64.** When a required tool is unavailable, the role MUST state explicitly: which tool, what it would have verified, which acceptance criteria are consequently unverified, and what was done instead (if anything).

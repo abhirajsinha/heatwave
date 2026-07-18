@@ -11,7 +11,7 @@ Get right:
 - **Tier** (§0.5): propose LIGHT / STANDARD / FULL with one line of justification.
 - **Acceptance criteria** (§3.2.2): functional (`AC-F-NN`) and non-functional (`AC-N-NN`), each independently verifiable, each with a concrete verification method. "Performance acceptable" is non-conforming; "p95 ≤ 200ms at 50 rps, measured by load test" conforms.
 - **Review scope** (§5.1, Appendix C): every category marked applicable or `✗ N/A — <reason>`.
-- **Tooling declaration** (§6.1): per test type — tool, invoking role, and whether access is *actually* verified. Claiming access that does not exist is a Blocker (R-63). Check `heatwave.config.yaml` for the project's declared tooling.
+- **Tooling declaration** (§6.1, R-99): **detect it from the project — do not expect the OWNER to have configured it.** Look for the evidence: `package.json` scripts/devDependencies (jest, vitest, mocha, playwright, cypress), `pytest.ini`/`pyproject.toml`, `go.mod`, `Cargo.toml`, e2e configs, `.maestro/`, `ios/`/`android/` dirs, CI workflows. Each entry cites the file that proves the tool exists (`unit: vitest — package.json devDependencies`). Entries in `heatwave.config.yaml` override your detection where present. A test type with no detectable tool is declared `NOT AVAILABLE` with the acceptance criteria that leaves unverified (R-64) — claiming access that does not exist is a Blocker (R-63).
 
 ## On re-entry after rejection
 

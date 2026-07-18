@@ -1,34 +1,42 @@
-# Heatwave project configuration.
-# Copy to heatwave.config.yaml at your project root and edit. install.sh does this for you.
+# Heatwave configuration — EVERYTHING here is optional.
+#
+# Out of the box, with this file untouched:
+#   • every role runs on the model your session already uses (one model in
+#     fresh contexts satisfies the isolation rules — R-12)
+#   • test tooling is auto-detected from your project by the planner
+#     (package.json, pytest.ini, go.mod, playwright/cypress configs,
+#      ios/ & android/ folders, CI workflows — R-99)
+#
+# Edit only to OVERRIDE a default. Uncomment what you need.
 
-# Model assignment per role (PROTOCOL.md §1.4). Use your tool's model ids.
-# The same model may fill several roles — the isolation boundary is the context, not the model (R-12).
-roles:
-  planner:
-    preferred: your-best-reasoning-model
-    fallback: []
-  implementer:
-    preferred: your-best-coding-model
-    fallback: []
-  reviewer:
-    preferred: your-best-reasoning-model   # must run in a different context from planner
-    fallback: []
+# --- Models per role (default: the session's model for all three) ------------
+# Use different models if you want uncorrelated blind spots between roles.
+# roles:
+#   planner:     { preferred: your-best-reasoning-model, fallback: [] }
+#   implementer: { preferred: your-best-coding-model,    fallback: [] }
+#   reviewer:    { preferred: your-best-reasoning-model, fallback: [] }
 
-# Default tier when the PLANNER does not argue otherwise (PROTOCOL.md §0.5).
-default_tier: STANDARD
+# --- Test tooling (default: auto-detected from the project) ------------------
+# Set an entry only when detection gets it wrong, or for tools that leave no
+# trace in the repo (a load-test rig, a device farm). Never claim a tool you
+# don't have — a false access claim is a Blocker (R-63).
+# tooling:
+#   unit: "jest"
+#   integration: ""
+#   web_e2e: "playwright"
+#   load: "k6"
 
-# Iteration budgets (PROTOCOL.md §2.3). Defaults are the spec's.
-budgets:
-  plan_iterations: 3
-  fix_iterations: 5
-  final_iterations: 2
+# --- Mobile apps only --------------------------------------------------------
+# ios | android | both. Leave unset to be asked once at the start of each
+# mobile task (R-98).
+# tooling:
+#   mobile_platform: "both"
 
-# Tooling available in THIS project (consumed by the §6.1 tooling declaration).
-# Declare only what actually exists — a false claim of access is a Blocker (R-63).
-tooling:
-  unit: ""            # e.g. "jest", "pytest"
-  integration: ""
-  web_e2e: ""         # e.g. "playwright"
-  mobile_e2e: ""      # e.g. "iOS Simulator + Maestro"
-  mobile_platform: "" # ios | android | both — leave empty to be asked once at the start of each mobile task (R-98)
-  load: ""
+# --- Iteration budgets (defaults: 3 plan / 5 fix / 2 final — §2.3) -----------
+# budgets:
+#   plan_iterations: 3
+#   fix_iterations: 5
+#   final_iterations: 2
+
+# --- Default tier when the planner doesn't argue otherwise (§0.5) ------------
+# default_tier: STANDARD

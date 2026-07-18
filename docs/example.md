@@ -22,21 +22,9 @@ suggested: for tool-backed security review, install ECC inside Claude Code:
 Heatwave installed into /Users/you/code/my-api (.heatwave/, adapter: claude)
 ```
 
-## 2 · Configure (once, ~2 minutes)
+## 2 · Configure — nothing to do
 
-Edit `~/code/my-api/heatwave.config.yaml`:
-
-```yaml
-roles:
-  planner:     { preferred: claude-sonnet-5, fallback: [] }
-  implementer: { preferred: claude-sonnet-5, fallback: [] }
-  reviewer:    { preferred: claude-sonnet-5, fallback: [] }   # same model is fine — fresh context is what matters
-tooling:
-  unit: "jest"          # declare only what the project actually has
-  web_e2e: ""
-  mobile_e2e: ""
-  mobile_platform: ""
-```
+`heatwave.config.yaml` was created, but it's all optional overrides and we need none of them: the roles will run on the session's model, and the planner will detect this project's test tooling by itself — it finds `jest` in `package.json`'s devDependencies and cites that as evidence in the plan.
 
 ## 3 · Ask for the feature — like you always would
 
