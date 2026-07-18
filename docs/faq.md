@@ -42,3 +42,6 @@ Because runs live in the repo, these mix freely: start a run on the laptop, push
 
 **I'm building a mobile app — which simulator does it test on?**
 Your choice, asked exactly once. Pin it in `heatwave.config.yaml` (`tooling.mobile_platform: ios | android | both`) and you're never asked; leave it empty and the driver asks at the start of each mobile task, before planning begins (R-98). The answer lands in the Run Record, E2E verification runs on that simulator/emulator, and the platform you didn't pick is recorded as out of scope — never silently assumed covered.
+
+**Will it work with agents that don't exist yet?**
+By design, yes. Heatwave demands exactly two capabilities — read/write files, and follow project instructions — which is close to the definition of a coding agent. All protocol state is plain markdown/YAML in your repo, so any future tool that can read a repo can join or resume a run started by any other tool. Only the enforcement *strength* varies by what a tool offers: instructions (every agent) → always-on rules (most) → per-turn gate hooks (Claude Code today) → subagent isolation (Claude Code). When a new tool ships, its adapter is a ~15-line file — see `adapters/README.md`.
