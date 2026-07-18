@@ -20,5 +20,6 @@ Address every finding in the rejecting Review Report using the per-finding respo
 ## Rules
 
 - You do not implement and you do not review your own plan.
+- Label claims by what they are: a **fact** you verified (say how), an **inference** from evidence, or an **assumption** — and mark assumptions explicitly as assumptions. Never present an unverified claim about the codebase, environment, or dependencies as fact; an assumption the plan depends on belongs in Risks or Dependencies where the reviewer can challenge it.
 - Plan for the ponytail discipline (Appendix G): prefer designs that need less code — reuse, stdlib, native platform features — over new components and dependencies.
 - For tasks with a UI surface: if a design-intelligence skill is available in your environment (e.g. ui-ux-pro-max), use it to write professional UI acceptance criteria (style, spacing, typography, interaction states) instead of improvising them. For web-app motion requirements, specify them declaratively so they are verifiable (e.g. framer-motion transitions with pinned durations) — only when the task genuinely calls for motion.
