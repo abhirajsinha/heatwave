@@ -1,0 +1,62 @@
+<svg width="880" height="250" viewBox="0 0 880 250" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="Avenir Next, Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="rolesbg" x1="0" y1="0" x2="880" y2="250" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#141022"/>
+      <stop offset="1" stop-color="#221018"/>
+    </linearGradient>
+    <style>
+      .doc1 { animation: travel1 6s ease-in-out infinite; }
+      .doc3 { animation: travel3 6s ease-in-out infinite; }
+      .wall { animation: wallpulse 3s ease-in-out infinite; }
+      @keyframes travel1 { 0%,8%{transform:translateX(0);opacity:0} 12%{opacity:1} 44%{transform:translateX(224px);opacity:1} 50%,100%{transform:translateX(224px);opacity:0} }
+      @keyframes travel3 { 0%,52%{transform:translateX(0);opacity:0} 56%{opacity:1} 92%{transform:translateX(224px);opacity:1} 98%,100%{transform:translateX(224px);opacity:0} }
+      @keyframes wallpulse { 0%,100%{stroke-opacity:0.55} 50%{stroke-opacity:1} }
+    </style>
+  </defs>
+  <rect width="880" height="250" rx="16" fill="url(#rolesbg)"/>
+
+  <text x="36" y="44" font-size="18" font-weight="700" fill="#efe9fb">Three separate AIs. Files are the only thing that passes between them.</text>
+  <text x="36" y="66" font-size="13" fill="#9a8fb8">so no one ever grades their own homework — the reviewer sees what was made, never what was meant</text>
+
+  <!-- role cards -->
+  <g>
+    <rect x="60" y="96" width="180" height="92" rx="14" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-width="1.8"/>
+    <text x="150" y="132" font-size="26" text-anchor="middle">🧠</text>
+    <text x="150" y="158" font-size="15" font-weight="700" fill="#a9cdfb" text-anchor="middle">PLANNER</text>
+    <text x="150" y="176" font-size="11.5" fill="#7ea8dd" text-anchor="middle">decides what &amp; how to prove it</text>
+  </g>
+  <g>
+    <rect x="350" y="96" width="180" height="92" rx="14" fill="#f97316" fill-opacity="0.15" stroke="#f97316" stroke-width="1.8"/>
+    <text x="440" y="132" font-size="26" text-anchor="middle">🔨</text>
+    <text x="440" y="158" font-size="15" font-weight="700" fill="#fdc38f" text-anchor="middle">BUILDER</text>
+    <text x="440" y="176" font-size="11.5" fill="#e09a5e" text-anchor="middle">smallest code that passes</text>
+  </g>
+  <g>
+    <rect x="640" y="96" width="180" height="92" rx="14" fill="#a855f7" fill-opacity="0.14" stroke="#a855f7" stroke-width="1.8"/>
+    <text x="730" y="132" font-size="26" text-anchor="middle">🔍</text>
+    <text x="730" y="158" font-size="15" font-weight="700" fill="#dcbdfd" text-anchor="middle">REVIEWER</text>
+    <text x="730" y="176" font-size="11.5" fill="#b490d8" text-anchor="middle">approves only with evidence</text>
+  </g>
+
+  <!-- context walls -->
+  <line x1="295" y1="92" x2="295" y2="192" stroke="#f43f5e" stroke-width="2" stroke-dasharray="3 5" class="wall"/>
+  <line x1="585" y1="92" x2="585" y2="192" stroke="#f43f5e" stroke-width="2" stroke-dasharray="3 5" class="wall"/>
+  <text x="295" y="212" font-size="10.5" fill="#f77" text-anchor="middle">context wall</text>
+  <text x="585" y="212" font-size="10.5" fill="#f77" text-anchor="middle">context wall</text>
+
+  <!-- traveling artifact docs -->
+  <g class="doc1">
+    <rect x="248" y="128" width="26" height="30" rx="4" fill="#fff" fill-opacity="0.9"/>
+    <line x1="253" y1="137" x2="269" y2="137" stroke="#5b21b6" stroke-width="2"/>
+    <line x1="253" y1="143" x2="269" y2="143" stroke="#8f86a8" stroke-width="1.6"/>
+    <line x1="253" y1="149" x2="264" y2="149" stroke="#8f86a8" stroke-width="1.6"/>
+  </g>
+  <g class="doc3">
+    <rect x="538" y="128" width="26" height="30" rx="4" fill="#fff" fill-opacity="0.9"/>
+    <line x1="543" y1="137" x2="559" y2="137" stroke="#c2410c" stroke-width="2"/>
+    <line x1="543" y1="143" x2="559" y2="143" stroke="#8f86a8" stroke-width="1.6"/>
+    <line x1="543" y1="149" x2="554" y2="149" stroke="#8f86a8" stroke-width="1.6"/>
+  </g>
+
+  <text x="440" y="238" font-size="12" fill="#8f86a8" text-anchor="middle">one model can play all three roles — the walls are between conversations, not between models</text>
+</svg>

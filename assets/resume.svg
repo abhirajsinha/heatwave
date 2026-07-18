@@ -1,0 +1,49 @@
+<svg width="880" height="240" viewBox="0 0 880 240" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="Avenir Next, Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="resbg" x1="0" y1="0" x2="880" y2="240" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#141022"/>
+      <stop offset="1" stop-color="#221018"/>
+    </linearGradient>
+    <style>
+      .s1bar  { animation: grow1 10s linear infinite; }
+      .crash  { animation: crashpop 10s linear infinite; }
+      .filesg { animation: fileglow 10s linear infinite; }
+      .s2bar  { animation: grow2 10s linear infinite; }
+      .done   { animation: donepop 10s linear infinite; }
+      .zzz    { animation: crashpop 10s linear infinite; }
+      @keyframes grow1   { 0%{width:0} 30%{width:220px} 100%{width:220px} }
+      @keyframes crashpop{ 0%,30%{opacity:0} 34%,100%{opacity:1} }
+      @keyframes fileglow{ 0%,32%{stroke-opacity:0.4} 38%,52%{stroke-opacity:1} 60%,100%{stroke-opacity:0.4} }
+      @keyframes grow2   { 0%,52%{width:0} 88%{width:190px} 100%{width:190px} }
+      @keyframes donepop { 0%,88%{opacity:0} 92%,100%{opacity:1} }
+    </style>
+  </defs>
+  <rect width="880" height="240" rx="16" fill="url(#resbg)"/>
+
+  <text x="36" y="42" font-size="18" font-weight="700" fill="#efe9fb">Sessions die. The work doesn't.</text>
+  <text x="36" y="64" font-size="13" fill="#9a8fb8">progress is written to files in your repo before every step — memory lives on disk, not in the chat</text>
+
+  <!-- session 1 -->
+  <text x="36" y="106" font-size="13" font-weight="600" fill="#c9bfe4">Monday, Claude Code</text>
+  <rect x="240" y="92" width="220" height="20" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="#3b82f6" stroke-opacity="0.4"/>
+  <rect x="240" y="92" height="20" rx="10" fill="#3b82f6" fill-opacity="0.45" class="s1bar" width="220"/>
+  <g class="crash">
+    <text x="472" y="107" font-size="15" fill="#f43f5e">✗ laptop died at step 3</text>
+  </g>
+
+  <!-- the files, persistent -->
+  <g>
+    <rect x="240" y="128" width="220" height="34" rx="8" fill="#0d0a18" stroke="#a78bfa" stroke-width="1.6" class="filesg"/>
+    <text x="252" y="149" font-size="12" font-family="SF Mono, Menlo, Consolas, monospace" fill="#a78bfa">.heatwave/runs/  💾 safe</text>
+    <text x="480" y="149" font-size="12" fill="#8f86a8">plan ✓ · review ✓ · step 3 recorded</text>
+  </g>
+
+  <!-- session 2 -->
+  <text x="36" y="196" font-size="13" font-weight="600" fill="#c9bfe4">Thursday, Gemini CLI</text>
+  <rect x="240" y="182" width="190" height="20" rx="10" fill="#10b981" fill-opacity="0.12" stroke="#10b981" stroke-opacity="0.4"/>
+  <rect x="240" y="182" height="20" rx="10" fill="#10b981" fill-opacity="0.45" class="s2bar" width="190"/>
+  <text x="240" y="222" font-size="11.5" fill="#8f86a8">"continue the export feature" → picks up at step 3, redoes nothing</text>
+  <g class="done">
+    <text x="444" y="197" font-size="15" fill="#34d399">✅ finished — different day, different tool</text>
+  </g>
+</svg>

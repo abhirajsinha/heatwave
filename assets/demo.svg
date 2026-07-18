@@ -1,0 +1,82 @@
+<svg width="880" height="330" viewBox="0 0 880 330" fill="none" xmlns="http://www.w3.org/2000/svg" font-family="SF Mono, Menlo, Consolas, monospace">
+  <defs>
+    <linearGradient id="term" x1="0" y1="0" x2="880" y2="330" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#16121f"/>
+      <stop offset="1" stop-color="#1d1218"/>
+    </linearGradient>
+    <style>
+      .l1 { animation: s1 16s linear infinite; }
+      .l2 { animation: s2 16s linear infinite; }
+      .l3 { animation: s3 16s linear infinite; }
+      .l4 { animation: s4 16s linear infinite; }
+      .l5 { animation: s5 16s linear infinite; }
+      .l6 { animation: s6 16s linear infinite; }
+      .l7 { animation: s7 16s linear infinite; }
+      .l8 { animation: s8 16s linear infinite; }
+      .cur { animation: blink 1s step-end infinite; }
+      @keyframes s1 { 0%,3%{opacity:0} 6%,93%{opacity:1} 97%,100%{opacity:0} }
+      @keyframes s2 { 0%,12%{opacity:0} 15%,93%{opacity:1} 97%,100%{opacity:0} }
+      @keyframes s3 { 0%,22%{opacity:0} 25%,93%{opacity:1} 97%,100%{opacity:0} }
+      @keyframes s4 { 0%,34%{opacity:0} 37%,93%{opacity:1} 97%,100%{opacity:0} }
+      @keyframes s5 { 0%,46%{opacity:0} 49%,93%{opacity:1} 97%,100%{opacity:0} }
+      @keyframes s6 { 0%,58%{opacity:0} 61%,93%{opacity:1} 97%,100%{opacity:0} }
+      @keyframes s7 { 0%,70%{opacity:0} 73%,93%{opacity:1} 97%,100%{opacity:0} }
+      @keyframes s8 { 0%,82%{opacity:0} 85%,93%{opacity:1} 97%,100%{opacity:0} }
+      @keyframes blink { 50% { opacity: 0; } }
+    </style>
+  </defs>
+
+  <!-- terminal window -->
+  <rect width="880" height="330" rx="14" fill="url(#term)" stroke="#3f3357" stroke-width="1"/>
+  <circle cx="26" cy="24" r="6" fill="#ff5f57"/>
+  <circle cx="46" cy="24" r="6" fill="#febc2e"/>
+  <circle cx="66" cy="24" r="6" fill="#28c840"/>
+  <text x="440" y="29" font-size="12" fill="#6f6590" text-anchor="middle" font-family="Avenir Next, Segoe UI, Helvetica, Arial, sans-serif">your terminal — any AI coding agent</text>
+
+  <!-- the conversation -->
+  <g font-size="14.5">
+    <g class="l1">
+      <text x="30" y="70" fill="#8f86a8">›</text>
+      <text x="48" y="70" fill="#efe9fb">add CSV export to the reports page</text>
+    </g>
+    <g class="l2">
+      <text x="30" y="102" fill="#3b82f6">🧠</text>
+      <text x="56" y="102" fill="#93c5fd">planning…</text>
+      <text x="160" y="102" fill="#8f86a8">wrote acceptance criteria + test plan</text>
+      <text x="560" y="102" fill="#6f6590">→ 01-planning-document.md</text>
+    </g>
+    <g class="l3">
+      <text x="30" y="134" fill="#a855f7">🔍</text>
+      <text x="56" y="134" fill="#d8b4fe">plan review…</text>
+      <text x="186" y="134" fill="#f43f5e">rejected — criteria too vague, revising</text>
+      <text x="560" y="134" fill="#6f6590">→ 02-plan-review.md</text>
+    </g>
+    <g class="l4">
+      <text x="30" y="166" fill="#a855f7">🔍</text>
+      <text x="56" y="166" fill="#d8b4fe">plan review…</text>
+      <text x="186" y="166" fill="#34d399">approved ✓ — now code may exist</text>
+      <text x="560" y="166" fill="#6f6590">→ 04-plan-review.md</text>
+    </g>
+    <g class="l5">
+      <text x="30" y="198" fill="#f97316">🔨</text>
+      <text x="56" y="198" fill="#fdba74">building…</text>
+      <text x="160" y="198" fill="#8f86a8">smallest code that meets the plan · tests: 6/6 ✓</text>
+      <text x="620" y="198" fill="#6f6590">→ 05-implementation.md</text>
+    </g>
+    <g class="l6">
+      <text x="30" y="230" fill="#a855f7">🔍</text>
+      <text x="56" y="230" fill="#d8b4fe">reviewing…</text>
+      <text x="170" y="230" fill="#f43f5e">1 finding — fix attached with proof, re-checked ✓</text>
+      <text x="620" y="230" fill="#6f6590">→ 07-fix-report.md</text>
+    </g>
+    <g class="l7">
+      <text x="30" y="262" fill="#10b981">✅</text>
+      <text x="56" y="262" fill="#6ee7b7">approved — every criterion verified with evidence</text>
+    </g>
+    <g class="l8">
+      <text x="30" y="298" fill="#8f86a8">›</text>
+      <text x="48" y="298" fill="#8f86a8" font-style="italic">you did nothing in between — that's the point</text>
+      <rect x="480" y="286" width="9" height="16" fill="#ff7b3d" class="cur"/>
+    </g>
+  </g>
+</svg>

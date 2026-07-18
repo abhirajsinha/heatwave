@@ -16,6 +16,12 @@ You ask for a feature the way you always do. Behind the scenes, the work is spli
 
 It works with **Claude Code, Codex, Gemini CLI, Cursor, and any other coding agent**. No server, no API keys, no dependencies — just markdown files and one install script.
 
+Here's what a task looks like from your side — you type one line, and the rest just happens:
+
+<p align="center">
+  <img src="assets/demo.svg" width="880" alt="Animated terminal: you ask for a feature; Heatwave plans, gets the plan rejected then approved by a separate reviewer, builds with passing tests, fixes one review finding with proof, and finishes approved — while you do nothing in between.">
+</p>
+
 ## Why you'd want it
 
 AI coding agents have three bad habits:
@@ -25,6 +31,10 @@ AI coding agents have three bad habits:
 3. **They start over when a session dies.** Yesterday's approved plan and reviewed code? A new session happily redoes it all.
 
 Heatwave fixes all three: separate roles that never grade their own work, a hard rule that every claim needs attached evidence, and progress saved to disk after every step so any session — even in a different tool — continues exactly where the last one stopped.
+
+<p align="center">
+  <img src="assets/roles.svg" width="880" alt="Three separate AI roles — planner, builder, reviewer — divided by context walls; only artifact files travel between them, so no one grades their own homework.">
+</p>
 
 ## How a task actually runs
 
@@ -45,6 +55,10 @@ Want to see every command and every file this produces for a real task? **[Read 
 **It runs without stopping.** The loop only interrupts you for three things: it finished, it's stuck and needs one specific decision from you, or a choice only a human may make (like waiving a security finding). No "shall I continue?" every five minutes.
 
 **And it never loses progress.** Every step is saved to `.heatwave/runs/<task>/` in your repo *before* the next step starts. Kill the terminal, let the laptop sleep, come back next week, even switch from Claude Code to Gemini — say "continue the export feature" and it picks up at the exact step it stopped. Starting over is against the rules, literally.
+
+<p align="center">
+  <img src="assets/resume.svg" width="880" alt="Timeline: a Monday Claude Code session dies at step 3; the run files in the repo survive; a Thursday Gemini CLI session says continue and finishes from step 3 — different day, different tool, nothing redone.">
+</p>
 
 <details>
 <summary><strong>What the saved files look like</strong></summary>
