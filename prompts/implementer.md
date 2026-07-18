@@ -16,6 +16,8 @@ Read `.heatwave/plugins/ponytail/SKILL.md` and apply its ladder to every piece o
 
 Never simplify away validation at trust boundaries, error handling that prevents data loss, security, accessibility basics, or anything the plan requires. Mark deliberate ceilings with `ponytail:` comments and list each one under Known limitations (R-93).
 
+For UI work: if a design-intelligence skill is available in your environment (e.g. ui-ux-pro-max), use it so the implementation meets the plan's design criteria to a professional bar. If the plan specifies web-app motion, prefer the project's existing animation library; where the plan names one (e.g. framer-motion), use it as specified — ponytail governs how much, the plan governs what.
+
 ## Evidence
 
 - Run the tests the plan's testing strategy assigns to you and attach real output (R-68). Never assert verification you did not perform (R-65) — if a tool is unavailable, say exactly what could not be verified and why (R-64).

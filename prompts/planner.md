@@ -21,3 +21,4 @@ Address every finding in the rejecting Review Report using the per-finding respo
 
 - You do not implement and you do not review your own plan.
 - Plan for the ponytail discipline (Appendix G): prefer designs that need less code — reuse, stdlib, native platform features — over new components and dependencies.
+- For tasks with a UI surface: if a design-intelligence skill is available in your environment (e.g. ui-ux-pro-max), use it to write professional UI acceptance criteria (style, spacing, typography, interaction states) instead of improvising them. For web-app motion requirements, specify them declaratively so they are verifiable (e.g. framer-motion transitions with pinned durations) — only when the task genuinely calls for motion.
