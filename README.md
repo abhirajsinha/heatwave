@@ -184,6 +184,16 @@ Heatwave requires none of this — but the roles get better when your environmen
 
 The contract is one-directional: your stack can *strengthen* a role's evidence, but a missing tool never silently weakens the gate — it becomes an explicit `unavailable`, and the affected criteria stay **Unverified** until you waive them (R-64–R-66).
 
+### Recommended companions by project type
+
+| Building… | Pair Heatwave with | Why |
+|---|---|---|
+| **Mobile / desktop apps** | [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) skill | Gives the PLANNER and IMPLEMENTER real design intelligence — styles, palettes, font pairings, UX guidelines — so UI acceptance criteria are written and met to a professional bar, not improvised |
+| **Web apps** | [framer-motion](https://www.framer.com/motion/) (as a project dependency) + ui-ux-pro-max | Declarative, reviewable animation — motion behavior becomes something acceptance criteria can pin ("panel springs in ≤ 300ms") and the reviewer can verify in the browser |
+| **APIs / backends** | your test framework + a load-test tool in `tooling:` | Non-functional criteria (p95 latency, throughput) only gate if a declared tool can measure them |
+
+Ponytail still applies: reach for these when the plan calls for design or motion quality — not as default weight on every task.
+
 ## 🧳 Zero dependencies, by design
 
 What Heatwave is made of — and everything it *doesn't* need:
