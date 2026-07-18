@@ -36,7 +36,7 @@ Because of (1), resuming is lossless: a fresh REVIEWER given the artifacts has e
 task_id: 2026-07-18-add-export
 tier: STANDARD
 state: TARGETED_REVIEW
-counters: { plan_iterations: 0, fix_iterations: 1, final_iterations: 0 }
+counters: { plan_iterations: 0, fix_iterations: 0, final_iterations: 0 }
 next_artifact: 06-review-report-2.md
 updated: 2026-07-18T14:02:00Z
 ```

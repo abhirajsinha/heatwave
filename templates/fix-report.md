@@ -1,6 +1,6 @@
 # Fix Report
 
-task_id: | iteration: | responding to: <Review Report id> | produced_by: IMPLEMENTER (<model>) | timestamp:
+task_id: | artifact_type: fix-report | iteration: | responding to: <Review Report id> | produced_by: IMPLEMENTER (<model>) | timestamp:
 
 ## Per-Finding Responses
 <exactly one block per finding in the report being answered (R-31)>

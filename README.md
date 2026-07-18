@@ -290,13 +290,13 @@ heatwave/
 │                                  the failure it exists to prevent
 ├── install.sh                   one-command install into any project
 ├── heatwave.config.example.yaml models per role · budgets · your project's real tooling
-├── prompts/                     7 ready-made role prompts (driver, planner, plan-reviewer,
+├── prompts/                     7 ready-made role prompts (orchestrator = the driver, planner, plan-reviewer,
 │                                  implementer, reviewer, fixer, final-reviewer)
 ├── templates/                   6 artifact templates (plan, package, review, fix,
 │                                  escalation, run record)
 ├── adapters/                    claude-code · codex · gemini · cursor · generic
 ├── plugins/ponytail/            vendored skill + license + attribution
-└── docs/                        loop.md (persistence deep-dive) · faq.md
+└── docs/                        getting-started.md · loop.md (persistence deep-dive) · faq.md
 ```
 
 ## 📖 Go deeper

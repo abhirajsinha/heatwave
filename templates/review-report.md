@@ -1,6 +1,6 @@
 # Review Report
 
-task_id: | iteration: | review_type: PLAN_REVIEW | FULL_REVIEW | TARGETED_REVIEW | FINAL_REVIEW | produced_by: REVIEWER (<model>) | timestamp:
+task_id: | artifact_type: review-report | iteration: | review_type: PLAN_REVIEW | FULL_REVIEW | TARGETED_REVIEW | FINAL_REVIEW | FULL_FINAL_REVIEW (LIGHT) | produced_by: REVIEWER (<model>) | timestamp:
 
 ## Verdict
 

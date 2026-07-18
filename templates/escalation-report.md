@@ -1,6 +1,6 @@
 # Escalation Report
 
-task_id: | state: | counters: plan=N fix=N final=N | timestamp:
+task_id: | artifact_type: escalation-report | iteration: | produced_by: REVIEWER (<model>) | state: | counters: plan=N fix=N final=N | timestamp:
 
 ## Trigger
 <which §7.1 condition fired; which counter, if applicable>

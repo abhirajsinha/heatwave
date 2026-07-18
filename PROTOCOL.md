@@ -510,6 +510,8 @@ Escalation to `ESCALATED` occurs when:
 
 ### 7.2 Escalation Report
 
+Produced by the REVIEWER upon entering `ESCALATED` (the driver dispatches it with the Run Record and all prior artifacts). Consumed by the OWNER.
+
 **R-71.** Entering `ESCALATED` MUST produce an Escalation Report containing:
 
 | Section | Content |
@@ -674,7 +676,7 @@ updated:         # timestamp of last transition
 2. **`ESCALATED`** — a budget exhausted or a §7.1 trigger fired; the driver stops *with the Escalation Report and its one answerable question* (R-72), never with an open-ended pause.
 3. A **blocking OWNER decision** the protocol itself requires — a Blocker waiver (R-9), an unverifiable acceptance criterion (R-66), or a checkpoint the OWNER configured in advance.
 
-**R-96.** The driver MUST NOT stop between states to ask permission to continue, report intermediate progress and wait, offer choices the protocol already decides ("shall I run the review now?"), or end its session after completing an individual stage. Progress reporting is done in passing; the loop keeps moving. Stopping anywhere other than the three points in R-95 is a protocol violation — the run is not "paused", it is abandoned mid-state, and the next session must resume it per R-88.
+**R-96.** The driver MUST NOT stop between states to ask permission to continue, report intermediate progress and wait, offer choices the protocol already decides ("shall I run the review now?"), or end its session after completing an individual stage. Progress reporting is done in passing; the loop keeps moving. Stopping anywhere other than the three points in R-95 is a protocol violation — the run is not "paused", it is stranded mid-state, and the next session must resume it per R-88.
 
 **R-97.** When the driver stops at a valid point, it MUST state which of the three stopping points applies and, for points 2 and 3, pose the specific decision required. "Done for now, let me know how to proceed" is non-conforming.
 
@@ -687,8 +689,7 @@ updated:         # timestamp of last transition
 ```
 Finding ID:           F-<task_id>-<NNN>
 Severity:             Blocker | Major | Minor | Nit
-Category:             <from Appendix C, or: plan-conformance |
-                       blast-radius | verification-integrity |
+Category:             <from Appendix C, or: blast-radius |
                        acceptance-criteria | over-engineering>
 Location:             <file:line, endpoint, screen, or artifact section>
 Problem:              <what is wrong — observable, specific>
@@ -806,7 +807,7 @@ Not applicable
 ```markdown
 # Review Report
 
-task_id: | iteration: | review_type: | produced_by: | timestamp:
+task_id: | artifact_type: review-report | iteration: | review_type: | produced_by: | timestamp:
 
 ## Verdict
 GATE_MET | GATE_NOT_MET
@@ -853,7 +854,7 @@ Not verified:
 ```markdown
 # Fix Report
 
-task_id: | iteration: | responding to: | produced_by: | timestamp:
+task_id: | artifact_type: fix-report | iteration: | responding to: | produced_by: | timestamp:
 
 ## Per-Finding Responses
 <one block per finding in the report being answered; schema per 3.5>
@@ -872,7 +873,7 @@ task_id: | iteration: | responding to: | produced_by: | timestamp:
 ```markdown
 # Escalation Report
 
-task_id: | state: | counters: | timestamp:
+task_id: | artifact_type: escalation-report | iteration: | produced_by: | state: | counters: | timestamp:
 
 ## Trigger
 ## Outstanding Findings
@@ -903,6 +904,9 @@ counters:
   plan_iterations:
   fix_iterations:
   final_iterations:
+tooling_resolutions:
+  mobile_platform:     # ios | android | both — per R-98; blank for non-mobile tasks
+  out_of_scope_platforms: []
 transitions:
   - { from:, to:, artifact:, timestamp: }
 findings:

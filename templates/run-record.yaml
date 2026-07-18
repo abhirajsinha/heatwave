@@ -13,6 +13,9 @@ counters:
   plan_iterations: 0
   fix_iterations: 0
   final_iterations: 0
+tooling_resolutions:
+  mobile_platform: ""      # ios | android | both — per R-98; blank for non-mobile tasks
+  out_of_scope_platforms: []
 transitions: []
   # - { from: , to: , artifact: , timestamp: }
 findings: []

@@ -6,7 +6,7 @@
 
 set -eu
 
-SRC=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+SRC=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 TARGET=${1:-}
 ADAPTER=${2:-generic}
 
@@ -77,13 +77,24 @@ cmd = "cat .heatwave/GATE.md 2>/dev/null || true"
 hook = {"hooks": [{"type": "command", "command": cmd}]}
 try:
     with open(path) as f: cfg = json.load(f)
-except (FileNotFoundError, json.JSONDecodeError):
+except FileNotFoundError:
     cfg = {}
+except json.JSONDecodeError as e:
+    # Never rewrite a file we could not parse — that would destroy the user's settings.
+    print(f"warning: {path} is not valid JSON ({e}) — hooks NOT installed. Fix the file and re-run.")
+    sys.exit(0)
+if not isinstance(cfg, dict) or not isinstance(cfg.get("hooks", {}), dict):
+    print(f"warning: {path} has an unexpected shape ('hooks' is not an object) — hooks NOT installed. Fix the file and re-run.")
+    sys.exit(0)
 hooks = cfg.setdefault("hooks", {})
 changed = False
 for event in ("UserPromptSubmit", "SessionStart"):
-    entries = hooks.setdefault(event, [])
-    if not any(cmd == h.get("command") for e in entries for h in e.get("hooks", [])):
+    entries = hooks.get(event, [])
+    if not isinstance(entries, list):
+        print(f"warning: {path} 'hooks.{event}' is not a list — hooks NOT installed. Fix the file and re-run.")
+        sys.exit(0)
+    hooks[event] = entries
+    if not any(cmd == h.get("command") for e in entries if isinstance(e, dict) for h in e.get("hooks", []) if isinstance(h, dict)):
         entries.append(hook); changed = True
 if changed:
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -93,8 +104,8 @@ else:
     print("skipped hooks (already installed)")
 PYEOF
     else
-      echo "note: python3 not found — add the gate hook manually to .claude/settings.json:"
-      echo '  {"hooks":{"UserPromptSubmit":[{"hooks":[{"type":"command","command":"cat .heatwave/GATE.md 2>/dev/null || true"}]}]}}'
+      echo "note: python3 not found — add the gate hooks manually to .claude/settings.json:"
+      echo '  {"hooks":{"UserPromptSubmit":[{"hooks":[{"type":"command","command":"cat .heatwave/GATE.md 2>/dev/null || true"}]}],"SessionStart":[{"hooks":[{"type":"command","command":"cat .heatwave/GATE.md 2>/dev/null || true"}]}]}}'
     fi
     ;;
   codex)
