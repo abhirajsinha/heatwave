@@ -52,6 +52,10 @@ Conforming: *"AC-N-01: p95 latency for `GET /notes` ≤ 200ms at 50 rps, measure
 
 **R-27.** Every acceptance criterion MUST have a stated verification method (see Appendix B), and the Final Review MUST report each criterion's status individually.
 
+#### 3.2.3 Technical design document *(v4)*
+
+**R-106 (planner half).** *(v4)* When the run-config says `design_doc: true`, the PLANNER emits `docs/design/<task-id>.md` (path per `design_doc_path`) from `templates/technical-design.md` *before* the Planning Document, and the Planning Document references it. It is an input to the plan (resolution per core §2.5); acceptance criteria and every gate are unchanged by its presence.
+
 ---
 
 ## 4. Stage Rules

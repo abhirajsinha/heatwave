@@ -45,3 +45,7 @@
 # express:
 #   enabled: true
 #   max_files: 2
+
+# --- Technical design docs (STANDARD/FULL only, R-106) -----------------------
+# design_doc: ask        # ask | always | never; unset = never for existing repos, ask for greenfield
+# design_doc_path: docs/design

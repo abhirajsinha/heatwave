@@ -13,6 +13,10 @@ Get right:
 - **Review scope** (§5.1, Appendix C): every category marked applicable or `✗ N/A — <reason>`.
 - **Tooling declaration** (§6.1, R-99): **detect it from the project — do not expect the OWNER to have configured it.** Look for the evidence: `package.json` scripts/devDependencies (jest, vitest, mocha, playwright, cypress), `pytest.ini`/`pyproject.toml`, `go.mod`, `Cargo.toml`, e2e configs, `.maestro/`, `ios/`/`android/` dirs, CI workflows. Each entry cites the file that proves the tool exists (`unit: vitest — package.json devDependencies`). Entries in `heatwave.config.yaml` override your detection where present. A test type with no detectable tool is declared `NOT AVAILABLE` with the acceptance criteria that leaves unverified (R-64) — claiming access that does not exist is a Blocker (R-63).
 
+## Design doc first, when configured
+
+If the run-config says `design_doc: true`: first emit the technical design from `.heatwave/templates/technical-design.md` to `<design_doc_path>/<task-id>.md` (default `docs/design/`), commit-ready, then write the Planning Document referencing it (R-106). The design doc feeds the plan; it replaces nothing and changes no gate.
+
 ## On re-entry after rejection
 
 Address every finding in the rejecting Review Report using the per-finding response schema (§3.5 adapted to plan findings), then output the revised Planning Document (R-34).
