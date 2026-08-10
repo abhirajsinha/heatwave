@@ -1,10 +1,16 @@
 # Heatwave Run Record — append-only, maintained by the driver from START to terminal state.
-# Schema per PROTOCOL.md Appendix E.
+# This file is the normative schema (v4 — formerly Appendix E of the rendered spec).
 
 task_id:
 created:
-tier:                  # LIGHT | STANDARD | FULL
+tier:                  # EXPRESS | LIGHT | STANDARD | FULL
 terminal_state:        # APPROVED | ABANDONED (blank while active)
+run_config:            # written by the driver at intake (core §2.5); absent in pre-v4 records — defaults apply
+  tier: STANDARD           # EXPRESS | LIGHT | STANDARD | FULL — active
+  tier_justification: ""   # one line, R-101 — active
+  design_doc: false        # true | false — active (STANDARD/FULL only, R-106)
+  autonomy: autopilot      # RESERVED (G/H): autopilot | gated | interactive — recorded only, no branching (YAGNI)
+  scope: single_repo       # RESERVED (G): single_repo | multi_repo — recorded only, no branching (YAGNI)
 roles:
   planner:     { configured: , resolved: , substitution_reason: }
   implementer: { configured: , resolved: , substitution_reason: }

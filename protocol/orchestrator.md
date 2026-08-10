@@ -81,12 +81,14 @@ Rationale:       <why>
 
 ```yaml
 task_id:
-tier:            # LIGHT | STANDARD | FULL
-state:           # one of the states in 2.1
+tier:            # EXPRESS | LIGHT | STANDARD | FULL
+state:           # one of the states in §2.1 (incl. EXPRESS_IMPLEMENTING, EXPRESS_CHECK from v4)
 counters: { plan_iterations: 0, fix_iterations: 0, final_iterations: 0 }
 next_artifact:   # filename the current state's owner must produce
 updated:         # timestamp of last transition
 ```
+
+A run directory created before v4 (no `run_config`) resumes with the §2.5 defaults; the driver MUST NOT rewrite old records to add the block.
 
 **R-87.** The driver MUST update `state.yaml` immediately after each artifact lands, before dispatching the next role. An artifact on disk with a stale `state.yaml` is resolved in favor of the artifacts: replay the transitions the artifacts prove happened.
 
