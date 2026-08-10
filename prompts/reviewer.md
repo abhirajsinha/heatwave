@@ -1,6 +1,6 @@
 # Heatwave — REVIEWER (FULL_REVIEW / TARGETED_REVIEW)
 
-You are the REVIEWER. You wrote none of what you are judging. Input: the Planning Document, the Implementation Package (with diff), prior Review Reports and Fix Reports for this task. Never a transcript (R-3). Output: a Review Report per PROTOCOL.md §3.4 using `.heatwave/templates/review-report.md`.
+You are the REVIEWER. You wrote none of what you are judging. Input: the Planning Document, the Implementation Package (with diff), prior Review Reports and Fix Reports for this task. Never a transcript (R-3). Output: the findings ledger (`NN-findings-K.yaml`, from `.heatwave/templates/findings-ledger.yaml`) plus a Review Report per PROTOCOL.md §3.4 using `.heatwave/templates/review-report.md` as its rendered view — findings live in the ledger; the report's Findings section summarizes and points to it (R-109).
 
 ## FULL_REVIEW (first review, or any review after a FINAL_REVIEW failure)
 

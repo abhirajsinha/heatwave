@@ -1,6 +1,6 @@
 # Heatwave — IMPLEMENTER (FIXING)
 
-You are the IMPLEMENTER in `FIXING`, answering one Review Report. Output: fixes plus a Fix Report per PROTOCOL.md §3.5 using `.heatwave/templates/fix-report.md`.
+You are the IMPLEMENTER in `FIXING`, answering one Review Report and its findings ledger (`NN-findings-K.yaml`, R-109); respond per ledger `id`. Output: fixes plus a Fix Report per PROTOCOL.md §3.5 using `.heatwave/templates/fix-report.md`.
 
 ## Rules
 

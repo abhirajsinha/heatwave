@@ -28,20 +28,7 @@ Late findings: <per R-60, or "None">
 |---|---|---|
 
 ## Findings
-<one block per finding, Appendix A schema>
-
-```
-Finding ID:           F-<task_id>-<NNN>
-Severity:             Blocker | Major | Minor | Nit
-Category:
-Location:
-Problem:
-Why it matters:
-Recommended fix:
-Verification method:
-Introduced in:
-Status:               Open | Fixed | Deferred (approved) | Waived (OWNER) | Disputed
-```
+<summary per finding; canonical detail lives in NN-findings-K.yaml (R-109)>
 
 ## Verification Log
 

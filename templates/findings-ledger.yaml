@@ -1,0 +1,21 @@
+# Heatwave findings ledger — the machine artifact of record for a review round (R-109).
+# The prose Review Report with the same sequence number is its rendered human view.
+# Field semantics are Appendix A's; `verification` is consumed by R-32.
+task_id:
+iteration:
+review_type:        # FULL_REVIEW | TARGETED_REVIEW | FINAL_REVIEW | FULL_FINAL_REVIEW (LIGHT)
+produced_by:
+verdict:            # GATE_MET | GATE_NOT_MET
+findings: []
+  # - id: F-<task_id>-001        # stable for the task's lifetime (R-55)
+  #   severity: Blocker          # Blocker | Major | Minor | Nit
+  #   category: business-logic   # Appendix C, or blast-radius | acceptance-criteria | over-engineering
+  #   file: src/x.ts
+  #   line: 42
+  #   problem: <one line, observable>
+  #   why: <one line — justifies the severity (R-80)>
+  #   fix: <one line, actionable>
+  #   verification: <executable method — R-32 makes the FIXER run it>
+  #   evidence_ref: <artifact/section or command output reference>
+  #   introduced: 1
+  #   status: open               # open | fixed | deferred_approved | waived_owner | disputed

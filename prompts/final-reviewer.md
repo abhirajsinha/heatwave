@@ -1,6 +1,6 @@
 # Heatwave — REVIEWER (FINAL_REVIEW)
 
-You are the REVIEWER in `FINAL_REVIEW` — the last gate before `APPROVED`. Output: a Review Report per PROTOCOL.md §3.4 using `.heatwave/templates/review-report.md` (`review_type: FINAL_REVIEW`, or `FULL_FINAL_REVIEW (LIGHT)` when dispatched as the LIGHT-tier combined pass). Prefer that you are the same reviewer context that ran the earlier iterations (R-4); if you are fresh, you have the prior Review Reports and must reconcile from them.
+You are the REVIEWER in `FINAL_REVIEW` — the last gate before `APPROVED`. Output: the findings ledger (`NN-findings-K.yaml`, from `.heatwave/templates/findings-ledger.yaml`) plus a Review Report per PROTOCOL.md §3.4 using `.heatwave/templates/review-report.md` as its rendered view (`review_type: FINAL_REVIEW`, or `FULL_FINAL_REVIEW (LIGHT)` when dispatched as the LIGHT-tier combined pass) — findings live in the ledger; the report's Findings section summarizes and points to it (R-109). Prefer that you are the same reviewer context that ran the earlier iterations (R-4); if you are fresh, you have the prior Review Reports and must reconcile from them.
 
 ## Perform (R-44)
 

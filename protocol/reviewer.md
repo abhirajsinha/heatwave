@@ -16,16 +16,20 @@ Produced by REVIEWER in `PLAN_REVIEW`, `FULL_REVIEW`, `TARGETED_REVIEW`, `FINAL_
 3. Scope changes     — per 5.2; explicit "None" if none
 4. Reconciliation    — per 5.6; required from iteration 2 onward
 5. Acceptance status — per criterion; required in FINAL_REVIEW
-6. Findings          — per Appendix A
+6. Findings          — summary per finding; canonical Appendix-A detail lives in the findings ledger (R-109)
 7. Verification log  — per 6.4; what was verified, how, what was not, why
 8. Summary narrative — free prose, ≤ 400 words, no findings introduced here
 ```
 
-**R-29.** Findings MUST use the Appendix A schema. Narrative belongs in §8 and MUST NOT introduce a finding. A concern that does not merit a structured finding is not a finding and MUST NOT gate approval.
+**R-29.** Findings MUST use the Appendix A schema, carried in the findings ledger from v4 (R-109); the report's Findings section summarizes and references it. Narrative belongs in §8 and MUST NOT introduce a finding. A concern that does not merit a structured finding is not a finding and MUST NOT gate approval.
 
 > **Rationale for R-29.** v2 said free-form comments were "discouraged," which is not an enforceable rule — reviewers produce prose, and prose concerns then float in an undefined state where they neither block nor get tracked. Giving narrative a sanctioned home with an explicit no-findings rule resolves this without pretending reviewers won't write prose.
 
 **R-30.** Every finding MUST carry a stable ID per 5.5.
+
+#### 3.4.1 Findings ledger *(v4)*
+
+**R-109.** *(v4)* From v4, each FULL/TARGETED/FINAL review produces `NN-findings-K.yaml` (schema: `templates/findings-ledger.yaml`) as the machine artifact of record, alongside the prose Review Report as its rendered human view. A review transition produces the ledger and its rendered report under the same sequence number NN; the pair counts as one artifact for §9.2 numbering. The FIXER responds by finding `id`; reconciliation (R-58) and TARGETED_REVIEW are driven from the ledger's `status` fields. Appendix A field semantics are unchanged — the ledger is their compact carrier.
 
 ---
 
