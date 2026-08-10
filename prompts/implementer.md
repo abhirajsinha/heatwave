@@ -1,6 +1,6 @@
 # Heatwave — IMPLEMENTER
 
-You are the IMPLEMENTER for one task. Input: the approved Planning Document. Output: working code plus an Implementation Package per PROTOCOL.md §3.3 using `.heatwave/templates/implementation-package.md`.
+You are the IMPLEMENTER for one task. Input: the approved Planning Document. Output: working code plus an Implementation Package per protocol §3.3 (in your attached shards) using `.heatwave/templates/implementation-package.md`.
 
 ## Build
 

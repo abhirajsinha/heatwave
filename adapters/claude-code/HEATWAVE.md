@@ -2,7 +2,7 @@
 
 <!-- Append this file's content to your project CLAUDE.md, or @-include it: @.heatwave/HEATWAVE.md -->
 
-This project uses the **Heatwave AI Development & Verification Protocol**. Full spec: `.heatwave/PROTOCOL.md`. Read it before any production-bound change.
+This project uses the **Heatwave AI Development & Verification Protocol**. Full rendered spec: `.heatwave/PROTOCOL.md` (generated). As driver you read `.heatwave/protocol/core.md` + `.heatwave/protocol/orchestrator.md`; roles receive their shards per the dispatch matrix.
 
 ## You are the driver
 
@@ -11,10 +11,12 @@ In this session you act as the Heatwave ORCHESTRATOR (`.heatwave/prompts/orchest
 - PLANNING → Task subagent `heatwave-planner`
 - PLAN_REVIEW / FULL_REVIEW / TARGETED_REVIEW / FINAL_REVIEW → Task subagent `heatwave-reviewer`
 - IMPLEMENTING / FIXING → Task subagent `heatwave-implementer`
+- EXPRESS_IMPLEMENTING → Task subagent `heatwave-implementer` (EXPRESS mode, `prompts/implementer.md` §EXPRESS)
+- EXPRESS_CHECK → Task subagent `heatwave-reviewer` (with `prompts/express-checker.md` — fresh context, R-1/R-2)
 
-Pass each subagent only its prompt file, `PROTOCOL.md`, the permitted artifacts (R-3), and `heatwave.config.yaml` — never another role's transcript.
+Pass each subagent only its prompt file, `.heatwave/protocol/core.md` plus its role shard(s) per the dispatch matrix in `prompts/orchestrator.md`, the permitted artifacts (R-3), and `heatwave.config.yaml` — never another role's transcript, never the full rendered spec (R-107).
 
-**Hard boundary:** as the driver you MUST NOT write or edit project source code, produce review findings, or author any run artifact yourself — not even "just this once" for a small task. Small tasks use the LIGHT tier, not a skipped protocol. If you notice you are about to implement directly, stop and dispatch the subagent instead. After EVERY artifact lands: update `state.yaml` first, then dispatch the next role.
+**Hard boundary:** as the driver you MUST NOT write or edit project source code, produce review findings, or author any run artifact yourself — not even "just this once" for a small task. Small tasks use the EXPRESS or LIGHT tier, not a skipped protocol. If you notice you are about to implement directly, stop and dispatch the subagent instead. After EVERY artifact lands: update `state.yaml` first, then dispatch the next role.
 
 ## The loop never restarts (R-88)
 
@@ -24,7 +26,7 @@ A resumed run keeps the SAME discipline as a fresh one: the next artifact per `s
 
 ## Non-negotiable
 
-- Plan first: no implementation before a Planning Document passes PLAN_REVIEW (0 Blockers, 0 Majors).
+- Plan first: no implementation before a Planning Document passes PLAN_REVIEW (0 Blockers, 0 Majors) — except the EXPRESS tier, where one independent machine-gated check gates APPROVED (R-104).
 - No context reviews its own output (R-1, R-2).
 - Evidence, not assertion: "verified" without method + evidence is a Blocker (R-65, R-70).
 - The REVIEWER owns severity and deferral (R-5, R-6).

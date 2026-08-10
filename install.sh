@@ -25,8 +25,9 @@ mkdir -p "$HW/runs"
 
 # Protocol runtime (refreshed on every run — these are Heatwave's files, not yours;
 # runs/ and your config are never touched).
-rm -rf "$HW/prompts" "$HW/templates" "$HW/plugins"
+rm -rf "$HW/prompts" "$HW/templates" "$HW/plugins" "$HW/protocol"
 cp "$SRC/PROTOCOL.md" "$HW/PROTOCOL.md"
+cp -R "$SRC/protocol" "$HW/"
 cp -R "$SRC/prompts" "$HW/"
 cp -R "$SRC/templates" "$HW/"
 mkdir -p "$HW/plugins"

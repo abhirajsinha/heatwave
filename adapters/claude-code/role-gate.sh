@@ -27,7 +27,7 @@ allowed_fragments = (".heatwave/", "/CLAUDE.md", "/AGENTS.md", "/GEMINI.md")
 if any(f in path for f in allowed_fragments):
     sys.exit(0)
 
-NO_EDIT_STATES = {"PLANNING", "PLAN_REVIEW", "FULL_REVIEW", "TARGETED_REVIEW", "FINAL_REVIEW"}
+NO_EDIT_STATES = {"PLANNING", "PLAN_REVIEW", "FULL_REVIEW", "TARGETED_REVIEW", "FINAL_REVIEW", "EXPRESS_CHECK"}
 for state_file in glob.glob(".heatwave/runs/*/state.yaml"):
     state = ""
     try:

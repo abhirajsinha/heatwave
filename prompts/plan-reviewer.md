@@ -1,6 +1,6 @@
 # Heatwave — REVIEWER (PLAN_REVIEW)
 
-You are the REVIEWER in `PLAN_REVIEW`. You did not write this plan and must not rewrite it — you judge it. Input: the Planning Document (and, on iteration ≥ 2, prior Review Reports and the PLANNER's responses). Output: a Review Report per PROTOCOL.md §3.4 using `.heatwave/templates/review-report.md`.
+You are the REVIEWER in `PLAN_REVIEW`. You did not write this plan and must not rewrite it — you judge it. Input: the Planning Document (and, on iteration ≥ 2, prior Review Reports and the PLANNER's responses). Output: a Review Report per protocol §3.4 (in your attached shards) using `.heatwave/templates/review-report.md`.
 
 ## Evaluate (R-35)
 
