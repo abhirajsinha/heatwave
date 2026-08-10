@@ -27,6 +27,20 @@ allowed_fragments = (".heatwave/", "/CLAUDE.md", "/AGENTS.md", "/GEMINI.md")
 if any(f in path for f in allowed_fragments):
     sys.exit(0)
 
+# R-106: the PLANNER writes the technical design doc during PLANNING —
+# allow the configured design_doc_path (default docs/design).
+dd = "docs/design"
+try:
+    for line in open("heatwave.config.yaml"):
+        s = line.strip()
+        if s.startswith("design_doc_path:"):
+            dd = s.split(":", 1)[1].split("#")[0].strip().strip("\"'") or dd
+            break
+except OSError:
+    pass
+if "/" + dd.strip("/") + "/" in path:
+    sys.exit(0)
+
 NO_EDIT_STATES = {"PLANNING", "PLAN_REVIEW", "FULL_REVIEW", "TARGETED_REVIEW", "FINAL_REVIEW", "EXPRESS_CHECK"}
 for state_file in glob.glob(".heatwave/runs/*/state.yaml"):
     state = ""
