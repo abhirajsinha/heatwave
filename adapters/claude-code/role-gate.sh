@@ -28,7 +28,9 @@ if any(f in path for f in allowed_fragments):
     sys.exit(0)
 
 # R-106: the PLANNER writes the technical design doc during PLANNING —
-# allow the configured design_doc_path (default docs/design).
+# allow .md files under the configured design_doc_path (default docs/design),
+# anchored to the project root so a same-named nested dir stays gated.
+# ponytail: prefix+.md anchor; scope to PLANNING-only if the gate ever needs role awareness.
 dd = "docs/design"
 try:
     for line in open("heatwave.config.yaml"):
@@ -38,7 +40,8 @@ try:
             break
 except OSError:
     pass
-if "/" + dd.strip("/") + "/" in path:
+dd_root = os.path.join(os.path.realpath(os.getcwd()), dd.strip("/")) + os.sep
+if os.path.realpath(path).startswith(dd_root) and path.endswith(".md"):
     sys.exit(0)
 
 NO_EDIT_STATES = {"PLANNING", "PLAN_REVIEW", "FULL_REVIEW", "TARGETED_REVIEW", "FINAL_REVIEW", "EXPRESS_CHECK"}

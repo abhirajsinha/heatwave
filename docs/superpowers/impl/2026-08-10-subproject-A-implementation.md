@@ -23,7 +23,7 @@ PROTOCOL.md v3.1 (974 lines) was extracted verbatim into eight canonical `protoc
 | `protocol/orchestrator.md` | new (+ E-pointer, §9.2 resume note, §9.6/§9.7) | T1, T2, T7, T8 |
 | `protocol/history.md` | new (+ v4 change table) | T1, T10 |
 | `build-protocol.sh` | new, executable | T2 |
-| `PROTOCOL.md` | now generated (951 lines; regenerated in every shard-touching commit) | T2–T10 |
+| `PROTOCOL.md` | now generated (1025 lines at fix-1; regenerated in every shard-touching commit) | T2–T10 |
 | `templates/express-change.md`, `templates/express-check.md` | new | T4 |
 | `prompts/express-checker.md` | new | T4 |
 | `prompts/implementer.md` | +EXPRESS mode; citation reworded | T4, T9 |
@@ -111,7 +111,7 @@ Components touched: the protocol document set (now `protocol/` + generated PROTO
 
 - Ledger filename adherence is model-mediated: one live run (hw-target4) named ledgers `NN-<type>-K-ledger.yaml` instead of `NN-findings-K.yaml`; the canonical runs (004, 005) conform. Prompt text already states the canonical name; not worth hard enforcement in this change.
 - The AC-F-02/AC-F-05 evidence runs were deliberately bounded with `--max-turns`/timeout and left mid-loop (resumable per R-88); their criteria don't require terminal state.
-- `role-gate.sh` design-doc allowance matches any path containing `/<design_doc_path>/` anywhere in the absolute path — a same-named directory elsewhere would also be writable during no-edit states. ponytail: substring match; tighten to project-root-relative resolution if it ever matters.
+- `role-gate.sh` design-doc allowance (as revised for F-hw-v4-A-102) admits only `.md` files whose realpath sits under `<project-root>/<design_doc_path>/`; it is state-blind (applies in every no-edit state, not just PLANNING). ponytail: prefix+.md anchor; scope to PLANNING-only if the gate ever needs role awareness.
 - The generated PROTOCOL.md reads core-then-roles, not numerically — accepted, documented in the shard map (plan: "Certain, accepted").
 
 ## Tooling Status

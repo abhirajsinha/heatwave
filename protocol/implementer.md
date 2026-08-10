@@ -86,3 +86,5 @@ Applicability is per review scope (5.1).
 
 **R-94.** A REVIEWER finding of over-engineering (speculative abstraction, unneeded dependency, reinvented stdlib) is a valid finding, `Category: over-engineering`, severity per judgment. The completion gate is symmetric: code can fail review for doing too much, not only too little.
 
+> **Rationale.** A verification protocol this strict invites over-building — an implementer graded on passing review will gold-plate. Binding a minimalism discipline to the same role that faces the gate keeps diffs small, which also makes every review cheaper and blast-radius claims easier to check.
+
