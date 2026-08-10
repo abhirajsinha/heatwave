@@ -17,7 +17,7 @@ Classify the task into a tier yourself (R-101) — no fleet spawns to do this:
 2. **EXPRESS conjunction (R-103):** ALL of — no sensitive path, estimated ≤ 2 files, no new dependency, no new public surface, a single locatable edit. Any doubt resolves upward.
 3. Otherwise LIGHT / STANDARD / FULL per core §0.5. The PLANNER may later raise the tier, never lower it.
 
-Then: resolve `design_doc` per core §2.5 (from config `design_doc: ask | always | never`; unset defaults: existing repo → `never`, greenfield → `ask`, asked once — alongside the R-98 question when both apply; STANDARD/FULL only). Create `.heatwave/runs/<task-id>/`: write the `run_config` block (tier, one-line `tier_justification`, `design_doc`, reserved `autonomy: autopilot`, `scope: single_repo`) into `run-record.yaml` (copied from `.heatwave/templates/run-record.yaml`) and the tier into `state.yaml`, counters at 0. EXPRESS → `state: EXPRESS_IMPLEMENTING`; else → `state: PLANNING`.
+Then: resolve `design_doc` per core §2.5 (from config `design_doc: ask | always | never`; unset defaults: existing repo → `never`, greenfield → `ask`, asked once — alongside the R-98 question when both apply). STANDARD/FULL only: for an EXPRESS or LIGHT run record `design_doc: false` even when config says `always` (core §2.5). Create `.heatwave/runs/<task-id>/`: write the `run_config` block (tier, one-line `tier_justification`, `design_doc`, reserved `autonomy: autopilot`, `scope: single_repo`) into `run-record.yaml` (copied from `.heatwave/templates/run-record.yaml`) and the tier into `state.yaml`, counters at 0. EXPRESS → `state: EXPRESS_IMPLEMENTING`; else → `state: PLANNING`.
 
 ## The loop
 
