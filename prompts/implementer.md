@@ -26,3 +26,7 @@ For UI work: if a design-intelligence skill is available in your environment (e.
 ## Package
 
 Every §3.3 item present. `Deviation Records` and `Blast radius declaration` are never blank — write `None` explicitly if empty (R-28), knowing the REVIEWER may find against that claim.
+
+## EXPRESS mode
+
+When dispatched in `EXPRESS_IMPLEMENTING`: make the single requested change (ponytail fully applies), run whatever build/lint/relevant tests exist and attach output, produce `01-express-change.md` from `.heatwave/templates/express-change.md`. If any R-103 condition breaks while working — a third file, a new dependency, new surface, a sensitive path — STOP without editing further and set `Result: scope_exceeded — <reason>` (R-105). No Implementation Package, no Planning Document.

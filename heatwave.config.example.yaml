@@ -40,3 +40,8 @@
 
 # --- Default tier when the planner doesn't argue otherwise (§0.5) ------------
 # default_tier: STANDARD
+
+# --- EXPRESS tier (§0.5, R-103) ----------------------------------------------
+# express:
+#   enabled: true
+#   max_files: 2

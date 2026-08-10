@@ -48,6 +48,12 @@ Produced by IMPLEMENTER in `IMPLEMENTING`. Consumed by REVIEWER.
 
 **R-38.** The IMPLEMENTER MUST NOT expand functional scope beyond the acceptance criteria. Additional work identified during implementation is a Deviation Record requesting plan change, not a unilateral addition.
 
+### 4.8 EXPRESS_IMPLEMENTING *(v4)*
+
+**R-105.** *(v4)* If the EXPRESS IMPLEMENTER finds the change larger or riskier than classified, it MUST NOT edit; it produces an EXPRESS Change note with `Result: scope_exceeded — <reason>`. The driver promotes the tier and enters `PLANNING`. This is the R-0b deviation path applied to intake misclassification.
+
+In EXPRESS mode the ponytail discipline (Appendix G) applies in full — the tier exists precisely for the single smallest change that works — and the evidence rules are unchanged: attach real output for every check run (R-65), and declare any check that does not exist as `NOT AVAILABLE` (R-64), never narrated as run.
+
 ---
 
 ### 6.3 Test type requirements
