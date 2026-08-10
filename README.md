@@ -82,7 +82,7 @@ Everything is readable markdown. Check progress anytime: `cat .heatwave/runs/*/s
 
 <br>
 
-No — ceremony scales with risk. A one-line fix runs a **LIGHT** version (a 4-section plan and one combined review). A normal feature runs the standard loop. Anything touching money, auth, or user data runs the **FULL** version with a production-readiness checklist. What never changes: the plan is reviewed before code, and claims need evidence.
+No — ceremony scales with risk. A trivial edit runs **EXPRESS**: the change plus one independent machine-gated check — no planner at all. A one-line fix runs a **LIGHT** version (a 4-section plan and one combined review). A normal feature runs the standard loop. Anything touching money, auth, or user data runs the **FULL** version with a production-readiness checklist. What never changes: independent verification before merge, and claims need evidence.
 </details>
 
 ## Setup (3 minutes)

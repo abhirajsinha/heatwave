@@ -46,6 +46,11 @@ Kill the session here. Open a new one, in any tool, and say "continue the export
 ## The state machine (from PROTOCOL.md §2)
 
 ```
+intake (driver classifies the tier, R-101)
+  ├─EXPRESS→ EXPRESS_IMPLEMENTING → EXPRESS_CHECK ─pass→ APPROVED
+  │             └─scope_exceeded→ PLANNING   └─fail→ PLANNING   (tier promoted, R-104/R-105; EXPRESS never loops)
+  └─LIGHT / STANDARD / FULL→ PLANNING
+
 PLANNING → PLAN_REVIEW ─rejected→ PLANNING            (budget: 3)
                 └─approved→ IMPLEMENTING → FULL_REVIEW
                                              ├─gate met→ FINAL_REVIEW
