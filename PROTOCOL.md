@@ -60,10 +60,11 @@ This protocol applies to any change intended to reach production. Purely explora
 
 ### 0.5 Change tiers
 
-Ceremony scales to the change; the gates do not. Every tier keeps all four gates: a plan reviewed by a separate context, distinct role contexts, evidence over assertion, and the completion gate (Section 8). What a tier changes is how much of the Planning Document must be written out.
+Ceremony scales to the change; independent verification does not. Every tier except EXPRESS keeps all four gates: a plan reviewed by a separate context, distinct role contexts, evidence over assertion, and the completion gate (Section 8) — what those tiers change is how much of the Planning Document must be written out. EXPRESS (v4) drops the plan and its review but substitutes its own independent gate: a deterministic machine check plus a confirmation glance by a fresh context that did not make the change (R-104). No tier, including EXPRESS, ever lets a context approve its own work.
 
 | Tier | Applies to | Planning Document | Reviews |
 |---|---|---|---|
+| **EXPRESS** *(v4)* | A single obvious edit: copy, label, color, config value, typo. No new surface. | None — no Planning Document. | No PLAN_REVIEW. IMPLEMENTER makes the change; one independent EXPRESS_CHECK (deterministic machine gate + fresh-context confirmation glance) gates APPROVED. Any failure promotes to LIGHT — EXPRESS never loops. |
 | **LIGHT** | Single-file fixes, copy changes, config tweaks with no new surface | Problem statement, acceptance criteria (may be a single AC-F), review scope, tooling declaration. All other sections MAY be collapsed to one `N/A — LIGHT tier` line each. | PLAN_REVIEW still precedes IMPLEMENTING. FULL_REVIEW and FINAL_REVIEW MAY be combined into one REVIEWER pass (full evaluation + per-criterion acceptance status + readiness checklist). A combined pass that fails behaves as a FINAL_REVIEW failure: → FIXING, increments `final_iterations`, next review is FULL (R-14). |
 | **STANDARD** | A feature or bugfix touching one subsystem | All sections; N/A allowed per R-20. | Full state machine. |
 | **FULL** | Cross-cutting changes: schema migrations, auth, new services, anything touching money or user data | All sections, no collapsed entries; non-functional criteria mandatory. | Full state machine; FINAL_REVIEW checklist (8.3) item-by-item. |
@@ -71,6 +72,12 @@ Ceremony scales to the change; the gates do not. Every tier keeps all four gates
 **R-0a.** The PLANNER proposes the tier in the Planning Document with one line of justification; the REVIEWER MAY raise it (never lower it) at PLAN_REVIEW.
 
 **R-0b.** Tier selection is recorded in the Run Record. A change that grows beyond its tier mid-implementation is a Deviation Record (3.2.1) and re-enters PLAN_REVIEW at the higher tier.
+
+**R-101.** *(v4)* The driver classifies every new task into a tier at intake, before dispatching any role, and records the tier plus a one-line justification in `run_config` and the Run Record. When a PLANNER is spawned (LIGHT+), it MAY raise the tier, never lower it; the REVIEWER MAY raise it at review (R-0a).
+
+**R-102.** *(v4)* A task touching authentication, payments/money, user data, schema/migrations, or public API surface MUST be classified STANDARD or higher. EXPRESS is forbidden on these paths.
+
+**R-103.** *(v4)* EXPRESS applies only when ALL hold: no sensitive path (R-102); estimated ≤ 2 files; no new dependency; no new public surface; the change is a single, locatable edit. Any doubt resolves upward.
 
 ---
 
@@ -143,6 +150,8 @@ roles:
 
 | State | Owner | Exit condition |
 |---|---|---|
+| `EXPRESS_IMPLEMENTING` *(v4)* | IMPLEMENTER | EXPRESS Change note produced |
+| `EXPRESS_CHECK` *(v4)* | independent checker | EXPRESS Check report produced |
 | `PLANNING` | PLANNER | Planning Document produced |
 | `PLAN_REVIEW` | REVIEWER | Plan approved or rejected |
 | `IMPLEMENTING` | IMPLEMENTER | Implementation Package produced |
@@ -157,8 +166,14 @@ roles:
 ### 2.2 Transitions
 
 ```
-START
-  └─→ PLANNING
+START → intake (driver, R-101; writes run_config)
+  ├─ EXPRESS → EXPRESS_IMPLEMENTING
+  │              ├─ change made      → EXPRESS_CHECK
+  │              └─ scope_exceeded   → PLANNING   [tier promoted per R-105]
+  │            EXPRESS_CHECK
+  │              ├─ pass → APPROVED
+  │              └─ fail → PLANNING              [tier promoted to ≥ LIGHT, R-104; no fix loop]
+  └─ LIGHT | STANDARD | FULL → PLANNING
         └─→ PLAN_REVIEW
               ├─ rejected ──→ PLANNING            [increments plan_iterations]
               └─ approved ──→ IMPLEMENTING
@@ -184,6 +199,8 @@ ESCALATED
   └─ owner: abandon ───→ ABANDONED
 ```
 
+**R-104.** *(v4)* EXPRESS runs `EXPRESS_IMPLEMENTING → EXPRESS_CHECK`. The check is performed by a context that did not make the change (R-1/R-2) and consists of (1) a deterministic machine gate — the project's build, lint, and tests relevant to the touched files — and (2) a confirmation glance — the diff does what was asked, touches ≤ 2 non-sensitive files, adds no dependency or public surface. Pass → `APPROVED`. Any failure → the driver promotes the run to LIGHT (or higher per R-102/R-103) and enters `PLANNING` with counters at 0. EXPRESS has no fix loop.
+
 ### 2.3 Counters and budgets
 
 Three independent counters:
@@ -204,6 +221,23 @@ Three independent counters:
 
 **R-15.** Every task MUST maintain a Run Record from `START` to terminal state. The schema is `templates/run-record.yaml` (normative; v4 — replaces Appendix E). It is append-only.
 
+### 2.5 Run-config *(v4)*
+
+Written by the driver at intake into `run-record.yaml`:
+
+```yaml
+run_config:
+  tier: EXPRESS            # EXPRESS | LIGHT | STANDARD | FULL — active
+  tier_justification: ""   # one line, R-101 — active
+  design_doc: false        # true | false — active (STANDARD/FULL only)
+  autonomy: autopilot      # RESERVED (G/H): autopilot | gated | interactive — recorded only, no branching (YAGNI)
+  scope: single_repo       # RESERVED (G): single_repo | multi_repo — recorded only, no branching (YAGNI)
+```
+
+**R-106 (driver half).** *(v4)* At intake the driver resolves `design_doc` from config (`ask` | `always` | `never`; unset defaults: existing repo → `never`, greenfield/new area → `ask`, asked once) and records it in `run_config`. It applies to STANDARD/FULL only; EXPRESS and LIGHT never generate one. *(The planner half — emitting the document — is §3.2.3.)*
+
+Only `tier`, `tier_justification`, and `design_doc` drive behavior. `autonomy` and `scope` are RESERVED for sub-projects G/H: recorded with defaults that reproduce current behavior, consulted by nothing (YAGNI). A Run Record without a `run_config` block (pre-v4) is read as `tier` from `state.yaml`, `design_doc: false`, `autonomy: autopilot`, `scope: single_repo`.
+
 ---
 
 ## 3. Artifacts & Contracts
@@ -217,6 +251,7 @@ Three independent counters:
 **R-18.** Every artifact MUST carry: `task_id`, `artifact_type`, `iteration`, `produced_by` (role + resolved model), `timestamp`.
 
 Artifact skeletons are the files in `templates/`; they are normative. *(v4: replaces Appendix D, which duplicated them.)*
+
 ---
 
 ### 5.4 Blast radius
