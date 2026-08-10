@@ -6,11 +6,26 @@ Loaded by: every dispatch, all states. Section/rule numbers are global to the pr
 
 # Heatwave — AI Development & Verification Protocol
 
-**Version:** 3.1 (open-source release)
+**Version:** 4.0
 **Status:** Active
-**Supersedes:** v3.0 (AI Development & Verification Protocol)
+**Supersedes:** v3.1 (open-source release)
 
 Heatwave is a tool-agnostic protocol for AI-performed software development. It works with any coding agent — Claude Code, Codex, Gemini CLI, Cursor, or a plain chat session — because it governs *contexts and artifacts*, not any vendor's features. See `README.md` for installation and the per-tool adapters.
+
+### Shard map
+
+From v4 the protocol is maintained as canonical shards in `protocol/`; the full rendered spec is generated from them (R-108) and reads core-then-roles rather than in strict numeric order. Section and rule numbers are global and stable across shards — every v3.1 cross-reference remains valid.
+
+| Shard | Carries | Loaded by |
+|---|---|---|
+| `protocol/core.md` | §0 purpose & tiers, §1 roles, §2 state machine & run-config, §3.1 artifact ground rules, §5.4 blast radius, §6.2/§6.4 tool unavailability & evidence, §8.1–8.2/§8.4 completion gate, §9.3 resume rule | every dispatch |
+| `protocol/planner.md` | §3.2 (excl. 3.2.1) Planning Document, §3.2.2 acceptance criteria, §3.2.3 design doc *(v4)*, §4.1, §5.1 review scope, §6.1 tooling declaration, Appendices B & C | PLANNING; PLAN_REVIEW |
+| `protocol/implementer.md` | §3.2.1 deviations, §3.3 Implementation Package, §4.3, §4.8 EXPRESS *(v4)*, §6.3 test types, Appendix G ponytail | IMPLEMENTING; EXPRESS_IMPLEMENTING |
+| `protocol/reviewer.md` | §3.4 Review Report, §3.4.1 findings ledger *(v4)*, §4.2, §4.4, §4.6, §5.2–5.3, §5.5–5.6, §7.2 escalation report, Appendix A | PLAN_REVIEW; FULL/TARGETED/FINAL_REVIEW; ESCALATED |
+| `protocol/fixer.md` | §3.5 Fix Report, §4.5 | FIXING |
+| `protocol/final-reviewer.md` | §4.7, §8.3 production readiness | FINAL_REVIEW |
+| `protocol/orchestrator.md` | §3.6, §7.1, §7.3, §9.1–9.2, §9.4–9.5, §9.6–9.7 shard dispatch & generation *(v4)* | the driver (intake) |
+| `protocol/history.md` | Appendix F change history | never dispatched |
 
 ---
 
@@ -185,7 +200,7 @@ Three independent counters:
 
 ### 2.4 Run Record
 
-**R-15.** Every task MUST maintain a Run Record from `START` to terminal state. See Appendix E for the schema. It is append-only.
+**R-15.** Every task MUST maintain a Run Record from `START` to terminal state. The schema is `templates/run-record.yaml` (normative; v4 — replaces Appendix E). It is append-only.
 
 ---
 
@@ -198,6 +213,8 @@ Three independent counters:
 **R-17.** Artifacts are the sole interface between roles. If information is not in an artifact, the receiving role does not have it.
 
 **R-18.** Every artifact MUST carry: `task_id`, `artifact_type`, `iteration`, `produced_by` (role + resolved model), `timestamp`.
+
+Artifact skeletons are the files in `templates/`; they are normative. *(v4: replaces Appendix D, which duplicated them.)*
 ---
 
 ### 5.4 Blast radius

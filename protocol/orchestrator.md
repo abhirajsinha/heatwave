@@ -68,7 +68,7 @@ Rationale:       <why>
 ```
 .heatwave/runs/<task-id>/
 ├── state.yaml            # current state, tier, counters — the resume anchor
-├── run-record.yaml       # append-only, per Appendix E
+├── run-record.yaml       # append-only; schema: templates/run-record.yaml
 ├── 01-planning-document.md
 ├── 02-plan-review-1.md
 ├── 03-implementation-package.md
@@ -89,6 +89,8 @@ updated:         # timestamp of last transition
 ```
 
 **R-87.** The driver MUST update `state.yaml` immediately after each artifact lands, before dispatching the next role. An artifact on disk with a stale `state.yaml` is resolved in favor of the artifacts: replay the transitions the artifacts prove happened.
+
+Run Record schema is `templates/run-record.yaml`; it is normative. *(v4: replaces Appendix E, which duplicated it.)*
 
 ### 9.4 Non-stop execution — the loop runs to the end
 
