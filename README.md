@@ -169,6 +169,17 @@ Tools with a hook system (Claude Code, Codex, Gemini CLI) get **active enforceme
 - **When it can't converge, it asks you well.** If reviews keep failing past a set budget, you get a short report ending in one specific question — you answer, and the loop resumes. No infinite loops, no vague "please advise."
 - **It's honest about its limits.** This is enforcement by instructions, files, and hooks — strong, visible, auditable — not cryptographic. The [FAQ](docs/faq.md) covers what that means in practice.
 
+## Benchmark
+
+Does the protocol actually catch more than an agent working raw? We built a reproducible rig to find out instead of asserting it: `benchmark/` holds an 8-task corpus of seeded defects with withheld oracles — graders neither arm can see, frozen before any run. Run it yourself:
+
+```sh
+sh benchmark/run.sh --arm raw           # then:
+sh benchmark/run.sh --arm heatwave
+```
+
+The honest status: the pilot run is **inconclusive** — too few completed protocol-arm runs to compute any comparison — so **no performance delta is claimed**. What exists today is the rig, not a result. How scoring works, exactly what the pilot did and didn't show, and how to contribute runs: [METHODOLOGY.md](benchmark/METHODOLOGY.md) · [RESULTS.md](benchmark/RESULTS.md).
+
 ## Learn more
 
 | | |
