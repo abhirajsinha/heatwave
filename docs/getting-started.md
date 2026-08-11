@@ -23,7 +23,7 @@ cd heatwave
 ./install.sh /path/to/your/project claude
 ```
 
-Replace `claude` with your tool: `codex` · `gemini` · `cursor` · `generic`.
+Replace `claude` with your tool: `codex` · `gemini` · `cursor` · `copilot` · `windsurf` · `cline` · `zed` · `amp` · `opencode` · `aider` · `generic` — 12 adapters in all (see the README for what each installs).
 
 What lands in your project:
 
@@ -64,7 +64,7 @@ Open your agent in the project and ask for something real:
 
 > "Add a dark-mode toggle to the settings screen."
 
-No special command, no magic words. The adapter makes your agent check for the protocol, and you'll see it enter the loop:
+No special command, no magic words. The adapter makes your agent check for the protocol. The driver first classifies the tier — a trivial single edit runs EXPRESS with no plan at all; this walkthrough shows the standard loop:
 
 1. **A run directory appears** — `.heatwave/runs/dark-mode-toggle/` with `state.yaml`
 2. *(Mobile projects only)* it asks once: **"Test on iOS, Android, or both?"**
