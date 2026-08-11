@@ -1,8 +1,12 @@
 # Review Report
 
-task_id: 2026-08-11-credibility-benchmark | artifact_type: review-report | iteration: 1 | review_type: FULL_REVIEW | produced_by: REVIEWER (claude-fable-5) | timestamp: 2026-08-11
+task_id: 2026-08-11-credibility-benchmark | artifact_type: review-report | iteration: 1+2 | review_type: FULL_REVIEW (iter 1) + TARGETED_REVIEW (iter 2) | produced_by: REVIEWER (claude-fable-5) | timestamp: 2026-08-11
 
-## Verdict
+**Current verdict (iteration 2, TARGETED_REVIEW): GATE_MET — see the Iteration 2 section at the end of this file.**
+
+---
+
+## Verdict (iteration 1, FULL_REVIEW — historical)
 
 **GATE_NOT_MET → FIXING**
 Blockers: 0 open | Majors: 1 open | Minor: 2 | Nit: 2
@@ -121,3 +125,45 @@ The gate fails on one Major of presentation honesty: the headline table counts t
 ## Gate
 
 **Iteration 1: GATE_NOT_MET (0 Blockers, 1 Major, 2 Minors, 2 Nits) → FIXING.**
+
+---
+
+# Iteration 2 — TARGETED_REVIEW (§4.6)
+
+review_type: TARGETED_REVIEW | iteration: 2 | produced_by: REVIEWER (claude-fable-5, same context as iteration 1) | timestamp: 2026-08-11
+
+## Verdict
+
+**GATE_MET**
+Blockers: 0 open | Majors: 0 open | Minor: 0 open | Nit: 0 open | New findings: 0
+
+## Scope Evaluated
+
+Fix delta only (commits `2f9cdd0` reporting/harness fixes + `fc58942` review/fix-report docs) against the iteration-1 findings, plus regression checks. Fix Report: `docs/superpowers/reviews/2026-08-11-fix-report-E.md`. Every closure verified from the actual files and re-run commands, not the report's claims.
+
+## Reconciliation
+
+| Finding ID | Prior status | Current status | Change reason (verified evidence) |
+|---|---|---|---|
+| F-1 (Major, killed arms counted as passes) | Open | **Closed — verified** | `benchmark/RESULTS.md` now *leads* with the blockquote: "The RAW-vs-HEATWAVE escaped-defect delta is UNCOMPUTABLE from this pilot. RAW completed 4 terminal runs ... (0/4). HEATWAVE completed only 1 terminal run (t03: ... 0/1); its other two arms (t01, t02) were watchdog-killed before reaching a terminal state and are NOT completed runs — they must not be counted as passes." Pilot table gained a `terminal?` column (`NO — watchdog-killed` on hw t01/t02, RESULTS.md:37-38); headline table is terminal-runs-only (RAW n=4 0/4, HEATWAVE n=1 0/1) with delta row "UNCOMPUTABLE — HEATWAVE terminal n=1" (RESULTS.md:41-50); killed rows quarantined as "supplementary observation only" ending "Do not quote '0/3 vs 0/3'" (RESULTS.md:52-60); NOT-RUN ledger adds a `RAN, NON-TERMINAL` row and the completion command re-runs t01/t02 (RESULTS.md:97-108). Impl package: Change Summary restated (terminal-n framing, delta uncomputable), AC-F-06 note explicitly labels `summarize.awk`'s `0/3` line as the graded-as-is aggregate NOT used by the headline, Known Limitations restated. Reviewer grep for `0/3` across both files: remaining occurrences are only (a) verbatim tool output with the F-1 qualification note attached and (b) the do-not-quote warning itself. No summary or AC statement implies a computable delta. Honest. |
+| F-2 (Minor, vacuous isolation grep) | Open | **Closed — verified** | RESULTS.md:74-82: grep declared meaningful for the 5 non-empty-transcript rows (all clean); hw t01/t02 marked "N/A — non-terminal" resting on the preventive control + watcher samples. Same qualification block added to impl AC-F-10(b). |
+| F-3 (Minor, agent-modifiable visible check) | Open | **Closed — verified** | `benchmark/run.sh:118-122` now re-copies BOTH `test_oracle.py` and `repo/test_visible.py` from the corpus after the arm exits, with a comment citing this finding; METHODOLOGY control 8 updated to match. Reviewer re-ran the gate + fixtures post-change: `check-corpus.sh` → ALL TASKS PASS exit 0; fixture-good `0/8` escapes; fixture-bad `8/8` escapes, rate 1.000. |
+| F-4 (Nit, watchdog overshoot) | Open | **Closed — verified** | `with_deadline` (run.sh:33-42) now uses a monotonic `date +%s` elapsed check instead of iteration counting; residual granularity ≤ one 5 s poll. Code read; function exercised in reviewer's fixture sweeps. Historical walls untouched (facts); D-4 disclosure retained. |
+| F-5 (Nit, stale diff-scope line) | Open | **Closed — verified** | Impl package restates 69 files / +2479 whole-branch (65 / +1300 under `benchmark/` + `.gitignore`; 4 E docs), noting post-FIXING commits. Matches reviewer's `git diff main...HEAD --stat`. |
+
+Late findings: None. No new findings introduced by the fix delta (the `with_deadline` rewrite and the `test_visible.py` re-copy were read line-by-line; both correct).
+
+## Verification Log (iteration 2, all re-run by this reviewer)
+
+| Item | Method | Result |
+|---|---|---|
+| Oracle discrimination | `sh benchmark/check-corpus.sh` | 8/8 tasks PASS all legs; `check-corpus: ALL TASKS PASS`; exit 0 |
+| Fixture regression after F-3/F-4 harness edits | `run.sh --arm fixture-good` / `--arm fixture-bad` | good: `graded=8 oracle_pass=8/8 escaped_defects=0/8`; bad: `graded=8 ... escaped_defects=8/8 escape_rate=1.000` |
+| Protocol drift | `sh build-protocol.sh --check` | `OK: PROTOCOL.md matches protocol/ shards`; exit 0 |
+| Diff isolation | `git diff main...HEAD --name-only` filtered | Only `benchmark/`, `.gitignore`, and `docs/` E artifacts; zero `protocol/`/`PROTOCOL.md` changes |
+| CSV facts untouched by fixes | `git diff 45faec3..HEAD --stat -- benchmark/results/` | Empty — no result row edited; fixes are reporting + harness only |
+| Results hygiene | `git status --porcelain benchmark/results/` after reviewer sweeps | Empty — gitignore holds |
+
+## Gate
+
+**Iteration 2: GATE_MET (0 Blockers, 0 Majors, 0 open findings). All 5 iteration-1 findings verified closed from the artifacts. Sub-project E proceeds.**
