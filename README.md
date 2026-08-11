@@ -143,7 +143,7 @@ Every install puts the protocol, role prompts, and templates in `<project>/.heat
 
 Then, per tool, it writes the rules where that tool auto-loads them — no manual "follow Heatwave" ever needed:
 
-- **Claude Code** — `CLAUDE.md` + three role subagents + **enforcement hooks** in `.claude/settings.json`: the rules re-inject on every prompt, and a `PreToolUse` gate blocks the agent's Edit/Write file operations while a run is in a plan/review state — a tool gate, not a filesystem sandbox (Claude Code only; other tools rely on the rules and the audit trail). Also fetches the [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design skill and prints official commands for the [verified companions](COMPANIONS.md).
+- **Claude Code** — `CLAUDE.md` + three role subagents + **enforcement hooks** in `.claude/settings.json`: the rules re-inject on every prompt, and a `PreToolUse` gate blocks the agent's Edit/Write file operations **and common shell source-writes** while a run is in a plan/review state — hardened, but still **not a filesystem sandbox**: a determined agent can bypass it (a helper script, a here-doc, or a `sh -c`/`eval` string), and the attempt lands in the audit trail (Claude Code only; other tools rely on the rules and the audit trail). Also fetches the [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design skill and prints official commands for the [verified companions](COMPANIONS.md).
 - **Codex** — `AGENTS.md` + a **per-prompt gate hook** in `.codex/hooks.json`.
 - **Gemini CLI** — `GEMINI.md` + a **BeforeAgent gate hook** in `.gemini/settings.json`.
 - **Cursor** — an always-on rule in `.cursor/rules/`.

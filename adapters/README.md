@@ -18,7 +18,7 @@ An adapter is the only tool-specific piece of Heatwave: a small shim that puts t
 | Aider | `CONVENTIONS.md` + `.aider.conf.yml` | passive |
 | Generic | `.heatwave/HEATWAVE-AGENT.md` | passive (paste anywhere) |
 
-"Active enforcement" means a hook re-injects the protocol every turn (and, on Claude Code, physically blocks source edits during plan/review states) — the rules can't fade from a long conversation. "Passive" means always-on instruction text, which every listed file already is.
+"Active enforcement" means a hook re-injects the protocol every turn (and, on Claude Code, blocks the agent's Edit/Write and common shell source-writes at the tool layer during plan/review states — best-effort, not a filesystem sandbox) — the rules can't fade from a long conversation. "Passive" means always-on instruction text, which every listed file already is.
 
 ## Writing an adapter for a new tool
 
