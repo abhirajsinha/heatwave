@@ -9,12 +9,14 @@ run_config:            # written by the driver at intake (core §2.5); absent in
   tier: STANDARD           # EXPRESS | LIGHT | STANDARD | FULL — active
   tier_justification: ""   # one line, R-101 — active
   design_doc: false        # true | false — active (STANDARD/FULL only, R-106)
+  change_class: feature    # v4: bugfix | feature — driver initial, PLANNER authoritative (R-114); absent = feature
   autonomy: autopilot      # RESERVED (G/H): autopilot | gated | interactive — recorded only, no branching (YAGNI)
   scope: single_repo       # RESERVED (G): single_repo | multi_repo — recorded only, no branching (YAGNI)
 roles:
   planner:     { configured: , resolved: , substitution_reason: }
   implementer: { configured: , resolved: , substitution_reason: }
   reviewer:    { configured: , resolved: , substitution_reason: }
+hetero_reviewer: ""      # v4 (R-115): "true" | "false (self-preference bias not mitigated)" — computed from roles.*.resolved once both implementer and reviewer have resolved (first FULL_REVIEW dispatch); blank/absent = pre-v4-B record or not yet computed; advisory, never gates
 counters:
   plan_iterations: 0
   fix_iterations: 0

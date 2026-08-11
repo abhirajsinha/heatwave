@@ -6,16 +6,24 @@ iteration:
 review_type:        # FULL_REVIEW | TARGETED_REVIEW | FINAL_REVIEW | FULL_FINAL_REVIEW (LIGHT)
 produced_by:
 verdict:            # GATE_MET | GATE_NOT_MET
+machine_evidence: []   # v4 (R-110/R-111) — ladder rung verdicts, recorded BEFORE any LLM finding; [] on EXPRESS and plan reviews; absent = pre-v4-B ledger
+  # - rung: tests              # tests | sast | mutation — per the tier rigor table (core §0.5)
+  #   tool: "npm test"         # as declared in the plan's tooling declaration (§6.1)
+  #   verdict: pass            # pass | fail | NOT_AVAILABLE
+  #   evidence_ref: <command output reference>
+  #   unverified_acs: []       # REQUIRED when verdict is NOT_AVAILABLE (R-64)
 findings: []
   # - id: F-<task_id>-001        # stable for the task's lifetime (R-55)
   #   severity: Blocker          # Blocker | Major | Minor | Nit
   #   category: business-logic   # Appendix C, or blast-radius | acceptance-criteria | over-engineering
+  #   origin: reviewer           # reviewer | machine (R-111); absent = reviewer
   #   file: src/x.ts
   #   line: 42
   #   problem: <one line, observable>
   #   why: <one line — justifies the severity (R-80)>
   #   fix: <one line, actionable>
   #   verification: <executable method — R-32 makes the FIXER run it>
+  #   refutation: <refutation attempt + outcome — REQUIRED for Major/Blocker (R-112)>
   #   evidence_ref: <artifact/section or command output reference>
   #   introduced: 1
-  #   status: open               # open | fixed | deferred_approved | waived_owner | disputed
+  #   status: open               # open | fixed | deferred_approved | waived_owner | disputed | refuted (R-112)
