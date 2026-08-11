@@ -55,3 +55,21 @@
 # --- Technical design docs (STANDARD/FULL only, R-106) -----------------------
 # design_doc: ask        # ask | always | never; unset = never for existing repos, ask for greenfield
 # design_doc_path: docs/design
+
+# --- Speed / token engine (v4, R-116–R-118) — ALL optional; unset = today's ---
+# --- behavior: every stage on the session/role model, fresh contexts.      ---
+# cheap_model: ""              # opt-in second model for MECHANICAL stages ONLY (R-116):
+#                              # EXPRESS_CHECK, driver-side summarization, PLAN_REVIEW of
+#                              # EXPRESS/LIGHT, TARGETED_REVIEW of a small delta. FULL_REVIEW,
+#                              # FINAL_REVIEW, and PLAN_REVIEW of STANDARD/FULL always run the
+#                              # frontier/role model — a config routing them to cheap_model is
+#                              # rejected with a warning, never honored.
+# small_diff_threshold: 150    # changed lines; TARGETED_REVIEW at/below this is cheap-eligible
+#                              # (R-116). Default 150 when cheap_model is set and this is not.
+# stage_models: {}             # per-stage overrides WITHIN R-116's sets — may narrow (route an
+#                              # eligible stage back to the role model), never widen.
+#   # EXPRESS_CHECK: <model-id>
+#   # TARGETED_REVIEW: <model-id>
+# fresh_final_reviewer: false  # true = always a cold FINAL_REVIEW context (R-117 escape hatch);
+#                              # the R-117 safety clause holds either way: FINAL re-runs machine
+#                              # evidence from scratch and re-confirms every AC.
