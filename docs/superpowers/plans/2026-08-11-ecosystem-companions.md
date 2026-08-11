@@ -15,6 +15,8 @@ Change class: **feature** — new capability (companion bindings), not a defect 
 
 B defined the `sast` and `mutation` gates abstractly (R-110 rungs consumed from the §6.1 tooling declaration, degrading to `NOT_AVAILABLE` per R-64) and deliberately named no tools. D binds verified concrete tools to those existing gates and adds four evidence channels B did not cover — secret scanning (gitleaks, FINAL), UI evidence (Playwright MCP), on-demand docs (context7 MCP), and opt-in dynamic security (Strix) — plus change-type gating for the Claude Code `/security-review` semantic pass. All companions are **external, optional, detected**: Heatwave ships only detection rules, config keys, invocation guidance, and COMPANIONS.md docs. Absent tool → explicit `NOT AVAILABLE`, never a silent skip. **Zero new runtime dependencies to Heatwave itself; nothing vendored; nothing always-on that costs tokens.**
 
+Spec-correction note (PLAN_REVIEW F-004): spec §4.6's parenthetical "present in the Claude Code adapter" is inaccurate — `/security-review` appears nowhere under `adapters/`; the sole occurrence is `prompts/reviewer.md:24`, which T8 gates and T9 wires into the adapter.
+
 ## Functional Requirements
 
 - FR-1. Semgrep binds to B's existing `sast` gate; mutation runners (Stryker/mutmut/PIT class) bind to B's existing `mutation` gate — detection is R-99-style (planner detects from evidence, reviewer runs). D does **not** recreate the gates; R-110/R-111 are untouched as gate definitions.
@@ -23,7 +25,7 @@ B defined the `sast` and `mutation` gates abstractly (R-110 rungs consumed from 
 - FR-4. context7 MCP is an on-demand docs lookup at PLANNING when the plan leans on an external library's API — never always-on; absent → the API claim stays a labeled assumption.
 - FR-5. Strix (R-119) is **opt-in + lazy + spin-up/tear-down**: fires iff config-enabled AND change_surface ∩ {auth, payments, external-input, new-endpoint} ≠ ∅ AND tier == FULL. Docker up → scan → down, both recorded; PoC (or clean result) attached to the Review Report; validated exploit = Blocker. Never on routine changes. Default: disabled.
 - FR-6. `/security-review` (Claude Code adapter) fires only for change_surface ∩ {auth, external-input, deps, secrets, api-surface}; other adapters: documented equivalent or NOT AVAILABLE.
-- FR-7. One integration policy (spec §4.7 table, reproduced exactly in core.md + COMPANIONS.md): deterministic tools auto-run when present; token/LLM/Docker tools fire only on matching change-surface or explicit opt-in; nothing always-on that costs tokens; absent → NOT AVAILABLE (R-64).
+- FR-7. One integration policy (spec §4.7 table, reproduced in core.md + COMPANIONS.md in the change_surface vocabulary, with the FINAL-presence precision for gitleaks — intent-preserving normalizations per PLAN_REVIEW F-001): deterministic tools auto-run when present; token/LLM/Docker tools fire only on matching change-surface or explicit opt-in; nothing always-on that costs tokens; absent → NOT AVAILABLE (R-64).
 - FR-8. A `change_surface` declaration (PLANNER-owned, in the Planning Document) is the gating input for FR-3/5/6.
 - FR-9. COMPANIONS.md is expanded (not recreated): protocol-wired section with the policy table, Strix/Semgrep/gitleaks/mutation entries, and the paid-SaaS "documented, not wired" note.
 - FR-10. A/B/C behavior is preserved: EXPRESS instant and companion-free, drift check green, ladder/refute/reproduce/hetero (B) and tiering/persistent-session/delta-FINAL (C) untouched except the two surgical amendments listed in the Architecture section.
