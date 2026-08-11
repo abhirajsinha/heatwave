@@ -1,10 +1,30 @@
 # Review Report
 
-task_id: positioning-readme | artifact_type: review-report | iteration: 1 | review_type: FULL_REVIEW | produced_by: REVIEWER (claude-fable-5) | timestamp: 2026-08-11
+task_id: positioning-readme | artifact_type: review-report | iteration: 2 | review_type: TARGETED_REVIEW (iteration 1 FULL_REVIEW preserved below) | produced_by: REVIEWER (claude-fable-5) | timestamp: 2026-08-11
+
+## Verdict (TARGETED_REVIEW, iteration 2 — current)
+
+GATE_MET — **APPROVED at this gate**
+Blockers: 0 open | Majors: 0 open | Minor: 0 | Nit: 0 open (F-FR-2 closed)
+
+Scope: fix delta of commit `f8b7622` (README.md 2 lines, docs/faq.md 1 line) + regression checks. All prior findings closed; no new findings.
+
+## Reconciliation (iteration 2)
+
+| Finding ID | Prior status | Current status | Change reason |
+|---|---|---|---|
+| F-FR-1 (Major) | open | **closed** | Both unqualified "physically blocks source edits" claims rewritten honestly. faq.md:28 now: "a `PreToolUse` gate mechanically blocks the agent's Edit/Write tool calls while the run state assigns them to another role. It's a tool gate, not a filesystem sandbox — it doesn't stop a raw shell write or a deliberately misbehaving agent; those land in the audit trail instead. Codex and Gemini CLI hooks re-inject the gate text each turn but don't block edits — those adapters rely on the rules plus the audit trail." README:146 now: "blocks the agent's Edit/Write file operations … — a tool gate, not a filesystem sandbox (Claude Code only; other tools rely on the rules and the audit trail)." Every element of the required fix present: Edit/Write tool-call scope, not-a-sandbox, raw-shell/misbehaving-agent bypass named, other adapters = rules + audit trail. `grep -rn "physically block" README.md docs/` → 5 hits, ALL inside run artifacts quoting the old text (impl package, this report, fix report); **zero in rendered copy** (README, faq, getting-started clean) |
+| F-FR-2 (Nit) | open | **closed** | README:97 now "since the last full review" — matches R-118 baseline; verified by grep |
+
+Late findings: None. Regression: `sh build-protocol.sh --check` → `OK: PROTOCOL.md matches protocol/ shards`, exit 0; `git diff main...HEAD --stat` → 9 files, all README.md + docs/* (content 3 + run artifacts 6), zero protocol//PROTOCOL.md/install.sh/adapters/ lines; link-existence check → zero MISSING. Fix delta read in full — no new claim introduced, no other sentence touched.
+
+---
+
+# Iteration 1 — FULL_REVIEW (historical)
 
 ## Verdict
 
-GATE_NOT_MET — **FIXING**
+GATE_NOT_MET — **FIXING** *(superseded by iteration 2 above)*
 Blockers: 0 open | Majors: 1 open | Minor: 0 | Nit: 1
 
 ## Scope Evaluated
