@@ -1,0 +1,8 @@
+id: t01-pagination
+type: feature
+trap: off-by-one
+difficulty: easy
+module: pagination.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
