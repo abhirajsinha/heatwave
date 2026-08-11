@@ -97,6 +97,15 @@ No — ceremony scales with risk. A trivial edit runs **EXPRESS**: the change pl
 - **Stage model-tiering + delta review** — mechanical stages can run on a cheaper model while judgment stages keep the strong one (zero-config default unchanged), and the final review re-checks only what changed since the last approved pass — plus a full machine-gate re-run.
 - **Ecosystem companions** — verified optional add-ons ([companions](COMPANIONS.md)): security scanners, browser evidence, current-docs lookup. None are required — a missing tool is reported as an honest gap, never papered over.
 
+## How it differs
+
+Most AI code-review tooling is a bolt-on reviewer: it inspects a diff after the fact and leaves comments. Heatwave gates the *process* that produces the diff — plan, build, review, prove — and differs in four checkable ways:
+
+- **Vendor-neutral.** Markdown files and one shell script — no server, no API keys, no dependencies. Any of the 12 supported agents can run it, and a run started in one tool resumes in another.
+- **An evidence ledger on disk.** Every plan, review, fix, and verification lands in `.heatwave/runs/<task>/` in your repo *before* the next step starts; every claim in the final approval traces to a file you can read.
+- **Never-restart resume.** Because the ledger is the whole interface, a dead session — or a different tool, days later — continues at the exact recorded step. Redoing finished work is against the rules.
+- **Roles that never grade their own work.** Planner, implementer, and reviewer are separate contexts; no context approves its own output, and approval requires attached evidence, not assertion.
+
 ## Setup (3 minutes)
 
 **Step 1 — clone Heatwave** (anywhere, once):
