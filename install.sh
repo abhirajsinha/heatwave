@@ -107,7 +107,7 @@ gate_cmd = "sh .heatwave/role-gate.sh"
 wanted = [
     ("UserPromptSubmit", cmd, {"hooks": [{"type": "command", "command": cmd}]}),
     ("SessionStart", cmd, {"hooks": [{"type": "command", "command": cmd}]}),
-    ("PreToolUse", gate_cmd, {"matcher": "Edit|Write", "hooks": [{"type": "command", "command": gate_cmd}]}),
+    ("PreToolUse", gate_cmd, {"matcher": "Edit|Write|Bash", "hooks": [{"type": "command", "command": gate_cmd}]}),
 ]
 for event, want_cmd, entry in wanted:
     entries = hooks.get(event, [])
@@ -117,6 +117,13 @@ for event, want_cmd, entry in wanted:
     hooks[event] = entries
     if not any(want_cmd == h.get("command") for e in entries if isinstance(e, dict) for h in e.get("hooks", []) if isinstance(h, dict)):
         entries.append(entry); changed = True
+# Migrate an existing gate entry from the old Edit|Write matcher to Edit|Write|Bash.
+# The idempotency check above matches on command only, so a project holding the old
+# matcher would otherwise keep it forever. Upgrade it exactly once.
+for e in hooks.get("PreToolUse", []):
+    if (isinstance(e, dict) and e.get("matcher") == "Edit|Write"
+            and any(gate_cmd == h.get("command") for h in e.get("hooks", []) if isinstance(h, dict))):
+        e["matcher"] = "Edit|Write|Bash"; changed = True
 if changed:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f: json.dump(cfg, f, indent=2); f.write("\n")
