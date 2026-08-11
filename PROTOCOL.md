@@ -1062,3 +1062,4 @@ Loaded by: never dispatched — rendered into the full generated spec only.
 | `run_config` block (tier, design_doc; autonomy/scope reserved) | core §2.5 | No per-run configuration record at intake |
 | Technical design-doc gate (STANDARD/FULL, opt-in) | R-106 | No pre-plan design artifact for greenfield work |
 | Appendix D/E replaced by normative `templates/` pointers | core §3.1, orchestrator §9.2 | Skeletons/schema duplicated the template files |
+| Machine-evidence ladder, refute-or-promote, reproduce-then-fix, hetero-reviewer visibility | R-110–R-115 | Rigor rested on LLM prose; false-positive Majors cost full fix cycles; "verified" bugfixes were claims; same-model self-preference was invisible |
