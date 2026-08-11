@@ -10,7 +10,7 @@ Loaded by: FINAL_REVIEW. Section/rule numbers are global to the protocol.
 
 **R-45.** Findings raised in `FINAL_REVIEW` that were passable in prior iterations MUST be reconciled per 5.6 — the report MUST state why the earlier pass was wrong or what changed.
 
-*(v4)* Session continuity never shrinks (b) or (d): a persistent reviewer (R-117) re-runs every machine rung from scratch and re-confirms every criterion with fresh evidence — reuse of context, never of a prior verdict. Files unchanged since the last FULL_REVIEW are outside the required reading scope (R-118(c)); reading one is done only as a recorded R-49 scope expansion substantiating a suspected delta-caused regression. Reconciliation (5.6) and the checklist (8.3) still cover the whole task from the artifacts already held.
+*(v4)* Session continuity never shrinks (b) or (d): a persistent reviewer (R-117) re-runs every machine rung from scratch and re-confirms every criterion with fresh evidence — reuse of context, never of a prior verdict. Files unchanged since the last FULL_REVIEW are outside the required reading scope (R-118(c)); reading one is done only as a recorded R-49 scope expansion substantiating a suspected delta-caused regression. Reconciliation (5.6) and the checklist (8.3) still cover the whole task from the artifacts already held. *(v4-D)* The (b) re-run includes the secrets rung when a scanner is declared: a secret scan of the run's full diff, any hit a Blocker (R-121).
 
 ---
 
