@@ -44,6 +44,8 @@ Say you ask: *"Add CSV export to the reports page."*
   <img src="assets/loop.svg" width="920" alt="The Heatwave loop: PLANNING → PLAN_REVIEW → IMPLEMENTING → FULL_REVIEW → FIXING ⇄ TARGETED_REVIEW → FINAL_REVIEW → APPROVED, with rejection loops, budgets, and escalation to the human owner.">
 </p>
 
+First, the driver sizes the task — a trivial single-file edit skips the full loop and runs **EXPRESS** (the change plus one independent machine-gated check, by a fresh context that didn't make it); a feature like this one runs the loop:
+
 1. **🧠 Plan** — a planner writes down what will be built: the exact acceptance criteria, what gets reviewed, what gets tested and with which tools.
 2. **🔍 Plan review** — a *different* AI context judges that plan. Weak criteria, contradictions, missing edge cases? Rejected, revised, re-reviewed. **No code exists yet.**
 3. **🔨 Build** — only after the plan passes, an implementer writes the code — the *smallest* code that meets the criteria (a bundled discipline called [ponytail](https://github.com/DietrichGebert/ponytail) keeps it from over-building).
