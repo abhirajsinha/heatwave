@@ -31,6 +31,17 @@
 #   load: "k6"
 #   sast: "semgrep --config auto"    # STANDARD+ ladder rung (R-110); unset + undetected → NOT AVAILABLE, never silent
 #   mutation: "npx stryker run"      # FULL ladder rung (R-110); scoped to changed modules; state a timeout
+#   secrets: "gitleaks"           # FINAL_REVIEW rung (R-121); auto-detected (binary / .gitleaks.toml /
+#                                 # pre-commit hook); a hit on the diff is a Blocker
+#   ui_evidence: "playwright-mcp" # UI-evidence capture when change_surface ∋ ui (R-120); auto-when-present
+#   docs: "context7-mcp"          # on-demand docs lookup at PLANNING (R-120); never always-on
+
+# --- Dynamic security (v4-D, R-119) — OPT-IN; unset = disabled -----------------
+# dynamic_security:
+#   strix: disabled               # disabled | enabled. enabled fires ONLY when change_surface
+#                                 # ∩ {auth, payments, external-input, new-endpoint} AND tier FULL.
+#                                 # Docker spin-up → scan → tear-down, both recorded (R-119).
+#   strix_target: ""              # target for `strix -n --target <...>` (URL or compose service)
 
 # --- Mobile apps only --------------------------------------------------------
 # ios | android | both. Leave unset to be asked once at the start of each
