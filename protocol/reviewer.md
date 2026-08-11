@@ -29,7 +29,13 @@ Produced by REVIEWER in `PLAN_REVIEW`, `FULL_REVIEW`, `TARGETED_REVIEW`, `FINAL_
 
 #### 3.4.1 Findings ledger *(v4)*
 
-**R-109.** *(v4)* From v4, each FULL/TARGETED/FINAL review produces `NN-findings-K.yaml` (schema: `templates/findings-ledger.yaml`) as the machine artifact of record, alongside the prose Review Report as its rendered human view. A review transition produces the ledger and its rendered report under the same sequence number NN; the pair counts as one artifact for §9.2 numbering. The FIXER responds by finding `id`; reconciliation (R-58) and TARGETED_REVIEW are driven from the ledger's `status` fields. Appendix A field semantics are unchanged — the ledger is their compact carrier.
+**R-109.** *(v4)* From v4, each FULL/TARGETED/FINAL review produces `NN-findings-K.yaml` (schema: `templates/findings-ledger.yaml`) as the machine artifact of record, alongside the prose Review Report as its rendered human view. A review transition produces the ledger and its rendered report under the same sequence number NN; the pair counts as one artifact for §9.2 numbering. The FIXER responds by finding `id`; reconciliation (R-58) and TARGETED_REVIEW are driven from the ledger's `status` fields. Appendix A field semantics are the ledger's field semantics — the ledger is their compact carrier (the v4 machine-evidence additions `Origin`, `Refutation`, and the `Refuted` status live in both; §3.4.2).
+
+#### 3.4.2 Machine evidence & refutation *(v4)*
+
+**R-111.** *(v4)* Ladder verdicts (R-110) convert to findings mechanically, recorded in the ledger with `origin: machine` and their `rung`: a failing declared test is a machine finding of severity Blocker; a high-severity SAST result on changed lines is a machine finding, default Major; a surviving mutant on changed lines is a machine finding — `tests inadequate for <file>`, naming what to cover — default Major. Default categories: a failing test takes the category of the acceptance criterion it verifies, else `verification-integrity`; a SAST hit takes the matching Security category from Appendix C; a surviving mutant takes `verification-integrity`. The REVIEWER MAY reclassify a machine finding's default severity or category per R-5 with recorded reason; it MUST NOT discard one silently. All other Appendix A semantics apply, including stable IDs (R-55). The LLM review that follows covers what machines cannot — logic, design, plan conformance — and MUST NOT restate as prose findings what a rung already verified.
+
+**R-112.** *(v4)* Refute-or-promote: before any candidate finding of severity Major or Blocker enters the ledger as `open`, the REVIEWER MUST attempt to refute it — is it actually reachable, actually wrong, not already handled? — and record the attempt and outcome in the finding's `refutation` field. A finding that survives is promoted (`status: open`) and gates per Section 8; one that is refuted is recorded with `status: refuted` and the refuting reason, MUST NOT enter FIXING, and MUST NOT gate (R-77 excludes it from "open"). Minors and Nits are exempt. A machine finding's refutation attempt is re-running its rung and checking the result is attributable to the change under review rather than a pre-existing baseline failure. Refuted findings remain in the ledger — visible, reconciled per 5.6, reopenable per R-59 — and are outside the set of findings R-31 obliges the FIXER to answer. Applies to ledger-producing reviews (R-109); PLAN_REVIEW findings are unaffected.
 
 ---
 
@@ -42,6 +48,10 @@ Produced by REVIEWER in `PLAN_REVIEW`, `FULL_REVIEW`, `TARGETED_REVIEW`, `FINAL_
 ### 4.4 FULL_REVIEW
 
 **R-39.** The REVIEWER MUST evaluate every category in the effective review scope (5.1 as amended by 5.2), plus plan conformance (5.3), across the entire feature — not only changed files.
+
+FULL_REVIEW opens with the machine-evidence ladder for the run's tier (R-110); LLM findings follow it.
+
+**R-113 (reviewer half).** *(v4)* For a `change_class: bugfix` run (R-114), the REVIEWER MUST confirm the reproduction: red evidence captured on pre-fix code, and the same check re-run green after the fix. A bugfix with no reproducing check, or with no red-run evidence, is a Major (`Category: verification-integrity`) regardless of how plausible the fix reads.
 
 ### 4.6 TARGETED_REVIEW
 
@@ -123,15 +133,18 @@ Finding ID:           F-<task_id>-<NNN>
 Severity:             Blocker | Major | Minor | Nit
 Category:             <from Appendix C, or: blast-radius |
                        acceptance-criteria | over-engineering>
+Origin:               reviewer | machine (R-111; absent = reviewer)
 Location:             <file:line, endpoint, screen, or artifact section>
 Problem:              <what is wrong — observable, specific>
 Why it matters:       <consequence; MUST justify the severity assigned>
 Recommended fix:      <actionable; not "consider improving">
 Verification method:  <how the fix will be proven — MUST be executable by
                        the IMPLEMENTER; this field is consumed by R-32>
+Refutation:           <refutation attempt + outcome — REQUIRED for
+                       Major/Blocker (R-112)>
 Introduced in:        <iteration first raised>
 Status:               Open | Fixed | Deferred (approved) | Waived (OWNER) |
-                      Disputed
+                      Disputed | Refuted
 ```
 
 Notes:

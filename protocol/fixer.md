@@ -18,7 +18,7 @@ Produced by IMPLEMENTER in `FIXING`. Consumed by REVIEWER.
 5. Notes
 ```
 
-**R-31.** Every finding in the Review Report being answered MUST have exactly one response entry. Silence is not a response.
+**R-31.** Every finding in the Review Report being answered MUST have exactly one response entry. Silence is not a response. Findings with `status: refuted` (R-112) require no response.
 
 **Per-finding response schema:**
 
