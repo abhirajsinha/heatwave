@@ -100,6 +100,63 @@ Row counts: fixture-good 8 started/8 rows; fixture-bad 8/8; stub-timeout 1/1; st
 
 <!-- AC-RERUN-PENDING: AC-F-04..08, AC-N-01 land with T7/T8 -->
 
-## Rerun Results (T7)
+## Termination-guarantee proof
 
-<!-- RERUN-PENDING -->
+Every started (task, arm, trial) yields exactly one CSV row with a definitive outcome, by construction plus demonstration:
+
+1. **Construction (code, `benchmark/run.sh`):** the row is emitted from a single `echo … >> "$CSV"` after a *total* classification `case` (fixtures → `graded`; `deadline.expired` marker → `timeout`; protocol-terminal ESCALATED/ABANDONED or final-line marker, and not APPROVED → `escalated`; `subtype=success` + APPROVED/raw → `graded`; everything else → `error`). The marker is touched **before** TERM, so even an uncleanly-dying arm classifies `timeout`. The transcript streams (`stream-json`), so evidence survives the kill. An INT/TERM of the harness itself fires the `on_int` trap, which writes the started-but-unwritten trial as `error/interrupted` before exit.
+2. **Demonstration (all five paths exercised):** graded — fixture sweeps 16/16 rows + RAW 8/8 real rows; timeout — stub row `…timeout,0,…,20,,timeout; last_state=none…` and the real capped t01 row (Rerun Results); escalated — stub row `…escalated,1,LIGHT,stub-model,…,escalated; state=ESCALATED`; error/interrupted — TERM'd stub run row (`…,error,0,,,,,,60,,interrupted`) **and** a TERM'd real arm (`20260811T172224Z-heatwave`: `…,error,0,,,,,,192,,interrupted`); no-orphans — `pgrep` empty for `claude -p`, both stub paths, and `sleep 300` after every forced test.
+
+## Files changed / blast radius
+
+- `benchmark/run.sh` — harness rework (knobs, marker timeout, stream transcripts, unattended prompt, sampler, classification, new schema, copy-back, interrupt trap, extended grep). Blast radius: benchmark only; consumed by nobody else.
+- `benchmark/parse-result.py` — new, stdlib-only helper (single-quoted sanitized output for `eval`).
+- `benchmark/summarize.awk` — replaced (E2 schema); only consumer of the CSVs.
+- `benchmark/testdata/` — new: stubs + awk unit fixture/expected.
+- `benchmark/METHODOLOGY.md`, `benchmark/RESULTS.md` — docs rewritten per plan.
+- `benchmark/results/rerun-20260811.csv` — committed snapshot (additive data).
+- `docs/specs/…`, `docs/superpowers/…` — planning/review/impl trail (additive).
+- **`protocol/` and `PROTOCOL.md`: untouched** (T9 not fired). `heatwave.config.example.yaml`: untouched (T6).
+
+## Deviations (declared, not self-approved)
+
+1. T1(b) capped at ~10 min instead of run-to-terminal ≤2700 s — coordinator instruction; archival evidence already sufficed (T1 note).
+2. T7 shrunk to RAW×8 + HEATWAVE t01 under a disclosed `HW_DEADLINE=1200` cap (+the interrupted canary), instead of the plan's canary-gated first-3 HEATWAVE subset — coordinator cost bound. RESULTS.md marks t02–t08 HEATWAVE NOT RUN with exact completion commands; AC-F-05's "every started row terminal" holds for everything that started.
+3. Plan-snippet corrections (sampler `|| :`, single-quoted parser output, per-arm `STAGE_MODEL`) — defect fixes recorded in the T2 note; direction conservative, reviewer to confirm.
+4. The interrupted-canary row plus the T1 probe cost are real spend without result-event cost records (killed runs report no `total_cost_usd`); bounded by wall-clock and stated rather than estimated in the CSV.
+
+## Rerun Results (T7/T8 — actual)
+
+Pre-flight: `check-corpus.sh` → `check-corpus: ALL TASKS PASS` (8/8); manifest asserted inside each sweep (no FATAL). `HW_MODEL` unset throughout (no model asymmetry). Committed snapshot: `benchmark/results/rerun-20260811.csv` (rows verbatim from `20260811T171717Z-raw.csv`, `20260811T172224Z-heatwave.csv`, `20260811T172553Z-heatwave.csv`).
+
+- **RAW ×8** (full sweep, `20260811T171717Z-raw`): 8/8 `graded`, 0/8 escaped defects, oracle 8/8, mean wall 35.4 s, total $1.7270. `stage_model` recorded on every row.
+- **HEATWAVE t01, 1200 s graceful cap** (`20260811T172553Z-heatwave`, deviation 2): the headline demonstration row —
+  ```
+  20260811T172553Z-heatwave,t01-pagination,heatwave,1,timeout,0,STANDARD,claude-opus-5[1m],0,0,0,1201,6.43996775,timeout; last_state=PLAN_REVIEW; agent-nonzero
+  ```
+  Terminal `timeout` recorded with: enforcement at cap+1 s (1201 vs 1200 — pilot's 536 s overshoot class gone), `tier=STANDARD`, `stage_model`, last protocol state (`PLAN_REVIEW`, iteration 2 per the copied `state.yaml` — 20 min in, still reviewing the plan, no code yet), **cost $6.44 recorded despite the kill** (CLI TERM path flushed a result event into the streamed transcript; 844 KB `agent.ndjson` survives), `deadline.expired` marker + `state-timeline.log` + full `heatwave-runs/` copied back. `pgrep -f 'claude -p'` after: empty.
+- **HEATWAVE t01, interrupted canary** (`20260811T172224Z-heatwave`): the 2700 s sweep was operator-stopped after 192 s (coordinator cost bound); the E2 trap recorded `…,error,0,,,,,,192,,interrupted` — a real-arm proof of plan-review F-002's fix. Cost of the 192 s is unrecorded (no result event flushed on that kill path); bounded by wall.
+- **Sweep summaries** (`summarize.awk` over the snapshot):
+  ```
+  heatwave: completed=0/2 escaped_defects=N/A (0 gradable runs) outcomes[graded=0 timeout=1 escalated=0 error=1] mean_wall=696.5s total_cost=$6.4400 (over 1 costed rows)
+  raw: completed=8/8 escaped_defects=0/8 gradable (rate=0.000) oracle_pass=8/8 outcomes[graded=8 timeout=0 escalated=0 error=0] mean_wall=35.4s total_cost=$1.7270 (over 8 costed rows)
+  ```
+- **RESULTS.md** rewritten conclusively (T8): headline = escape rate over graded per arm (RAW 0/8; HEATWAVE N/A in rerun, 0/1 in pilot), HEATWAVE completion rate (0/2 rerun, 1/3 pilot, 1/5 all-time), outcome tables, cost/wall profile, pilot-1 reinterpretation, NOT-RUN ledger with exact completion commands, **no delta claimed** (explicit paragraph). Tier finding disclosed: intake chose STANDARD on t01 in all three instrumented runs (R-103 upward-doubt on feature-stubs).
+
+### AC-F-04 (tier recorded, not forced) — PASS with disclosure
+`awk -F, '$3=="heatwave"{print $2,$7}' benchmark/results/rerun-20260811.csv` → `t01-pagination ` (interrupted row, empty tier) / `t01-pagination STANDARD` (timeout row). Neither row edited. Disclosures per the AC's own clause + plan-review F-003 carve-out: STANDARD (not LIGHT/EXPRESS) reported in RESULTS as an intake-classification finding; the empty tier on the interrupted row disclosed in the rerun table (`—`). Nothing in the invocation dictates tier (`run.sh` has no tier flag; `HW_UNATTENDED` mentions none).
+
+### AC-F-05 (conclusive rerun, no lost rows) — PASS
+Outcome audit: `awk -F, 'NR>1{print $5}' rerun-20260811.csv | sort | uniq -c` → `1 error, 8 graded, 1 timeout` — all ∈ {graded,timeout,escalated,error}; started trials (8 RAW + 2 HEATWAVE) = 10 = CSV rows. RESULTS.md reports per-arm escape-over-graded, completion K/M, mean wall, cost, outcome table, and an explicit concluding reading.
+
+### AC-F-06 (honesty) — PASS
+(a) `grep -nE '0/[0-9]|%|fewer bugs' benchmark/RESULTS.md` → 6 hits, every one inside the caveated up-front summary, the caveated headline table, the partial-work note, or the no-delta paragraph itself; recorded verbatim in this package's evidence run. (b) Every number in RESULTS tables traces to a row/aggregate of `rerun-20260811.csv` or `pilot-20260811.csv` (reviewer spot-audit invited; snapshot is verbatim-concatenated from run CSVs). (c) No delta sentence exists — RESULTS states the refusal explicitly with the n's. (d) `HW_MODEL` unset; `stage_model` identical family both arms (session default); no cost/wall comparison carries a model asymmetry — the only disclosed asymmetry is the HEATWAVE deadline cap, stated in Provenance.
+
+### AC-F-07 (oracle isolation) — PASS
+`scratch-root.txt` both sweeps: `/var/folders/…/hw-bench.*` (outside repo). Withheld-set assert untriggered (no FATAL). Manifest identical pre/post (harness exits fatally otherwise; both sweeps completed). Transcript grep over rerun `agent.ndjson`/`agent.err`/`heatwave-runs`: **zero hits** (command + output in evidence).
+
+### AC-F-08 (no regression) — PASS
+`git diff main...HEAD --stat`: only `benchmark/**` and `docs/**` (12 files; no `protocol/**`, no `PROTOCOL.md`, no config). `sh build-protocol.sh --check` → `OK: PROTOCOL.md matches protocol/ shards`. `sh benchmark/check-corpus.sh` → `check-corpus: ALL TASKS PASS`.
+
+### AC-N-01 (bounded spend) — PASS
+T1 probe: 598 s wall, cost unmeasured-but-bounded (≪ 2700 s; ≈$3 extrapolated) — within ≤$15/2700 s. T7: recorded spend $1.7270 (RAW) + $6.4400 (HEATWAVE timeout row) + 192 s unrecorded interrupt ≈ **$8.17 recorded total**, wall ≈ 1676 s across sweeps — far under the $60/14400 s breaker (breaker constants unchanged in `run.sh`; never tripped).

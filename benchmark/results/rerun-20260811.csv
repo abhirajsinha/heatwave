@@ -1,0 +1,11 @@
+run_id,task,arm,trial,outcome,terminal,tier,stage_model,visible_pass,oracle_pass,escaped_defect,wall_secs,cost_usd,notes
+20260811T171717Z-raw,t01-pagination,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,31,0.21092499999999997,
+20260811T171717Z-raw,t02-date-window,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,27,0.2014085,
+20260811T171717Z-raw,t03-log-summary,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,35,0.213433,
+20260811T171717Z-raw,t04-safe-stats,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,33,0.2024625,
+20260811T171717Z-raw,t05-cart-total,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,52,0.23850400000000002,
+20260811T171717Z-raw,t06-username-policy,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,29,0.198553,
+20260811T171717Z-raw,t07-slugify,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,44,0.253668,
+20260811T171717Z-raw,t08-dedupe-contacts,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,32,0.20800399999999997,
+20260811T172224Z-heatwave,t01-pagination,heatwave,1,error,0,,,,,,192,,interrupted
+20260811T172553Z-heatwave,t01-pagination,heatwave,1,timeout,0,STANDARD,claude-opus-5[1m],0,0,0,1201,6.43996775,timeout; last_state=PLAN_REVIEW; agent-nonzero
