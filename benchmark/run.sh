@@ -33,8 +33,13 @@ with_deadline() {  # $1=secs, rest=cmd. No timeout(1) on macOS. Kills the PROCES
   set -m                                        # job control: background job = own process group
   "$@" & pid=$!
   set +m
-  ( t=0; while [ "$t" -lt "$secs" ]; do kill -0 "$pid" 2>/dev/null || exit 0; sleep 5; t=$((t+5)); done
-    kill -TERM -- -"$pid" 2>/dev/null; sleep 10; kill -KILL -- -"$pid" 2>/dev/null ) & wd=$!
+  ( t0=$(date +%s)                              # monotonic elapsed check (review F-4): no drift from loop overhead
+    while kill -0 "$pid" 2>/dev/null; do
+      if [ $(( $(date +%s) - t0 )) -ge "$secs" ]; then
+        kill -TERM -- -"$pid" 2>/dev/null; sleep 10; kill -KILL -- -"$pid" 2>/dev/null; exit 0
+      fi
+      sleep 5
+    done ) & wd=$!
   st=0; wait "$pid" || st=$?
   kill "$wd" 2>/dev/null || true
   return "$st"
@@ -110,7 +115,11 @@ for TASK_DIR in "$BENCH"/corpus/*/; do
                 fi ;;
     esac
     WALL=$(( $(date +%s) - START ))
-    cp "$TASK_DIR/oracle/test_oracle.py" "$SCRATCH/"      # grading only — AFTER the arm exited
+    # Grading files re-copied from the corpus AFTER the arm exited — the graded
+    # checks are always the corpus's, even if the agent edited or replaced them
+    # (review F-3: an agent-weakened test_visible.py could manufacture visible passes).
+    cp "$TASK_DIR/oracle/test_oracle.py" "$SCRATCH/"
+    cp "$TASK_DIR/repo/test_visible.py" "$SCRATCH/"
     VIS=0
     if (cd "$SCRATCH" && with_deadline 120 sh -c "$(meta visible_check "$TASK_DIR")" \
         > visible.log 2>&1); then VIS=1; fi

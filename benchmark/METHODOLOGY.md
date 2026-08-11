@@ -113,9 +113,9 @@ pipeline. They are excluded from all results claims.
    the sweep; completed rows are kept, the rest become NOT-RUN rows. When cost
    is unreported the wall caps alone bind.
 8. **Grading is arm-blind:** the same `test_visible.py`/`test_oracle.py`
-   commands grade every arm; if the agent wrote its own file named
-   `test_oracle.py`, the harness's copy overwrites it — the graded oracle is
-   always the corpus's.
+   commands grade every arm, and the harness re-copies **both** files from the
+   corpus at grading time — the graded checks are always the corpus's, even if
+   the agent edited, weakened, or replaced them in scratch.
 
 ## 5. Threats to validity (read before quoting numbers)
 

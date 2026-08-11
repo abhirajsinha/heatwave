@@ -4,7 +4,7 @@ task_id: 2026-08-11-credibility-benchmark | artifact_type: implementation-packag
 
 ## Change Summary
 
-Built sub-project E (Credibility Benchmark) exactly to the approved iteration-2 plan: an 8-task seeded-trap corpus (`benchmark/corpus/`, two tasks per defect class, agent-visible SPEC + withheld deterministic oracle + good/bad reference solutions), the POSIX harness `run.sh` (out-of-repo `mktemp -d` scratch, fatal isolation asserts, process-group deadlines, cumulative cost/wall breaker, CSV + transcript copy-back), `check-corpus.sh` (layout / isolation / SPEC-traceability / bidirectional oracle discrimination), `summarize.awk`, `METHODOLOGY.md`, `RESULTS.md`, and a real paid pilot. The pilot ran under the plan's feasibility escape (operator cost steer mid-sweep + the HEATWAVE canary tripping its 45-min rule): RAW graded t01–t04 (4 rows), HEATWAVE graded t01–t03 (3 rows); all other rows are declared `NOT RUN (cost-bounded)` with exact completion commands. Headline (pre-committed first-3 subset, n=3/arm, K=1): escaped-defect rate 0/3 RAW vs 0/3 HEATWAVE — **inconclusive on the delta; the rig itself is proven** (fixture-bad 8/8 escapes, fixture-good 0/8; oracle discrimination 8/8; isolation checks clean). No protocol shard touched; drift check `OK`.
+Built sub-project E (Credibility Benchmark) exactly to the approved iteration-2 plan: an 8-task seeded-trap corpus (`benchmark/corpus/`, two tasks per defect class, agent-visible SPEC + withheld deterministic oracle + good/bad reference solutions), the POSIX harness `run.sh` (out-of-repo `mktemp -d` scratch, fatal isolation asserts, process-group deadlines, cumulative cost/wall breaker, CSV + transcript copy-back), `check-corpus.sh` (layout / isolation / SPEC-traceability / bidirectional oracle discrimination), `summarize.awk`, `METHODOLOGY.md`, `RESULTS.md`, and a real paid pilot. The pilot ran under the plan's feasibility escape (operator cost steer mid-sweep + the HEATWAVE canary tripping its 45-min rule): RAW completed 4 terminal runs (t01–t04, 0/4 escaped defects); HEATWAVE completed **1 terminal run** (t03: 0/1 escaped defects) — its t01/t02 arms were watchdog-killed non-terminal (empty result JSON) and are NOT counted as completed runs; their graded-as-is on-disk work is a supplementary observation only. **The RAW-vs-HEATWAVE escaped-defect delta is uncomputable from this pilot (HEATWAVE terminal n=1); the rig itself is proven** (fixture-bad 8/8 escapes, fixture-good 0/8; oracle discrimination 8/8; isolation checks clean). All not-run rows are declared `NOT RUN (cost-bounded)` with exact completion commands. No protocol shard touched; drift check `OK`.
 
 ## Files Changed
 
@@ -21,7 +21,7 @@ Built sub-project E (Credibility Benchmark) exactly to the approved iteration-2 
 | `benchmark/results/pilot-20260811.csv` | added | +8 |
 | `benchmark/corpus/t01..t08/**` (8 tasks × {repo/module, repo/test_visible.py, SPEC.md, oracle/test_oracle.py, solutions/good.py, solutions/bad.py, TASK.yaml}) | added | ~766 total |
 
-Total: `git diff main...HEAD --stat` → **65 files changed, 1300 insertions(+)**, all under `benchmark/` + `.gitignore`.
+Total: `git diff main...HEAD --stat` at the T12 commit → **69 files changed, +2479** for the whole branch (65 files / +1300 of that under `benchmark/` + `.gitignore`; the remaining 4 files are the E artifact docs — spec, plan, plan-review, this package). Post-FIXING commits add the review/fix-report docs and the F-3/F-4 harness lines.
 
 ## Diff
 
@@ -113,7 +113,7 @@ $ awk -F, 'NR>1 && $3=="raw"{g++;e+=$7} END{print e"/"g}'      → 0/4
 $ awk -F, 'NR>1 && $3=="heatwave"{g++;e+=$7} END{print e"/"g}' → 0/3
 ```
 
-Hand computation matches summarize output and the RESULTS.md table; NOT-RUN tasks appear in no denominator.
+Hand computation matches summarize output and the RESULTS.md pilot table; NOT-RUN tasks appear in no denominator. **Note (review F-1):** `summarize.awk` aggregates all CSV rows under the pre-registered graded-as-is policy, so its `heatwave: graded=3 ... 0/3` line includes the two watchdog-killed non-terminal arms. The RESULTS.md **headline** does not use that number: it reports terminal runs only (RAW 0/4, HEATWAVE 0/1) and declares the delta uncomputable; the killed rows are labeled supplementary.
 
 ### AC-F-07 — reproducibility
 
@@ -158,6 +158,13 @@ The fatal assert is in `run.sh` (`case "$SWEEP_ROOT" in "$REPO"*) ... exit 1`).
 $ grep -rc -e 'benchmark/corpus' -e 'oracle' transcripts/<each-run>/*/agent.json */agent.err
 all 14 counts = 0   (4 raw + 3 heatwave × {agent.json, agent.err})
 ```
+
+**Qualification (review F-2):** the grep is meaningful for the 5 rows with
+non-empty transcripts (raw t01–t04, heatwave t03) — all clean. Heatwave
+t01/t02's `agent.json`/`agent.err` are 0 bytes (watchdog kill), so their zero
+counts are vacuous: those two rows' isolation check is **N/A — non-terminal**,
+resting on the preventive control (out-of-repo scratch, no discoverable corpus
+path — reviewer re-verified) plus the during-arm scratch-watcher samples.
 
 (c) Oracle copied only post-arm: single sequential flow in `run.sh` (the `cp .../test_oracle.py` line executes after `run_agent` returns / fixture copy); corroborated by the t05 watcher evidence in AC-F-01.
 
@@ -232,7 +239,7 @@ Components touched: new `benchmark/` tree + one `.gitignore` hunk. Consumers: no
 
 ## Known Limitations
 
-- **The headline number is inconclusive by honest admission** — n=3/arm, K=1, easy-difficulty tasks all solved by both arms; RESULTS.md says so plainly. A corpus hard enough that RAW actually fails is the required follow-up before any public claim.
+- **The comparison is uncomputable by honest admission** — HEATWAVE terminal n=1 (t03 only; t01/t02 watchdog-killed non-terminal), RAW terminal n=4, K=1, easy-difficulty tasks all solved by every terminal run; RESULTS.md leads with this. A corpus hard enough that RAW actually fails, plus a HEATWAVE budget the loop actually fits, is the required follow-up before any public claim.
 - HEATWAVE t01/t02 costs unobtainable (watchdog kill → empty result JSON); only wall-time bounds their spend.
 - `with_deadline` ceiling is approximate (+~20% observed under load: 3236 s on a 2700 s deadline) — bound enforced, not precise (D-4).
 - Setup-determinism proof excludes `.git/index` (embedded mtimes) and reconstructs the tree via the same command sequence rather than a harness hook (real scratch is trap-deleted).
