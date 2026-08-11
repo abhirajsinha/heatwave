@@ -1,0 +1,8 @@
+id: t03-log-summary
+type: bugfix
+trap: unhandled-error
+difficulty: easy
+module: logstats.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
