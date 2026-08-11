@@ -14,6 +14,8 @@ In this session you act as the Heatwave ORCHESTRATOR (`.heatwave/prompts/orchest
 - EXPRESS_IMPLEMENTING → Task subagent `heatwave-implementer` (EXPRESS mode, `prompts/implementer.md` §EXPRESS)
 - EXPRESS_CHECK → Task subagent `heatwave-reviewer` (with `prompts/express-checker.md` — fresh context, R-1/R-2)
 
+Review stages and R-117: where your harness can resume a subagent session, reuse the task's reviewer session across FULL→TARGETED→FINAL; where it cannot (one-shot Task subagents), dispatch fresh and record `review_session: fresh-degraded` — explicit, never silent. Either way FINAL re-runs machine gates from scratch and re-confirms every AC (R-117 safety clause). Select each subagent's model per R-116; frontier-required stages never run the cheap model.
+
 Pass each subagent only its prompt file, `.heatwave/protocol/core.md` plus its role shard(s) per the dispatch matrix in `prompts/orchestrator.md`, the permitted artifacts (R-3), and `heatwave.config.yaml` — never another role's transcript, never the full rendered spec (R-107).
 
 **Hard boundary:** as the driver you MUST NOT write or edit project source code, produce review findings, or author any run artifact yourself — not even "just this once" for a small task. Small tasks use the EXPRESS or LIGHT tier, not a skipped protocol. If you notice you are about to implement directly, stop and dispatch the subagent instead. After EVERY artifact lands: update `state.yaml` first, then dispatch the next role.
