@@ -592,7 +592,7 @@ Produced by IMPLEMENTER in `IMPLEMENTING`. Consumed by REVIEWER.
 | Migration notes | Forward and backward |
 | Configuration changes | Including new env vars, flags, secrets |
 | Test additions | What was added and what it covers |
-| Test results | Per 6.4 — evidence, not assertion |
+| Test results | Per 6.4 — evidence, not assertion; bugfix runs attach the red-then-green reproduction pair (R-113) |
 | Blast radius declaration | Per 5.4 |
 | Known limitations | Explicit `None` if none |
 | Tooling status | Per 6.2 |
@@ -606,6 +606,8 @@ Produced by IMPLEMENTER in `IMPLEMENTING`. Consumed by REVIEWER.
 **R-37.** The IMPLEMENTER MUST build to the approved plan. Divergence is permitted but MUST be declared per 3.2.1.
 
 **R-38.** The IMPLEMENTER MUST NOT expand functional scope beyond the acceptance criteria. Additional work identified during implementation is a Deviation Record requesting plan change, not a unilateral addition.
+
+**R-113 (implementer half).** *(v4)* For a `change_class: bugfix` run (R-114), the IMPLEMENTER MUST capture the failing reproduction FIRST: run the plan's reproduction check against unmodified code and attach the red output to the Implementation Package, then fix, then re-run the same check and attach the green output. Red-then-green is the verification evidence for the reproduction criterion; a fix authored before the red run is captured is a deviation (3.2.1).
 
 ### 4.8 EXPRESS_IMPLEMENTING *(v4)*
 
