@@ -1,0 +1,8 @@
+run_id,task,arm,trial,visible_pass,oracle_pass,escaped_defect,wall_secs,cost_usd,notes
+20260811T114738Z-raw,t01-pagination,raw,1,1,1,0,32,0.2181565,
+20260811T114738Z-raw,t02-date-window,raw,1,1,1,0,34,0.20185099999999997,
+20260811T114738Z-raw,t03-log-summary,raw,1,1,1,0,34,0.2064585,
+20260811T114738Z-raw,t04-safe-stats,raw,1,1,1,0,31,0.2266795,
+20260811T115121Z-heatwave,t01-pagination,heatwave,1,1,1,0,3236,,agent-nonzero-or-timeout
+20260811T124604Z-heatwave,t02-date-window,heatwave,1,1,1,0,2709,,agent-nonzero-or-timeout
+20260811T124604Z-heatwave,t03-log-summary,heatwave,1,1,1,0,2602,12.366612249999994,
