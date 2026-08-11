@@ -16,6 +16,7 @@ Classify the task into a tier yourself (R-101) — no fleet spawns to do this:
 1. **Denylist first (R-102):** touching authentication, payments/money, user data, schema/migrations, or public API surface → STANDARD or FULL. EXPRESS is forbidden on these paths.
 2. **EXPRESS conjunction (R-103):** ALL of — no sensitive path, estimated ≤ 2 files, no new dependency, no new public surface, a single locatable edit. Any doubt resolves upward.
 3. Otherwise LIGHT / STANDARD / FULL per core §0.5. The PLANNER may later raise the tier, never lower it.
+4. Record `change_class: bugfix | feature` in `run_config` (R-114) — the PLANNER may correct it; record the correction.
 
 Then: resolve `design_doc` per core §2.5 (from config `design_doc: ask | always | never`; unset defaults: existing repo → `never`, greenfield → `ask`, asked once — alongside the R-98 question when both apply). STANDARD/FULL only: for an EXPRESS or LIGHT run record `design_doc: false` even when config says `always` (core §2.5). Create `.heatwave/runs/<task-id>/`: write the `run_config` block (tier, one-line `tier_justification`, `design_doc`, reserved `autonomy: autopilot`, `scope: single_repo`) into `run-record.yaml` (copied from `.heatwave/templates/run-record.yaml`) and the tier into `state.yaml`, counters at 0. EXPRESS → `state: EXPRESS_IMPLEMENTING`; else → `state: PLANNING`.
 
@@ -26,7 +27,7 @@ When a run starts or resumes: `sh .heatwave/keep-awake.sh start <run-dir>` — t
 Repeat until `state` is `APPROVED` or `ABANDONED`:
 
 1. Read `state.yaml`. The state's owner and required artifact are defined in core §2.1 and §3.
-2. Dispatch that role in a **fresh context**. Assemble each dispatch stable-prefix-first — `[protocol shards, matrix order][heatwave.config.yaml][role prompt][task artifacts]` — an identical prefix across dispatches is prompt-cache-friendly (R-107). Every dispatch's protocol context starts with `.heatwave/protocol/core.md` plus the role shard(s) below. Never attach the full protocol document to a role. The artifacts attached are only those R-3 permits that role (never a transcript).
+2. Dispatch that role in a **fresh context**. Assemble each dispatch stable-prefix-first — `[protocol shards, matrix order][heatwave.config.yaml][role prompt][task artifacts]` — an identical prefix across dispatches is prompt-cache-friendly (R-107). Every dispatch's protocol context starts with `.heatwave/protocol/core.md` plus the role shard(s) below. Never attach the full protocol document to a role. The artifacts attached are only those R-3 permits that role (never a transcript). At the first FULL_REVIEW (or LIGHT combined-pass) dispatch — once both implementer and reviewer have resolved — record the `hetero_reviewer` advisory in `run-record.yaml` per R-115 (compare the resolved models; recompute on any later substitution).
 
    | State | Prompt (`.heatwave/prompts/`) | Protocol context (`.heatwave/protocol/`) |
    |---|---|---|

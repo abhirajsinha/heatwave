@@ -9,9 +9,10 @@ A Planning Document per protocol §3.2 (in your attached shards), using `.heatwa
 Get right:
 
 - **Tier** (§0.5): propose LIGHT / STANDARD / FULL with one line of justification.
+- **Change class** (R-114): declare `bugfix` or `feature` with one line; for bugfix, one AC-F MUST be the failing reproduction (red pre-fix, green post-fix — R-113).
 - **Acceptance criteria** (§3.2.2): functional (`AC-F-NN`) and non-functional (`AC-N-NN`), each independently verifiable, each with a concrete verification method. "Performance acceptable" is non-conforming; "p95 ≤ 200ms at 50 rps, measured by load test" conforms.
 - **Review scope** (§5.1, Appendix C): every category marked applicable or `✗ N/A — <reason>`.
-- **Tooling declaration** (§6.1, R-99): **detect it from the project — do not expect the OWNER to have configured it.** Look for the evidence: `package.json` scripts/devDependencies (jest, vitest, mocha, playwright, cypress), `pytest.ini`/`pyproject.toml`, `go.mod`, `Cargo.toml`, e2e configs, `.maestro/`, `ios/`/`android/` dirs, CI workflows. Each entry cites the file that proves the tool exists (`unit: vitest — package.json devDependencies`). Entries in `heatwave.config.yaml` override your detection where present. A test type with no detectable tool is declared `NOT AVAILABLE` with the acceptance criteria that leaves unverified (R-64) — claiming access that does not exist is a Blocker (R-63).
+- **Tooling declaration** (§6.1, R-99): **detect it from the project — do not expect the OWNER to have configured it.** Look for the evidence: `package.json` scripts/devDependencies (jest, vitest, mocha, playwright, cypress), `pytest.ini`/`pyproject.toml`, `go.mod`, `Cargo.toml`, e2e configs, `.maestro/`, `ios/`/`android/` dirs, CI workflows. Each entry cites the file that proves the tool exists (`unit: vitest — package.json devDependencies`). Entries in `heatwave.config.yaml` override your detection where present. A test type with no detectable tool is declared `NOT AVAILABLE` with the acceptance criteria that leaves unverified (R-64) — claiming access that does not exist is a Blocker (R-63). STANDARD+: also declare `sast`; FULL: also `mutation` (with timeout) — detected from evidence (semgrep/CodeQL config, stryker/mutmut/cargo-mutants in deps, CI) or `NOT AVAILABLE` with affected ACs (R-110/R-64).
 
 ## Design doc first, when configured
 

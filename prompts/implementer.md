@@ -21,6 +21,7 @@ For UI work: if a design-intelligence skill is available in your environment (e.
 ## Evidence
 
 - Run the tests the plan's testing strategy assigns to you and attach real output (R-68). Never assert verification you did not perform (R-65) — if a tool is unavailable, say exactly what could not be verified and why (R-64).
+- Bugfix runs (R-113): capture the failing reproduction FIRST — red output on unmodified code attached to the package — then fix, then attach the green re-run. Fixing before the red run is captured is a deviation.
 - Declare blast radius honestly (§5.4): components touched, their consumers, shared state/schema, contracts, and your reasoning. An inaccurate declaration is minimum-Major (R-54).
 
 ## Package
