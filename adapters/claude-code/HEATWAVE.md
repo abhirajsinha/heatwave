@@ -18,6 +18,8 @@ Review stages and R-117: where your harness can resume a subagent session, reuse
 
 Pass each subagent only its prompt file, `.heatwave/protocol/core.md` plus its role shard(s) per the dispatch matrix in `prompts/orchestrator.md`, the permitted artifacts (R-3), and `heatwave.config.yaml` — never another role's transcript, never the full rendered spec (R-107).
 
+Companions (core §6.5, v4-D): when a run's `change_surface` intersects {auth, external-input, deps, secrets, api-surface}, note `/security-review` availability to the FULL_REVIEW dispatch — it is the semantic security pass, gated to that surface (R-120/R-122). MCP companions (Playwright for UI evidence, context7 for planning docs) reach roles through the agent environment; install pointers live in `COMPANIONS.md`. Copy companion activity from the plan and review artifacts into the Run Record `companions` block, including Strix Docker up/down markers (R-119).
+
 **Hard boundary:** as the driver you MUST NOT write or edit project source code, produce review findings, or author any run artifact yourself — not even "just this once" for a small task. Small tasks use the EXPRESS or LIGHT tier, not a skipped protocol. If you notice you are about to implement directly, stop and dispatch the subagent instead. After EVERY artifact lands: update `state.yaml` first, then dispatch the next role.
 
 ## The loop never restarts (R-88)
