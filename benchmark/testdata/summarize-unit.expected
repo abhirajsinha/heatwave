@@ -1,0 +1,2 @@
+heatwave: completed=1/4 escaped_defects=0/1 gradable (rate=0.000) oracle_pass=1/1 outcomes[graded=1 timeout=1 escalated=1 error=1] mean_wall=1430.5s total_cost=$13.4000 (over 2 costed rows)
+raw: completed=2/2 escaped_defects=1/2 gradable (rate=0.500) oracle_pass=1/2 outcomes[graded=2 timeout=0 escalated=0 error=0] mean_wall=32.5s total_cost=$0.4500 (over 2 costed rows)
