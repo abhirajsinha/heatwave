@@ -1088,3 +1088,4 @@ Loaded by: never dispatched — rendered into the full generated spec only.
 | Technical design-doc gate (STANDARD/FULL, opt-in) | R-106 | No pre-plan design artifact for greenfield work |
 | Appendix D/E replaced by normative `templates/` pointers | core §3.1, orchestrator §9.2 | Skeletons/schema duplicated the template files |
 | Machine-evidence ladder, refute-or-promote, reproduce-then-fix, hetero-reviewer visibility | R-110–R-115 | Rigor rested on LLM prose; false-positive Majors cost full fix cycles; "verified" bugfixes were claims; same-model self-preference was invisible |
+| Stage model-tiering, persistent reviewer session, delta-only FINAL_REVIEW | R-116–R-118 | Every stage paid the frontier price; cold review spawns forfeited prompt cache; FINAL re-read files unchanged since the last full review |
