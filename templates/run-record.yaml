@@ -17,6 +17,8 @@ roles:
   implementer: { configured: , resolved: , substitution_reason: }
   reviewer:    { configured: , resolved: , substitution_reason: }
 hetero_reviewer: ""      # v4 (R-115): "true" | "false (self-preference bias not mitigated)" — computed from roles.*.resolved once both implementer and reviewer have resolved (first FULL_REVIEW dispatch); SET this field in place (never append a new line or duplicate key — R-115); blank/absent = pre-v4-B record or not yet computed; advisory, never gates
+review_session: ""       # v4-C (R-117): persistent | fresh-degraded | fresh-configured — set by the driver at the first post-implementation review dispatch; blank/absent = pre-C record (no session tracking)
+final_delta_range: ""    # v4-C (R-118): "<last-full-sha>..<head-sha>" reviewed at FINAL_REVIEW; blank/absent = pre-C record or explicit full-scope degrade (degrade reason recorded in transitions)
 counters:
   plan_iterations: 0
   fix_iterations: 0
@@ -25,7 +27,7 @@ tooling_resolutions:
   mobile_platform: ""      # ios | android | both — per R-98; blank for non-mobile tasks
   out_of_scope_platforms: []
 transitions: []
-  # - { from: , to: , artifact: , timestamp: }
+  # - { from: , to: , artifact: , timestamp: , stage_model: , head_sha: }   # stage_model v4-C (R-116): model that served the dispatch; head_sha v4-C (R-118): recorded on FULL_REVIEW transitions; both optional — absent = session model / no delta anchor
 findings: []
   # - { id: , severity: , category: , introduced_iteration: , final_status: ,
   #     severity_changes: [], reopened_count: 0 }
