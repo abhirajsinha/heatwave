@@ -1,1 +1,4 @@
 .DS_Store
+benchmark/results/*
+!benchmark/results/.gitkeep
+!benchmark/results/pilot-*.csv
