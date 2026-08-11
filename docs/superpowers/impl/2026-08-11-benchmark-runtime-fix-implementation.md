@@ -49,6 +49,57 @@ One instrumented HEATWAVE arm on t01-pagination (pilot conditions: same `HW_PROM
 | F-007 (Nit) — METHODOLOGY control 7 canary wording | Control 7 edited in T5 ("fails to reach a terminal state" → `outcome != graded`) |
 | F-008 (Nit) — strongest slow-not-stuck datum uncited | Cited as T1(a) fact 3 |
 
+## Task log
+
+- **T1** — Diagnosis above. Commit `fcb4b82`. Deviation (coordinator-directed, recorded, not self-approved): the T1(b) instrumented run was hard-capped at ~10 min instead of the plan's run-to-terminal ≤2700 s bound — the archival evidence already established slow-not-stuck and the probe only needed to show state progression. It did (progress, no stall). Also: the probe ran `git init` in scratch (matching the real harness environment; the plan's snippet omitted it).
+- **T2** — `benchmark/run.sh` reworked + new `benchmark/parse-result.py`. Commit `a0023c2`. `sh -n` OK; `py_compile` OK. Two departures from the plan's snippets, both defect fixes found while implementing (recorded as deviations, direction conservative):
+  1. **Plan's sampler dies under `set -eu`** — `cat …/*/state.yaml` fails while the glob is unexpanded (before the driver creates the run dir), killing the sampler subshell on its first pass. Proven live: the T1 probe's identical sampler died after one sample. Fixed with `|| :` inside the loop.
+  2. **Plan's parser emitted unquoted `KEY=value` for `eval`** with `;` and `$` in the allowed charset — `eval "ST_MODEL=m1;m2"` would *execute* `m2` as a command. Parser now emits single-quoted values and the allowed charset contains no quote, so the quoting cannot be broken.
+  Also `STAGE_MODEL` uses `HW_MODEL` only for the heatwave arm (the plan's shared row line would have stamped `HW_MODEL` onto RAW rows when set; Data Design's own wording is per-arm).
+- **T3** — `summarize.awk` replaced (spec-§3 scoring); unit CSV `benchmark/testdata/summarize-unit.csv` + committed expected output `summarize-unit.expected` (hand-checked: heatwave 1 graded/4 attempted, 0/1 escapes; raw 1/2 escapes). Commit `cb9e6c0`.
+- **T4** — forced-outcome self-tests, all $0, all green (evidence below in AC-F-02/03/AC-N-03/04). Stubs committed: `benchmark/testdata/stub-timeout.sh`, `stub-escalate.sh`. Commit `274e280`.
+- **T5** — METHODOLOGY.md: scoring section + unattended profile verbatim, §1 completion metric, §3 stream-json arm commands, §4 control 6 graceful timeout + control 7 canary wording (plan-review F-007), §5 threat updates (timeout-row scoring; unattended-prompt asymmetry disclosed). Commit `1fff465`.
+- **T6** — config decision, no file change: `heatwave.config.example.yaml` untouched. The run-config `autonomy` field is RESERVED and consulted by nothing (core §2.5) — confirmed empirically in the T1 probe's `run-record.yaml` (`autonomy: autopilot   # RESERVED … recorded only, no branching`). Termination comes from the harness (unattended prompt + wall-clock), not a phantom config key. T1's finding did not contradict this; T9 not fired.
+- **T7/T8** — see Rerun Results below.
+
 ## AC evidence
 
-<!-- AC-PENDING -->
+### AC-F-01 (diagnosis recorded) — PASS
+Diagnosis section above names H1 (+H3) with archival facts (0-byte `agent.json` paths quoted with byte sizes) and fresh probe evidence (`state-timeline.log` all-PLANNING samples, 38 advancing tool_use events, 45,848-byte in-progress planning artifact), plus the recorded harness-only/T9-not-needed decision. Every quoted file exists under `benchmark/results/transcripts/diag-20260811T165720Z/` (local, transcripts dir is gitignored by E's convention — reviewer verifies on this machine).
+
+### AC-F-02 (no hang, escalation terminal) — PASS
+Command: `CLAUDE_BIN=$PWD/benchmark/testdata/stub-escalate.sh sh benchmark/run.sh --arm heatwave --only t01-pagination`
+CSV row (verbatim, `benchmark/results/20260811T171304Z-heatwave.csv`):
+```
+20260811T171304Z-heatwave,t01-pagination,heatwave,1,escalated,1,LIGHT,stub-model,0,0,0,1,0,escalated; state=ESCALATED
+```
+Orphan checks immediately after (stub-aware per plan-review F-004): `pgrep -f 'claude -p'` → empty (exit 1); `pgrep -f stub-escalate.sh` → empty (exit 1).
+
+### AC-F-03 (graceful terminal timeout; R-113 reproduction) — PASS
+**Red (archival per R-64, plan-review F-005 disposition):** pilot-1 deadline kill produced 0-byte `agent.json`/`agent.err` (paths in T1(a) item 1) and a row with no outcome column; the executable red is impossible against pre-fix `run.sh` (hardcoded deadline, literal `claude`) without a ~45-min paid run.
+**Green:** `CLAUDE_BIN=$PWD/benchmark/testdata/stub-timeout.sh HW_DEADLINE=20 sh benchmark/run.sh --arm heatwave --only t01-pagination`
+CSV row (verbatim, `benchmark/results/20260811T171226Z-heatwave.csv`):
+```
+20260811T171226Z-heatwave,t01-pagination,heatwave,1,timeout,0,,,0,0,0,20,,timeout; last_state=none; agent-nonzero
+```
+`wall_secs=20` ∈ [20, 40]; `notes` contains `last_state=`; transcript dir listing: `agent.err agent.ndjson deadline.expired heatwave-runs install.log oracle.log state-timeline.log visible.log` (marker + streamed transcript copied back). Orphans: `pgrep -f 'claude -p'`, `pgrep -f stub-timeout.sh`, `pgrep -f 'sleep 300'` → all empty (exit 1).
+**Interrupt residual (plan-review F-002):** a signal to the harness mid-trial (stub run, TERM at 60 s from the tool timeout) recorded `…,error,0,,,,,,60,,interrupted` (`benchmark/results/20260811T171344Z-heatwave.csv`) with zero orphans. Honest nuance: the earlier SIGINT sent while `sh` was blocked in `wait` was not acted on until the TERM arrived — trap delivery during a foreground wait is shell-dependent; the row-never-lost guarantee held on the signal that actually terminated the harness.
+
+### AC-N-02 (zero new dependencies) — PASS
+`grep -E '^import|^from' benchmark/parse-result.py` → `import json`, `import re`, `import sys` (stdlib only). Diff introduces no package manifest, no install step, no binary (stubs are committed `/bin/sh` scripts used only via the disclosed `CLAUDE_BIN` seam).
+
+### AC-N-03 (deterministic free path) — PASS
+`sh benchmark/run.sh --arm fixture-good` → `fixture-good: completed=8/8 escaped_defects=0/8 gradable (rate=0.000) oracle_pass=8/8 outcomes[graded=8 timeout=0 escalated=0 error=0]` (`20260811T171213Z-fixture-good.csv`).
+`sh benchmark/run.sh --arm fixture-bad` → `fixture-bad: completed=8/8 escaped_defects=8/8 gradable (rate=1.000) oracle_pass=0/8 …` (`20260811T171215Z-fixture-bad.csv`). Both sweeps together: **4 s wall** (« 5 min).
+
+### AC-N-04 (no lost rows, by construction) — PASS
+Row counts: fixture-good 8 started/8 rows; fixture-bad 8/8; stub-timeout 1/1; stub-escalation 1/1; interrupt test 1 started/1 row (`interrupted`). Classification `case` is total: fixtures → `graded`; marker → `timeout`; ESCALATED/ABANDONED/final-line marker (and not APPROVED) → `escalated`; success+APPROVED (or raw success) → `graded`; else → `error`. No fall-through without assignment (code: `benchmark/run.sh` classification block).
+
+### awk unit (Testing Strategy item 5) — PASS
+`awk -F, -f summarize.awk testdata/summarize-unit.csv` output == committed `testdata/summarize-unit.expected`; hand-check in T3 note above.
+
+<!-- AC-RERUN-PENDING: AC-F-04..08, AC-N-01 land with T7/T8 -->
+
+## Rerun Results (T7)
+
+<!-- RERUN-PENDING -->
