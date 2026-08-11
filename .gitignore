@@ -2,3 +2,7 @@
 benchmark/results/*
 !benchmark/results/.gitkeep
 !benchmark/results/pilot-*.csv
+
+# Python caches
+__pycache__/
+*.pyc
