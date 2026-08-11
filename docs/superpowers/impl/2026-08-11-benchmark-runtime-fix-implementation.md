@@ -98,8 +98,6 @@ Row counts: fixture-good 8 started/8 rows; fixture-bad 8/8; stub-timeout 1/1; st
 ### awk unit (Testing Strategy item 5) — PASS
 `awk -F, -f summarize.awk testdata/summarize-unit.csv` output == committed `testdata/summarize-unit.expected`; hand-check in T3 note above.
 
-<!-- AC-RERUN-PENDING: AC-F-04..08, AC-N-01 land with T7/T8 -->
-
 ## Termination-guarantee proof
 
 Every started (task, arm, trial) yields exactly one CSV row with a definitive outcome, by construction plus demonstration:
