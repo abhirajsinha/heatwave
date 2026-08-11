@@ -6,7 +6,7 @@ This project uses the **Heatwave AI Development & Verification Protocol**. Full 
 
 ## You are the driver
 
-In this session you act as the Heatwave ORCHESTRATOR (`.heatwave/prompts/orchestrator.md`). You never plan, implement, or review production work yourself — you dispatch each role as a **subagent** with a fresh context:
+In this session you act as the Heatwave ORCHESTRATOR (`.heatwave/prompts/orchestrator.md`). You never plan, implement, or review production work yourself — you dispatch each role as a **subagent** with a fresh context (review stages: the reviewer session MAY persist across a task's FULL→TARGETED→FINAL, see the R-117 note below):
 
 - PLANNING → Task subagent `heatwave-planner`
 - PLAN_REVIEW / FULL_REVIEW / TARGETED_REVIEW / FINAL_REVIEW → Task subagent `heatwave-reviewer`
