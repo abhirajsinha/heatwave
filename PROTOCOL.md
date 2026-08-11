@@ -79,6 +79,17 @@ Ceremony scales to the change; independent verification does not. Every tier exc
 
 **R-103.** *(v4)* EXPRESS applies only when ALL hold: no sensitive path (R-102); estimated ≤ 2 files; no new dependency; no new public surface; the change is a single, locatable edit. Any doubt resolves upward.
 
+**Machine-evidence rigor by tier** *(v4)* — review is machine-first and scales with tier:
+
+| Tier | Machine-evidence ladder (R-110) | Refute-or-promote (R-112) | Reproduce-then-fix, bugfix class (R-113) |
+|---|---|---|---|
+| EXPRESS | none — R-104's machine gate is unchanged | no | no |
+| LIGHT | declared test command(s) | yes (Major+) | yes |
+| STANDARD | tests + SAST scan of the diff | yes (Major+) | yes |
+| FULL | tests + SAST + mutation adequacy on changed modules | yes (Major+) | yes |
+
+**R-110.** *(v4)* At FULL_REVIEW (including the LIGHT combined pass, and FINAL_REVIEW per R-44) the REVIEWER MUST run the machine-evidence ladder for the run's tier — executing each rung itself, not trusting outputs attached by other roles — and record every rung's verdict in the findings ledger (`machine_evidence`) BEFORE authoring any LLM finding. Rungs consume the plan's tooling declaration (§6.1): `tests` = the declared test command(s); `sast` (STANDARD and FULL) = a static scan of the diff with the declared `sast` tool; `mutation` (FULL only) = mutation adequacy of the changed modules with the declared `mutation` tool, scoped to changed modules and bounded by the declared timeout. A rung whose tool is undeclared or unavailable records `verdict: NOT_AVAILABLE` naming the acceptance criteria it leaves unverified (R-64) — never a silent skip. The protocol names the checks, never specific tools. At FINAL_REVIEW a rung's prior verdict MAY be carried forward by reference only when the run's diff since that verdict was recorded is empty for the rung's scope (the files it scanned or mutated), and the carry-forward entry names the prior verdict's `evidence_ref`; the `tests` rung is always re-run.
+
 ---
 
 ## 1. Roles & Responsibilities
@@ -141,6 +152,8 @@ roles:
 **R-11.** If a preferred model is unavailable, the highest-ranked available fallback is used automatically and the substitution MUST be recorded in the Run Record. The workflow does not change based on which model fills a role.
 
 **R-12.** The same underlying model MAY fill multiple roles provided R-1 and R-2 (distinct contexts) hold. Model identity is not the isolation boundary; context is.
+
+**R-115.** *(v4)* The reviewer role SHOULD resolve to a different model family from the implementer — a same-model reviewer under-critiques work in its own style, and uncorrelated blind spots are the cheapest review upgrade — but this is never required: zero-config (the session model in all roles) remains fully valid. When BOTH the implementer and reviewer roles have resolved for the run — at the first FULL_REVIEW (or LIGHT combined-pass) dispatch — the driver MUST compare the resolved models and record in the Run Record `hetero_reviewer: "true"` when they differ, or `hetero_reviewer: "false (self-preference bias not mitigated)"` when they are the same. If either role's resolved model subsequently changes (R-11 substitution), the driver recomputes and appends the updated value. Advisory only — it never gates and changes no workflow step.
 
 ---
 
@@ -230,13 +243,16 @@ run_config:
   tier: EXPRESS            # EXPRESS | LIGHT | STANDARD | FULL — active
   tier_justification: ""   # one line, R-101 — active
   design_doc: false        # true | false — active (STANDARD/FULL only)
+  change_class: feature    # v4: bugfix | feature — driver initial, PLANNER authoritative (R-114) — active
   autonomy: autopilot      # RESERVED (G/H): autopilot | gated | interactive — recorded only, no branching (YAGNI)
   scope: single_repo       # RESERVED (G): single_repo | multi_repo — recorded only, no branching (YAGNI)
 ```
 
 **R-106 (driver half).** *(v4)* At intake the driver resolves `design_doc` from config (`ask` | `always` | `never`; unset defaults: existing repo → `never`, greenfield/new area → `ask`, asked once) and records it in `run_config`. It applies to STANDARD/FULL only; EXPRESS and LIGHT never generate one. *(The planner half — emitting the document — is §3.2.3.)*
 
-Only `tier`, `tier_justification`, and `design_doc` drive behavior. `autonomy` and `scope` are RESERVED for sub-projects G/H: recorded with defaults that reproduce current behavior, consulted by nothing (YAGNI). A Run Record without a `run_config` block (pre-v4) is read as `tier` from `state.yaml`, `design_doc: false`, `autonomy: autopilot`, `scope: single_repo`.
+**R-114.** *(v4)* At intake the driver records `change_class` in `run_config`: `bugfix` when the task's purpose is to correct defective existing behavior, else `feature`. The PLANNER declares the authoritative class in the Planning Document with one line of justification and MAY correct the driver's value (the correction is recorded in the Run Record). EXPRESS runs never carry a change class — EXPRESS has no plan. Misclassification is a valid REVIEWER finding. Only `bugfix` alters behavior (R-113); a record without the field reads `feature`.
+
+Only `tier`, `tier_justification`, `design_doc`, and `change_class` drive behavior. `autonomy` and `scope` are RESERVED for sub-projects G/H: recorded with defaults that reproduce current behavior, consulted by nothing (YAGNI). A Run Record without a `run_config` block (pre-v4) is read as `tier` from `state.yaml`, `design_doc: false`, `autonomy: autopilot`, `scope: single_repo`, `change_class: feature`.
 
 ---
 
@@ -293,7 +309,7 @@ Artifact skeletons are the files in `templates/`; they are normative. *(v4: repl
 - Blockers = 0 (open)
 - Majors = 0 (open)
 
-Where "open" excludes findings with `Status: Deferred (approved)` or `Status: Waived (OWNER)`.
+Where "open" excludes findings with `Status: Deferred (approved)`, `Status: Waived (OWNER)`, or `Status: Refuted` (R-112).
 
 **R-78.** Minor and Nit findings do not gate. They MAY be deferred by REVIEWER approval (R-6) and MUST be recorded in the Run Record for backlog.
 
