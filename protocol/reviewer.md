@@ -59,6 +59,8 @@ FULL_REVIEW opens with the machine-evidence ladder for the run's tier (R-110); L
 
 **R-43.** The REVIEWER MUST NOT re-litigate areas passed in prior iterations unless a fix's blast radius reaches them, or reconciliation (5.6) justifies reopening.
 
+*(v4)* In a persistent session (R-117) the REVIEWER arrives at TARGETED_REVIEW already holding its ledger and finding memory — that is the economy of persistence. The recorded artifacts remain authoritative: reconciliation (5.6) is still written from the ledger, and a degraded fresh context (R-117) performs it from the supplied prior reports exactly as R-4 provides.
+
 ---
 
 ### 5.2 Dynamic scope
