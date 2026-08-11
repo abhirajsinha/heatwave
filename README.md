@@ -94,7 +94,7 @@ No — ceremony scales with risk. A trivial edit runs **EXPRESS**: the change pl
 - **Machine-evidence ladder** — the reviewer itself runs the project's tests, then static analysis, then (on FULL-tier work) mutation testing, and converts what the machines find into review findings.
 - **Refute-or-promote** — before a serious finding gates the work, the reviewer must first try to disprove it with a concrete check; only findings that survive are promoted, with the evidence attached.
 - **Reproduce-then-fix** — bugfixes must show the bug first: a failing reproduction before the fix, the same reproduction passing after it.
-- **Stage model-tiering + delta review** — mechanical stages can run on a cheaper model while judgment stages keep the strong one (zero-config default unchanged), and the final review re-checks only what changed since the last approved pass — plus a full machine-gate re-run.
+- **Stage model-tiering + delta review** — mechanical stages can run on a cheaper model while judgment stages keep the strong one (zero-config default unchanged), and the final review re-checks only what changed since the last full review — plus a full machine-gate re-run.
 - **Ecosystem companions** — verified optional add-ons ([companions](COMPANIONS.md)): security scanners, browser evidence, current-docs lookup. None are required — a missing tool is reported as an honest gap, never papered over.
 
 ## How it differs
@@ -143,7 +143,7 @@ Every install puts the protocol, role prompts, and templates in `<project>/.heat
 
 Then, per tool, it writes the rules where that tool auto-loads them — no manual "follow Heatwave" ever needed:
 
-- **Claude Code** — `CLAUDE.md` + three role subagents + **enforcement hooks** in `.claude/settings.json`: the rules re-inject on every prompt, and a `PreToolUse` gate physically blocks source edits while a run is in a plan/review state. Also fetches the [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design skill and prints official commands for the [verified companions](COMPANIONS.md).
+- **Claude Code** — `CLAUDE.md` + three role subagents + **enforcement hooks** in `.claude/settings.json`: the rules re-inject on every prompt, and a `PreToolUse` gate blocks the agent's Edit/Write file operations while a run is in a plan/review state — a tool gate, not a filesystem sandbox (Claude Code only; other tools rely on the rules and the audit trail). Also fetches the [ui-ux-pro-max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) design skill and prints official commands for the [verified companions](COMPANIONS.md).
 - **Codex** — `AGENTS.md` + a **per-prompt gate hook** in `.codex/hooks.json`.
 - **Gemini CLI** — `GEMINI.md` + a **BeforeAgent gate hook** in `.gemini/settings.json`.
 - **Cursor** — an always-on rule in `.cursor/rules/`.
