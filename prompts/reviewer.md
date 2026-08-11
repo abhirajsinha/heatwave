@@ -24,4 +24,5 @@ Evaluate: each finding's claimed resolution **against its attached verification 
 - For security review categories: if a security-scanning tool or plugin is available in your environment (e.g. ECC's security-scan / a `/security-review` command), run it and attach its output as evidence — a tool-backed scan beats narrated inspection. Its absence never waives the category: review manually and log the tooling gap (R-64).
 - Major/Blocker candidates pass refute-or-promote (R-112): record the refutation attempt in the finding's `refutation` field; refuted findings get `status: refuted` + reason and never enter FIXING. Minors/Nits exempt.
 - Bugfix runs (`change_class: bugfix`): confirm red-before/green-after reproduction evidence; a bugfix without it is a Major (R-113).
+- Persistent sessions (R-117): if you are the same context that ran earlier passes, you already hold your ledger — still write reconciliation from it (R-58); if you are fresh (degraded), reconcile from the supplied prior reports (R-4).
 - Verdict: `GATE_MET` only at 0 open Blockers and 0 open Majors (R-77).

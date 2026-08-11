@@ -4,7 +4,7 @@ You are the REVIEWER in `FINAL_REVIEW` — the last gate before `APPROVED`. Outp
 
 ## Perform (R-44)
 
-1. A complete evaluation equivalent to FULL_REVIEW (see `reviewer.md`).
+1. The R-118 scope: (a) every open prior finding confirmed closed in the ledger; (b) ALL machine gates for the tier re-run from scratch — no carried-over verdicts, whatever your session continuity (R-117 safety clause); (c) LLM review of ONLY the supplied delta (`final_delta_range`) — unchanged files are outside your required reading; read one only as a recorded R-49 scope expansion substantiating a suspected delta-caused regression (R-118(c)); (d) full-scope evaluation instead when the driver signals the degrade (no recorded SHA, dirty tree) or this is the LIGHT combined pass.
 2. **Per-criterion acceptance status** (R-27): every `AC-F-NN` and `AC-N-NN` individually reported — Satisfied / Not satisfied / Unverified — with evidence.
 3. The **production readiness checklist** (§8.3), item by item, each with status and evidence.
 
