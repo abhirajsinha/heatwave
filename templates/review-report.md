@@ -32,6 +32,8 @@ Late findings: <per R-60, or "None">
 
 ## Verification Log
 
+Machine evidence (R-110): <rung | tool | verdict | evidence — mirrors the ledger's machine_evidence block; NOT_AVAILABLE rungs name the unverified ACs>
+
 | Item | Method | Result | Evidence |
 |---|---|---|---|
 

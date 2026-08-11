@@ -5,6 +5,7 @@ task_id: | artifact_type: planning-document | iteration: | produced_by: PLANNER 
 ## Tier
 
 <LIGHT | STANDARD | FULL> — <one-line justification> (PROTOCOL §0.5)
+Change class: <bugfix | feature> — <one-line justification> (R-114; bugfix triggers R-113)
 
 ## Problem Statement
 <what is being solved and for whom>
@@ -56,6 +57,8 @@ task_id: | artifact_type: planning-document | iteration: | produced_by: PLANNER 
 
 AC-F-01 | <observable behavior> | Verification: <method>
 
+<bugfix runs: one functional criterion MUST be the failing reproduction — red on pre-fix code, green after (R-113)>
+
 ### Non-functional
 
 AC-N-01 | <metric> <operator> <threshold> under <conditions> | Verification: <method>
@@ -77,3 +80,5 @@ Not applicable
 | Test type | Tool | Invoking role | Access |
 |---|---|---|---|
 | Unit | <framework> | IMPLEMENTER | confirmed / NOT AVAILABLE — <affected ACs> |
+| SAST (STANDARD+) | <tool> | REVIEWER | confirmed — <evidence> / NOT AVAILABLE — <affected ACs> (R-110) |
+| Mutation (FULL, with timeout ceiling) | <tool> | REVIEWER | confirmed — <evidence> / NOT AVAILABLE — <affected ACs> (R-110) |
