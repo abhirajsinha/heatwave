@@ -26,6 +26,12 @@ counters:
 tooling_resolutions:
   mobile_platform: ""      # ios | android | both — per R-98; blank for non-mobile tasks
   out_of_scope_platforms: []
+companions:              # v4-D (R-119–R-121): companion activity; absent = pre-D record or none declared
+  detected: []           #   from the plan's tooling declaration, e.g. [semgrep, gitleaks]
+  fired: []              #   - { tool: , stage: , verdict: , evidence: }
+  strix: ""              #   run | skipped-disabled | skipped-out-of-gate | NOT AVAILABLE (R-119)
+  strix_docker_up: ""    #   timestamp — set only when strix ran (R-119)
+  strix_docker_down: ""  #   timestamp — MUST be set whenever _up is set (R-119)
 transitions: []
   # - { from: , to: , artifact: , timestamp: , stage_model: , head_sha: }   # stage_model v4-C (R-116): model that served the dispatch; head_sha v4-C (R-118): recorded on FULL_REVIEW transitions; both optional — absent = session model / no delta anchor
 findings: []

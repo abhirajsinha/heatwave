@@ -82,3 +82,7 @@ Not applicable
 | Unit | <framework> | IMPLEMENTER | confirmed / NOT AVAILABLE — <affected ACs> |
 | SAST (STANDARD+) | <tool> | REVIEWER | confirmed — <evidence> / NOT AVAILABLE — <affected ACs> (R-110) |
 | Mutation (FULL, with timeout ceiling) | <tool> | REVIEWER | confirmed — <evidence> / NOT AVAILABLE — <affected ACs> (R-110) |
+| Secrets (FINAL rung) | <tool> | REVIEWER | confirmed — <evidence> / NOT AVAILABLE (R-121) |
+| UI evidence (change_surface ∋ ui) | <MCP/tool> | REVIEWER | confirmed / NOT AVAILABLE (R-120) |
+
+change_surface: <subset of {auth, payments, external-input, new-endpoint, ui, deps, secrets, api-surface} or none> — <one line> (R-122)

@@ -7,7 +7,7 @@ review_type:        # FULL_REVIEW | TARGETED_REVIEW | FINAL_REVIEW | FULL_FINAL_
 produced_by:
 verdict:            # GATE_MET | GATE_NOT_MET
 machine_evidence: []   # v4 (R-110/R-111) — ladder rung verdicts, recorded BEFORE any LLM finding; [] on EXPRESS and plan reviews; absent = pre-v4-B ledger
-  # - rung: tests              # tests | sast | mutation — per the tier rigor table (core §0.5)
+  # - rung: tests              # tests | sast | mutation | secrets | dynamic — per the tier rigor table (core §0.5); secrets R-121, dynamic R-119
   #   tool: "npm test"         # as declared in the plan's tooling declaration (§6.1)
   #   verdict: pass            # pass | fail | NOT_AVAILABLE
   #   evidence_ref: <command output reference>
