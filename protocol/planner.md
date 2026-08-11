@@ -68,6 +68,8 @@ Conforming: *"AC-N-01: p95 latency for `GET /notes` ≤ 200ms at 50 rps, measure
 
 **R-34.** On re-entry from `PLAN_REVIEW` rejection, the PLANNER MUST address every finding in the rejecting Review Report, using the Fix Report per-finding response schema (3.5) adapted to plan findings.
 
+*(v4-D)* When the plan leans on an external library's API and a docs companion is present (context7 MCP class, R-120), the PLANNER MAY fetch version-specific docs with an on-demand lookup — never always-on. Absent, the API claim stays a labeled assumption per the planner's claim-labeling discipline.
+
 ---
 
 ## 5. Review Rules
@@ -104,6 +106,10 @@ Mutation     | <per detection/config> | REVIEWER | access: confirmed — stryker
 **R-99.** *(v3.1)* The tooling declaration SHOULD be **derived by the PLANNER from project evidence**, not typed by the OWNER: test frameworks from manifests and config files (`package.json` scripts and devDependencies, `pytest.ini`/`pyproject.toml`, `go.mod`, `Cargo.toml`, `playwright.config.*`, `cypress.config.*`, `.maestro/`, `ios/`/`android/` directories, CI workflows), each entry citing the file that proves the tool exists. Entries in `heatwave.config.yaml` override detection where present. A tool declared with neither project evidence nor a config entry is a false access claim under R-63. Where a required test type has no detectable tool, the declaration says so explicitly (R-64) — detection failure is stated, never papered over.
 
 *(v4)* For STANDARD and FULL runs the declaration MUST also carry a `sast` entry, and for FULL runs a `mutation` entry — the REVIEWER's ladder rungs consume them (R-110). Detect them from project evidence like any other tool (a Semgrep/CodeQL config, `stryker.conf.*`, `mutmut`/`cargo-mutants` in dev-dependencies, CI workflows); `tooling.sast` / `tooling.mutation` in `heatwave.config.yaml` override detection. A mutation entry states its timeout ceiling. No evidence and no config entry → the entry reads `NOT AVAILABLE`, naming the acceptance criteria left unverified (R-64) — the rung then degrades per R-110, never silently.
+
+*(v4-D)* Companion detection follows the same evidence discipline (R-120): a secret scanner from a gitleaks binary on PATH, a `.gitleaks.toml`, or a pre-commit hook (`tooling.secrets` in config overrides); UI-evidence capture from Playwright MCP presence in the agent environment (`tooling.ui_evidence` overrides); a docs companion from context7 MCP presence (`tooling.docs` overrides). LIGHT+ declarations SHOULD carry a `secrets` entry — `NOT AVAILABLE` when nothing is detected (R-64) — feeding the FINAL_REVIEW secrets rung (R-121).
+
+**R-122.** *(v4-D)* **Change surface.** For LIGHT+ runs the tooling declaration MUST carry a `change_surface` line: the subset of {auth, payments, external-input, new-endpoint, ui, deps, secrets, api-surface} the change touches, or `none`, with one line of justification, declared by the PLANNER from the plan's own scope (the Appendix C review-scope categories are its evidence). `external-input` means any handling of untrusted input — external, user-supplied, or crossing a service or trust boundary — the input-handling class, not only input originating outside the system. It is consumed by the companion gates: the semantic security pass fires on {auth, external-input, deps, secrets, api-surface}, UI-evidence capture on {ui}, dynamic security per R-119. Misclassification is a valid REVIEWER finding — minimum Major when it would have suppressed a security companion. EXPRESS runs have no plan and no change surface; companions never fire on EXPRESS.
 
 ---
 
