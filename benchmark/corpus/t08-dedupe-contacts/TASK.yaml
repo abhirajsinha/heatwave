@@ -1,0 +1,8 @@
+id: t08-dedupe-contacts
+type: feature
+trap: implied-edge-case
+difficulty: easy
+module: dedupe.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
