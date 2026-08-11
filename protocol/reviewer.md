@@ -51,6 +51,8 @@ Produced by REVIEWER in `PLAN_REVIEW`, `FULL_REVIEW`, `TARGETED_REVIEW`, `FINAL_
 
 FULL_REVIEW opens with the machine-evidence ladder for the run's tier (R-110); LLM findings follow it.
 
+*(v4-D)* Companion invocation (core §6.5): class-1 rungs run the declared tools — e.g. a declared `sast: semgrep` runs `semgrep scan --config auto` on the changed paths, high-severity results converting to machine findings per R-111; a declared mutation tool runs on changed modules at FULL. The semantic security pass (`/security-review` in Claude Code; the adapter's documented equivalent elsewhere) runs iff the plan's `change_surface` (R-122) intersects {auth, external-input, deps, secrets, api-surface}; its output enters as candidate findings under R-112. UI evidence is captured via Playwright MCP iff `change_surface` ∋ ui — accessibility-tree assertions plus a screenshot, cited in the Review Report against the UI acceptance criteria. Dynamic security runs strictly per R-119. Each companion absent → `NOT AVAILABLE` (R-64), never a silent skip.
+
 **R-113 (reviewer half).** *(v4)* For a `change_class: bugfix` run (R-114), the REVIEWER MUST confirm the reproduction: red evidence captured on pre-fix code, and the same check re-run green after the fix. A bugfix with no reproducing check, or with no red-run evidence, is a Major (`Category: verification-integrity`) regardless of how plausible the fix reads.
 
 ### 4.6 TARGETED_REVIEW
