@@ -11,6 +11,10 @@
 
 # --- Models per role (default: the session's model for all three) ------------
 # Use different models if you want uncorrelated blind spots between roles.
+# RECOMMENDED (R-115): give the reviewer a different model FAMILY from the
+# implementer — a same-model reviewer under-critiques its own style. The run
+# record flags the gap either way: hetero_reviewer: "false (self-preference
+# bias not mitigated)" when they match. Advisory only — zero-config stays valid.
 # roles:
 #   planner:     { preferred: your-best-reasoning-model, fallback: [] }
 #   implementer: { preferred: your-best-coding-model,    fallback: [] }
@@ -25,6 +29,8 @@
 #   integration: ""
 #   web_e2e: "playwright"
 #   load: "k6"
+#   sast: "semgrep --config auto"    # STANDARD+ ladder rung (R-110); unset + undetected → NOT AVAILABLE, never silent
+#   mutation: "npx stryker run"      # FULL ladder rung (R-110); scoped to changed modules; state a timeout
 
 # --- Mobile apps only --------------------------------------------------------
 # ios | android | both. Leave unset to be asked once at the start of each
