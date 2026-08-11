@@ -153,7 +153,7 @@ roles:
 
 **R-12.** The same underlying model MAY fill multiple roles provided R-1 and R-2 (distinct contexts) hold. Model identity is not the isolation boundary; context is.
 
-**R-115.** *(v4)* The reviewer role SHOULD resolve to a different model family from the implementer — a same-model reviewer under-critiques work in its own style, and uncorrelated blind spots are the cheapest review upgrade — but this is never required: zero-config (the session model in all roles) remains fully valid. When BOTH the implementer and reviewer roles have resolved for the run — at the first FULL_REVIEW (or LIGHT combined-pass) dispatch — the driver MUST compare the resolved models and record in the Run Record `hetero_reviewer: "true"` when they differ, or `hetero_reviewer: "false (self-preference bias not mitigated)"` when they are the same. If either role's resolved model subsequently changes (R-11 substitution), the driver recomputes and appends the updated value. Advisory only — it never gates and changes no workflow step.
+**R-115.** *(v4)* The reviewer role SHOULD resolve to a different model family from the implementer — a same-model reviewer under-critiques work in its own style, and uncorrelated blind spots are the cheapest review upgrade — but this is never required: zero-config (the session model in all roles) remains fully valid. When BOTH the implementer and reviewer roles have resolved for the run — at the first FULL_REVIEW (or LIGHT combined-pass) dispatch — the driver MUST compare the resolved models and record in the Run Record `hetero_reviewer: "true"` when they differ, or `hetero_reviewer: "false (self-preference bias not mitigated)"` when they are the same. The advisory is written by SETTING the record's `hetero_reviewer` field — the scalar key the run-record template already carries — never by appending a line mid-file or duplicating the key, so the record remains valid YAML; timing is evidenced by record snapshots at dispatch, not by insertion position. If either role's resolved model subsequently changes (R-11 substitution), the driver recomputes and sets the field to the updated value (the substitution entry R-11 already requires preserves the history). Advisory only — it never gates and changes no workflow step.
 
 ---
 
@@ -957,7 +957,7 @@ Rationale:       <why>
 
 **R-85.** The driver MUST dispatch a role with artifacts only, never with another role's transcript.
 
-*(v4)* Two recording duties ride the driver's existing steps: at intake it records `change_class` in `run_config` (R-114 — the PLANNER may correct it, and the correction is recorded); at the first FULL_REVIEW (or LIGHT combined-pass) dispatch — once both the implementer and reviewer roles have resolved — it records the `hetero_reviewer` advisory computed from the resolved models (R-115), recomputing and appending if a later substitution changes either. Neither duty adds a state or a gate.
+*(v4)* Two recording duties ride the driver's existing steps: at intake it records `change_class` in `run_config` (R-114 — the PLANNER may correct it, and the correction is recorded); at the first FULL_REVIEW (or LIGHT combined-pass) dispatch — once both the implementer and reviewer roles have resolved — it records the `hetero_reviewer` advisory computed from the resolved models by setting the record's `hetero_reviewer` field (R-115 — set in place, valid YAML, never a mid-file append or duplicate key), recomputing and re-setting the field if a later substitution changes either. Neither duty adds a state or a gate.
 
 ### 9.2 On-disk run state
 

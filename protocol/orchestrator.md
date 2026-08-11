@@ -61,7 +61,7 @@ Rationale:       <why>
 
 **R-85.** The driver MUST dispatch a role with artifacts only, never with another role's transcript.
 
-*(v4)* Two recording duties ride the driver's existing steps: at intake it records `change_class` in `run_config` (R-114 — the PLANNER may correct it, and the correction is recorded); at the first FULL_REVIEW (or LIGHT combined-pass) dispatch — once both the implementer and reviewer roles have resolved — it records the `hetero_reviewer` advisory computed from the resolved models (R-115), recomputing and appending if a later substitution changes either. Neither duty adds a state or a gate.
+*(v4)* Two recording duties ride the driver's existing steps: at intake it records `change_class` in `run_config` (R-114 — the PLANNER may correct it, and the correction is recorded); at the first FULL_REVIEW (or LIGHT combined-pass) dispatch — once both the implementer and reviewer roles have resolved — it records the `hetero_reviewer` advisory computed from the resolved models by setting the record's `hetero_reviewer` field (R-115 — set in place, valid YAML, never a mid-file append or duplicate key), recomputing and re-setting the field if a later substitution changes either. Neither duty adds a state or a gate.
 
 ### 9.2 On-disk run state
 

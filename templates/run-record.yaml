@@ -16,7 +16,7 @@ roles:
   planner:     { configured: , resolved: , substitution_reason: }
   implementer: { configured: , resolved: , substitution_reason: }
   reviewer:    { configured: , resolved: , substitution_reason: }
-hetero_reviewer: ""      # v4 (R-115): "true" | "false (self-preference bias not mitigated)" — computed from roles.*.resolved once both implementer and reviewer have resolved (first FULL_REVIEW dispatch); blank/absent = pre-v4-B record or not yet computed; advisory, never gates
+hetero_reviewer: ""      # v4 (R-115): "true" | "false (self-preference bias not mitigated)" — computed from roles.*.resolved once both implementer and reviewer have resolved (first FULL_REVIEW dispatch); SET this field in place (never append a new line or duplicate key — R-115); blank/absent = pre-v4-B record or not yet computed; advisory, never gates
 counters:
   plan_iterations: 0
   fix_iterations: 0
