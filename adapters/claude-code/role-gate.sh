@@ -90,6 +90,7 @@ if path:
 # eval / xargs "echo x > src/y" — the write collapses into one unscanned quoted
 # token); a helper script that writes (printf > /tmp/w.sh && sh /tmp/w.sh); a
 # here-doc piped to an interpreter; base64-decoded content; chmod +x && ./writer;
+# a scripted-editor invocation (vim -es / vim -c 'w' / ex driven by a -s script);
 # a redirect inside a quoted awk/interpreter program. The real fix is the OS-sandbox
 # track (read-only bind mounts / seccomp) — this gate is a speed bump against casual
 # drift; bypass attempts land in the audit trail.
@@ -190,6 +191,12 @@ def plain_args(args):
 def nonopt(args):
     return [a for a in args if not a.startswith("-")]
 
+def inplace_flag(raw, short_re):
+    # in-place edit flag: short form (sed -i / -i.bak, perl -pi) OR the GNU long
+    # form --in-place / --in-place=<suffix> an ordinary user would type.
+    return any(re.match(short_re, a) or a == "--in-place" or a.startswith("--in-place=")
+               for a in raw)
+
 def scan_tools(seg):
     if not seg:
         return False
@@ -201,11 +208,11 @@ def scan_tools(seg):
     if cmd == "tee":
         return any(not allowed_target(a) for a in na)               # no files → stdout only → allow
 
-    if cmd == "sed" and any(a.startswith("-i") for a in raw):
+    if cmd == "sed" and inplace_flag(raw, r'^-i'):
         rest = na[1:]                               # drop the script arg
         return (not rest) or any(not allowed_target(a) for a in rest)
 
-    if cmd == "perl" and any(re.match(r'^-[A-Za-z]*i', a) for a in raw):
+    if cmd == "perl" and inplace_flag(raw, r'^-[A-Za-z]*i'):
         rest = na[1:]
         return (not rest) or any(not allowed_target(a) for a in rest)
 
@@ -249,11 +256,18 @@ def scan_tools(seg):
     return False                                    # unmatched command → err toward ALLOW
 
 blocked = False
+def lex(s, posix):
+    lx = shlex.shlex(s, posix=posix, punctuation_chars=True)
+    lx.whitespace_split = True
+    return list(lx)
+
 try:
-    lexer = shlex.shlex(body_stripped, posix=True, punctuation_chars=True)
-    lexer.whitespace_split = True
-    toks = list(lexer)
-    if scan_redirects(toks):
+    toks = lex(body_stripped, True)                 # quote-stripped: tool/interpreter scans
+    # Redirects are detected on a quote-PRESERVING pass so a quoted literal
+    # operator (grep '>' src) keeps its quotes and is NOT mistaken for a real
+    # shell redirect (echo x > src); posix=True would strip the quotes and
+    # collapse both into a bare '>' token.
+    if scan_redirects(lex(body_stripped, False)):
         blocked = True
     else:
         for seg in segments(toks):
