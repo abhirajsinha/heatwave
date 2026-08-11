@@ -87,6 +87,16 @@ Everything is readable markdown. Check progress anytime: `cat .heatwave/runs/*/s
 No — ceremony scales with risk. A trivial edit runs **EXPRESS**: the change plus one independent machine-gated check — no planner at all. A one-line fix runs a **LIGHT** version (a 4-section plan and one combined review). A normal feature runs the standard loop. Anything touching money, auth, or user data runs the **FULL** version with a production-readiness checklist. What never changes: independent verification before merge, and claims need evidence.
 </details>
 
+## What's new in v4
+
+- **Adaptive intake** — the driver classifies every task on arrival and records the tier; trivial edits run **EXPRESS** (the change plus one independent machine-gated check — no plan at all), and sensitive paths like auth, payments, or migrations can never take that shortcut.
+- **Sharded protocol** — each role loads only its own shard of the rules instead of the whole document, so every context is cheaper; `PROTOCOL.md` is generated from the shards, with a drift check keeping them identical.
+- **Machine-evidence ladder** — the reviewer itself runs the project's tests, then static analysis, then (on FULL-tier work) mutation testing, and converts what the machines find into review findings.
+- **Refute-or-promote** — before a serious finding gates the work, the reviewer must first try to disprove it with a concrete check; only findings that survive are promoted, with the evidence attached.
+- **Reproduce-then-fix** — bugfixes must show the bug first: a failing reproduction before the fix, the same reproduction passing after it.
+- **Stage model-tiering + delta review** — mechanical stages can run on a cheaper model while judgment stages keep the strong one (zero-config default unchanged), and the final review re-checks only what changed since the last approved pass — plus a full machine-gate re-run.
+- **Ecosystem companions** — verified optional add-ons ([companions](COMPANIONS.md)): security scanners, browser evidence, current-docs lookup. None are required — a missing tool is reported as an honest gap, never papered over.
+
 ## Setup (3 minutes)
 
 **Step 1 — clone Heatwave** (anywhere, once):
