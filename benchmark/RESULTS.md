@@ -182,3 +182,43 @@ single-file task LIGHT instead of STANDARD? It does.
   faster, cheaper — but the standing finding stands: headless HEATWAVE is still
   slow, and LIGHT reduces the overhead without erasing it. A terminal-APPROVED
   LIGHT completion and a matched-n comparison remain NOT RUN.
+
+## Addendum — 2026-08-12: model-tiering knob + tier-variance finding
+
+Added an opt-in harness knob `HW_CHEAP_MODEL` (`run.sh`) that pre-seeds a
+`heatwave.config.yaml` with `cheap_model: <id>` into the HEATWAVE arm scratch,
+enabling R-116 stage model-tiering. Unset = zero-config, byte-identical to the
+untiered arm (verified by a deterministic seam self-check + isolated review,
+GATE_MET). Purpose: route LIGHT's cheap-eligible `PLAN_REVIEW` (~6 min on the
+frontier model in the first t01 run) to a fast model, the only frontier-safe
+latency lever — PLANNING, IMPLEMENTING, and the combined FULL+FINAL pass stay
+frontier by R-116 and are untouched.
+
+**The intended LIGHT+haiku measurement did NOT land, for an honest reason.** The
+tiered t01 rerun (`HW_CHEAP_MODEL=claude-haiku-4-5-20251001`, 1500 s cap)
+classified t01 **STANDARD**, not LIGHT — so cheap-tiering correctly did not
+apply (STANDARD `PLAN_REVIEW` is frontier-required, R-116). No LIGHT+haiku
+datapoint was obtained; no speedup is claimed.
+
+| task | arm | cheap_model | outcome | tier | wall_s | cost | last_state |
+|---|---|---|---|---|---|---|---|
+| t01-pagination | heatwave | — (untiered) | timeout | LIGHT | 1502 | 7.75 | FULL_REVIEW |
+| t01-pagination | heatwave | haiku-4-5 | timeout | STANDARD | 1502 | 7.08 | IMPLEMENTING |
+
+**Tier-variance finding (the real result).** The same task classified LIGHT in
+one run and STANDARD in another — but the flip is at cascade **rung 1 (R-102
+sensitive path)**, not the LIGHT/STANDARD boundary, and both runs cite R-103a:
+
+- LIGHT run: "no new public surface … EXPRESS doubtful → LIGHT."
+- STANDARD run: "`pagination.paginate` is imported by callers and defines its
+  public contract → **public API surface (R-102)** → EXPRESS/LIGHT forbidden."
+
+This is the sensitive-path floor working, not inflation: a stub that defines a
+public contract is a defensible read of "public API surface," which R-102
+forces to STANDARD+. The consequence for benchmarking: **every corpus task is a
+function-stub that defines a public contract, so they all straddle the R-102
+line and none reliably classifies LIGHT.** Measuring LIGHT-tiering needs an
+unambiguously-LIGHT task (a bounded fix to already-implemented, non-public
+behavior) — which the current corpus lacks. The knob is landed and correct; a
+clean live LIGHT-tiering number remains NOT MEASURED, blocked on corpus
+suitability rather than on the knob.

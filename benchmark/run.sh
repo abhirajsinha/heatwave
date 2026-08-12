@@ -10,6 +10,7 @@ ARM= TASKS=8 TRIALS=1 ONLY=
 RAW_DEADLINE=${RAW_DEADLINE:-900} HW_DEADLINE=${HW_DEADLINE:-2700}  # seconds; NFR-2. Env-overridable: stub tests use tiny values.
 CLAUDE_BIN=${CLAUDE_BIN:-claude}   # self-test seam: stub binary for zero-cost forced-outcome tests (disclosed in METHODOLOGY)
 HW_MODEL=${HW_MODEL:-}             # optional disclosed model for the heatwave arm (FR-6); unset = session model
+HW_CHEAP_MODEL=${HW_CHEAP_MODEL:-} # optional cheap model for R-116 tiering (heatwave arm); unset = no tiering (zero-config, unchanged)
 CUM_COST_CAP=60 CUM_WALL_CAP=14400             # sweep-cumulative breaker (F-003)
 
 # Verbatim arm prompts (reproduced in METHODOLOGY.md — do not edit one without the other).
@@ -80,7 +81,7 @@ CSV="$BENCH/results/$RUN_ID.csv"
 TRANSCRIPTS="$BENCH/results/transcripts/$RUN_ID"
 mkdir -p "$BENCH/results" "$TRANSCRIPTS"
 echo "run_id,task,arm,trial,outcome,terminal,tier,stage_model,visible_pass,oracle_pass,escaped_defect,wall_secs,cost_usd,notes" > "$CSV"
-echo "binary=$CLAUDE_BIN hw_model=${HW_MODEL:-<session-default>} raw_deadline=${RAW_DEADLINE}s hw_deadline=${HW_DEADLINE}s" \
+echo "binary=$CLAUDE_BIN hw_model=${HW_MODEL:-<session-default>} hw_cheap_model=${HW_CHEAP_MODEL:-<none>} raw_deadline=${RAW_DEADLINE}s hw_deadline=${HW_DEADLINE}s" \
   | tee "$TRANSCRIPTS/run-header.txt"
 
 # F-001: arms run OUTSIDE the repo tree — the corpus/oracle is not discoverable from cwd.
@@ -125,6 +126,10 @@ for TASK_DIR in "$BENCH"/corpus/*/; do
       fixture-bad)  cp "$TASK_DIR/solutions/bad.py"  "$SCRATCH/$MODULE" ;;
       raw)      ARM_MODEL= run_agent "$SCRATCH" "$RAW_DEADLINE" "$RAW_PROMPT" || NOTE="agent-nonzero" ;;
       heatwave) mkdir -p "$SCRATCH/.claude/skills/ui-ux-pro-max"     # F-002: no network clone
+                # R-116 stage model-tiering, opt-in: pre-seed the config so install.sh
+                # (which only creates when absent) leaves it. Unset HW_CHEAP_MODEL => no
+                # file written => zero-config, byte-identical to the untiered arm.
+                [ -n "$HW_CHEAP_MODEL" ] && printf 'cheap_model: %s\n' "$HW_CHEAP_MODEL" > "$SCRATCH/heatwave.config.yaml"
                 sh "$REPO/install.sh" "$SCRATCH" claude > "$SCRATCH/install.log" 2>&1 \
                   || NOTE="install-failed"                           # F-005
                 if [ "$NOTE" != "install-failed" ]; then
