@@ -259,3 +259,44 @@ tier**, observable seconds after start, and it is LIGHT. n=1; the cap was 600 s
 This unblocks the corrected Doc 1 §6 experiment (baseline all-frontier LIGHT vs
 tiered cheap-`PLAN_REVIEW` LIGHT on this fixture). That measurement is NOT YET
 RUN.
+
+## Addendum — 2026-08-12: LIGHT cheap-PLAN_REVIEW measurement (Doc 1 §6; n=1)
+
+Ran the corrected single-variable experiment on `lt01-progress-cap`: two
+HEATWAVE-arm runs, `HW_DEADLINE=1200`, identical except the model serving
+`PLAN_REVIEW`. Both classified **LIGHT** (valid comparison). R-116 routed
+exactly the intended stage — the tiered run's `stage_model` shows
+**haiku on PLAN_REVIEW only**, opus on PLANNING / IMPLEMENTING / the combined
+FULL+FINAL pass (frontier-required) — confirming the tiering knob cheapens the
+one cheap-eligible stage and nothing else.
+
+Real-clock stage timing (state-timeline, ±30 s sampling, n=1 each):
+
+| metric | baseline (all frontier) | tiered (cheap PLAN_REVIEW) |
+|---|---|---|
+| tier | LIGHT | LIGHT |
+| PLAN_REVIEW model | opus-5 | **haiku-4.5** |
+| **PLAN_REVIEW stage wall** | **~6 min** | **~3.5 min** |
+| PLANNING | ~7 min | ~6 min |
+| IMPLEMENTING | ~4 min | ~7.5 min |
+| time to combined-review | +18 min | +18 min |
+| total wall / cost | 1201 s / $6.49 | 1200 s / $6.22 |
+
+**Finding (honest, and slightly humbling):** the cheap model cut the
+`PLAN_REVIEW` **stage** ~40 % (~6 → ~3.5 min) exactly as designed — but
+**total wall time and cost did not move** (both hit the cap at ~+18 min;
+$6.49 vs $6.22 is within noise). The ~2.5 min plan-review saving was swallowed
+by ordinary implementation-stage variance (4 min vs 7.5 min, both opus). This
+is direct evidence for the priority ordering in the Product/Engineering plan
+§9: **model-tiering is the smallest LIGHT lever** — it touches one of four
+sequential frontier dispatches, and inter-dispatch variance already exceeds the
+saving. The real latency lives in the number and per-dispatch cost of the
+frontier round-trips (planning, implementation, combined review), not in which
+model reviews the plan.
+
+**Caveats:** n=1 per arm, 30 s sampling granularity, stage durations are
+stochastic — this is a directional spot-check, not a powered measurement. It
+cannot prove the total-time question either way; it shows the stage-level
+saving is real and that at n=1 it did not surface in the total. No further runs
+spent chasing significance (cost-bounded). The stage-level result + the R-116
+routing verification are the durable takeaways.
