@@ -222,3 +222,40 @@ unambiguously-LIGHT task (a bounded fix to already-implemented, non-public
 behavior) — which the current corpus lacks. The knob is landed and correct; a
 clean live LIGHT-tiering number remains NOT MEASURED, blocked on corpus
 suitability rather than on the knob.
+
+## Addendum — 2026-08-12: LIGHT fixture added and confirmed LIGHT live (n=1)
+
+The corpus-suitability blocker above is now resolved. Added a tier-stratified
+fixture `benchmark/corpus-tiering/lt01-progress-cap/` (behind the `CORPUS`
+knob, frozen reliability corpus untouched): an already-implemented **internal**
+`percent_complete` helper with a `min(pct,99)` bug that corrupts only
+`done==total`. The SPEC is symptom-framed ("bars stall just short of full;
+diagnose why the finished state is wrong") — no line naming, no
+public-contract/API language — so the driver has no legitimate R-102 hook and
+the defect is not a single handed-over locatable edit.
+
+Confirmatory live run (`HW_DEADLINE=600 CORPUS=corpus-tiering`, n=1):
+
+| task | arm | tier | change_class | wall_s | cost | last_state |
+|---|---|---|---|---|---|---|
+| lt01-progress-cap | heatwave | **LIGHT** | bugfix | 604 | 2.57 | PLANNING (capped) |
+
+The driver's recorded `tier_justification`: *"Bounded fix to one existing
+internal helper in a single file; no sensitive path, no new dependency or
+public surface — but not a copy/config/typo edit (it needs diagnosis +
+behavioral verification), so EXPRESS doubt resolves upward to LIGHT (R-103,
+R-103a rung 3)."* This threads the needle the stub tasks could not: **not
+EXPRESS** (diagnosis required → not a single locatable edit), **not STANDARD**
+(internal single-file bugfix, no R-102 public-API hook). Contrast t01, which
+flipped LIGHT↔STANDARD at rung 1 because it defines a public contract.
+
+Caveat (honest): the run timed out in PLANNING at the 10-min cap, so it is
+non-terminal; `oracle_pass=0 / escaped_defect=1` are **meaningless** for a run
+that never reached implementation (the shipped buggy code was never fixed) —
+they are NOT a real escaped defect. The validated signal is the **intake
+tier**, observable seconds after start, and it is LIGHT. n=1; the cap was 600 s
+(tighter than the plan's 1200 s) because the tier lands at intake.
+
+This unblocks the corrected Doc 1 §6 experiment (baseline all-frontier LIGHT vs
+tiered cheap-`PLAN_REVIEW` LIGHT on this fixture). That measurement is NOT YET
+RUN.
