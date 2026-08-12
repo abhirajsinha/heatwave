@@ -266,3 +266,22 @@ change_surface: **none** — the investigation reads immutable transcripts and p
 - **Full benchmark sweeps** — no ~43-min/task sweep; only `lt01` + `lt-hidden-surface`, only for surviving levers, capped.
 - **Enterprise / multi-repo / CLI scope** — out of scope (sub-projects G/H).
 - **Implementing any lever** — every lever is a separate future Heatwave run gated on this investigation's Phase-0/1 evidence.
+
+---
+
+## Phase 0 Results — MEASURED & VERIFIED (2026-08-12)
+
+Executed. Decomposition script `decompose.py` + table in `.heatwave/runs/light-dispatch-reduction-plan/`; independently re-derived by a separate REVIEWER context (own grouping script, not the table) — **CONFIRMED**, all anchors reproduce, F-001 guard holds (combined pass 18R/9B/0W ≠ the 29/13/2 double-count). n=2 on dispatches 1–3, reported un-averaged; dispatch-4 (combined FULL+FINAL) pending a bounded uncapped run (capped in every trial).
+
+**The measured finding refutes this plan's own Phase-1 ranking rationale.** The rank put pre-supply first because the stages are *Read-heavy by tool count*. The decomposition shows that count is not wall:
+
+- **Generation is 88–94% of every stage's wall** (PLANNING ~280 s, IMPLEMENTING ~378 s, review ~147–303 s).
+- **Total tool-call wall per dispatch is 2–9 s; repo-explore (Read/Grep/Glob) wall is 0.5–1.6 s.** Eliminating repo re-exploration frees ~1 s, not minutes.
+- The cold-start tax lives in **tokens, not wall**: `cache_creation` 95K–269K per cold dispatch; the run's $6.22 is dominated by opus **cache-read 4.28M tokens**.
+- Whole-run idle wait is 1.3–2.3% → generation is genuine compute, not queue wait.
+
+**Reranking (honest, over-claiming in neither direction):**
+- Pre-supply (Levers 2/3/6) is a **cost lever with a measured win** (fewer rebuild tokens) and an **unproven wall win**. Whether handing a dispatch the diff + edit-site cuts any of its 280–378 s of *generation* is not decomposable from these timestamps (generation is one opaque block that may include input-processing pre-supply would shrink). It is neither established that it helps wall nor that it doesn't.
+- **LIGHT wall time is generation-bound.** Under the fixed 4-dispatch gate structure, the wall is dominated by frontier-model generation doing the authoring/review work — inherent to the dispatch, not the context around it.
+
+**Consequence for Phase 2.** The A/B's success metric MUST be **whole-run wall AND `total_cost_usd`**, reported separately: pre-supply may show a real cost reduction with no wall movement (the tiering outcome). A cost-only win is a legitimate result but is NOT the "dispatch reduction for speed" this project set out to find. The remaining genuine *wall* levers are outside context-reuse: a faster frontier model (out of scope), or a materially different gate-preserving structure (a larger bet). This is the value of measuring first — it stops us building pre-supply expecting a speed win it likely cannot deliver.
