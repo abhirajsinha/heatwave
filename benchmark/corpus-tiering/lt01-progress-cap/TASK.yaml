@@ -1,0 +1,10 @@
+id: lt01-progress-cap
+type: bugfix
+trap: boundary-cap
+difficulty: easy
+module: progress.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+tier_expected: LIGHT
+risk_reason: single internal file, already-implemented behavior, no public API, no sensitive path, no new dependency, no cross-file coordination, bugfix not feature

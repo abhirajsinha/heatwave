@@ -6,13 +6,14 @@
 set -eu
 
 BENCH=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+CORPUS=${CORPUS:-corpus}           # corpus root under $BENCH; unset => legacy "corpus" (byte-identical default)
 FAIL=0
 
 meta() { sed -n "s/^$1: //p" "$2/TASK.yaml"; }
 
 printf '%-22s %-8s %-12s %-12s %-12s %-7s\n' task layout good-oracle bad-oracle bad-visible trace
 
-for TASK_DIR in "$BENCH"/corpus/*/; do
+for TASK_DIR in "$BENCH/$CORPUS"/*/; do
   ID=$(basename "$TASK_DIR")
 
   # 1. Layout completeness.

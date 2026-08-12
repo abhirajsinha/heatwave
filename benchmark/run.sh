@@ -12,6 +12,7 @@ CLAUDE_BIN=${CLAUDE_BIN:-claude}   # self-test seam: stub binary for zero-cost f
 HW_MODEL=${HW_MODEL:-}             # optional disclosed model for the heatwave arm (FR-6); unset = session model
 HW_CHEAP_MODEL=${HW_CHEAP_MODEL:-} # optional cheap model for R-116 tiering (heatwave arm); unset = no tiering (zero-config, unchanged)
 CUM_COST_CAP=60 CUM_WALL_CAP=14400             # sweep-cumulative breaker (F-003)
+CORPUS=${CORPUS:-corpus}           # corpus root under $BENCH; unset => legacy "corpus" (byte-identical default)
 
 # Verbatim arm prompts (reproduced in METHODOLOGY.md — do not edit one without the other).
 RAW_PROMPT="Implement the task described in SPEC.md by editing the files in this directory. Make the visible tests pass and satisfy the SPEC completely. When done, stop."
@@ -30,7 +31,7 @@ done
 case "$ARM" in raw|heatwave|fixture-good|fixture-bad) ;; *) echo "bad --arm (raw|heatwave|fixture-good|fixture-bad)" >&2; exit 1 ;; esac
 
 meta() { sed -n "s/^$1: //p" "$2/TASK.yaml"; }
-manifest() { (cd "$BENCH/corpus" && find . -type f | LC_ALL=C sort | xargs shasum -a 256); }
+manifest() { (cd "$BENCH/$CORPUS" && find . -type f | LC_ALL=C sort | xargs shasum -a 256); }
 
 with_deadline() {  # $1=secs, rest=cmd. No timeout(1) on macOS. Kills the PROCESS GROUP (F-004).
                    # On expiry touches "$DL_MARK" (when set) BEFORE TERM — the timeout is
@@ -101,7 +102,7 @@ BEFORE=$(manifest)
 CUM_COST=0 CUM_WALL=0 CANARY_COST=
 
 count=0
-for TASK_DIR in "$BENCH"/corpus/*/; do
+for TASK_DIR in "$BENCH/$CORPUS"/*/; do
   ID=$(basename "$TASK_DIR")
   [ -n "$ONLY" ] && case ",$ONLY," in *,"$ID",*) ;; *) continue ;; esac
   count=$((count+1)); [ "$count" -gt "$TASKS" ] && break
