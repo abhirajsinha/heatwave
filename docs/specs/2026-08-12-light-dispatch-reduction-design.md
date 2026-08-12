@@ -271,7 +271,7 @@ change_surface: **none** — the investigation reads immutable transcripts and p
 
 ## Phase 0 Results — MEASURED & VERIFIED (2026-08-12)
 
-Executed. Decomposition script `decompose.py` + table in `.heatwave/runs/light-dispatch-reduction-plan/`; independently re-derived by a separate REVIEWER context (own grouping script, not the table) — **CONFIRMED**, all anchors reproduce, F-001 guard holds (combined pass 18R/9B/0W ≠ the 29/13/2 double-count). n=2 on dispatches 1–3, reported un-averaged; dispatch-4 (combined FULL+FINAL) pending a bounded uncapped run (capped in every trial).
+Executed. Decomposition script `decompose.py` + table in `.heatwave/runs/light-dispatch-reduction-plan/`; independently re-derived by a separate REVIEWER context (own grouping script, not the table) — **CONFIRMED**, all anchors reproduce, F-001 guard holds (combined pass 18R/9B/0W ≠ the 29/13/2 double-count). n=2 on dispatches 1–3, reported un-averaged. **Dispatch-4 (combined FULL+FINAL) now measured** on the first fully-terminal LIGHT run (run `20260812T094216Z`, reached APPROVED, graded, oracle-pass/0-escaped, ~31 min / $9.98): combined-review wall 534.8 s, **generation 502.9 s = 94.0%**, tool-call wall 8.3 s (repo-explore 1.6 s) — it confirms the generation-bound finding across all four dispatches, no longer pending.
 
 **The measured finding refutes this plan's own Phase-1 ranking rationale.** The rank put pre-supply first because the stages are *Read-heavy by tool count*. The decomposition shows that count is not wall:
 
