@@ -56,6 +56,9 @@
 #   final_iterations: 2
 
 # --- Default tier when the planner doesn't argue otherwise (§0.5) ------------
+# Rung-4 fallback of the intake cascade (R-103a): used only when a task is neither
+# sensitive, EXPRESS-eligible, nor bounded-LIGHT. NOT a floor — it never suppresses
+# the EXPRESS or LIGHT rungs.
 # default_tier: STANDARD
 
 # --- EXPRESS tier (§0.5, R-103) ----------------------------------------------

@@ -65,8 +65,8 @@ Ceremony scales to the change; independent verification does not. Every tier exc
 | Tier | Applies to | Planning Document | Reviews |
 |---|---|---|---|
 | **EXPRESS** *(v4)* | A single obvious edit: copy, label, color, config value, typo. No new surface. | None — no Planning Document. | No PLAN_REVIEW. IMPLEMENTER makes the change; one independent EXPRESS_CHECK (deterministic machine gate + fresh-context confirmation glance) gates APPROVED. Any failure promotes to LIGHT — EXPRESS never loops. |
-| **LIGHT** | Single-file fixes, copy changes, config tweaks with no new surface | Problem statement, acceptance criteria (may be a single AC-F), review scope, tooling declaration. All other sections MAY be collapsed to one `N/A — LIGHT tier` line each. | PLAN_REVIEW still precedes IMPLEMENTING. FULL_REVIEW and FINAL_REVIEW MAY be combined into one REVIEWER pass (full evaluation + per-criterion acceptance status + readiness checklist). A combined pass that fails behaves as a FINAL_REVIEW failure: → FIXING, increments `final_iterations`, next review is FULL (R-14). |
-| **STANDARD** | A feature or bugfix touching one subsystem | All sections; N/A allowed per R-20. | Full state machine. |
+| **LIGHT** | Single-file (or a few closely-related same-subsystem) fixes, copy changes, config tweaks with no new surface | Problem statement, acceptance criteria (may be a single AC-F), review scope, tooling declaration. All other sections MAY be collapsed to one `N/A — LIGHT tier` line each. | PLAN_REVIEW still precedes IMPLEMENTING. FULL_REVIEW and FINAL_REVIEW MAY be combined into one REVIEWER pass (full evaluation + per-criterion acceptance status + readiness checklist). A combined pass that fails behaves as a FINAL_REVIEW failure: → FIXING, increments `final_iterations`, next review is FULL (R-14). |
+| **STANDARD** | A feature, or a bugfix larger than a single bounded fix, touching one subsystem | All sections; N/A allowed per R-20. | Full state machine. |
 | **FULL** | Cross-cutting changes: schema migrations, auth, new services, anything touching money or user data | All sections, no collapsed entries; non-functional criteria mandatory. | Full state machine; FINAL_REVIEW checklist (8.3) item-by-item. |
 
 **R-0a.** The PLANNER proposes the tier in the Planning Document with one line of justification; the REVIEWER MAY raise it (never lower it) at PLAN_REVIEW.
@@ -77,7 +77,16 @@ Ceremony scales to the change; independent verification does not. Every tier exc
 
 **R-102.** *(v4)* A task touching authentication, payments/money, user data, schema/migrations, or public API surface MUST be classified STANDARD or higher. EXPRESS is forbidden on these paths.
 
-**R-103.** *(v4)* EXPRESS applies only when ALL hold: no sensitive path (R-102); estimated ≤ 2 files; no new dependency; no new public surface; the change is a single, locatable edit. Any doubt resolves upward.
+**R-103.** *(v4)* EXPRESS applies only when ALL hold: no sensitive path (R-102); estimated ≤ 2 files; no new dependency; no new public surface; the change is a single, locatable edit. Any doubt about EXPRESS eligibility resolves upward to LIGHT — the next rung (R-103a) — not to the default tier.
+
+**R-103a.** *(v4.1)* Intake is an ordered cascade; the driver takes the FIRST rung that holds and records it with its one-line justification (R-101):
+
+1. **Sensitive path (R-102)** — auth, payments/money, user data, schema/migrations, public API → STANDARD or higher. This rung wins over every lower rung; EXPRESS and LIGHT are forbidden here.
+2. **EXPRESS (R-103)** — all five R-103 conditions hold → EXPRESS.
+3. **LIGHT** — otherwise, when the change is bounded and low-risk: a fix or small change to an EXISTING surface, estimated to a single file or a few closely-related same-subsystem files, no new dependency, no new public surface. EXPRESS ruled out by doubt (R-103) lands here — one rung up — not at STANDARD.
+4. **STANDARD / FULL** — otherwise: multi-file or cross-subsystem work, a new service, schema, or public surface — STANDARD, or FULL per §0.5.
+
+This ordered cascade is authoritative over the §0.5 table's descriptive "Applies to" column when they appear to differ. The cascade classifies intake only; it never caps later promotion — the PLANNER and REVIEWER MAY still raise the tier (R-0a, R-101), and scope growth mid-run re-plans at a higher tier (R-0b, R-105). `default_tier` (config) is the rung-4 fallback, not a floor.
 
 **Machine-evidence rigor by tier** *(v4)* — review is machine-first and scales with tier:
 
