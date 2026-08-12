@@ -155,3 +155,30 @@ sh benchmark/run.sh --arm heatwave --only t01-pagination
 Cumulative breaker never tripped ($60 / 14400 s caps intact); the reduction to
 a single real HEATWAVE task was an explicit operator cost bound, stated here
 rather than hidden.
+
+## Addendum — 2026-08-12: post intake-fix t01 spot-check (n=1, no delta)
+
+After the intake tier-inflation fix (`main@965b1ad`, v4.1 R-103a ordered
+cascade), t01-pagination was re-run on the HEATWAVE arm under a disclosed
+1500 s cap to check ONE thing: does the live driver now classify this small
+single-file task LIGHT instead of STANDARD? It does.
+
+| task | arm | outcome | tier | vis | ora | escape | wall_s | cost_usd | last_state |
+|---|---|---|---|---|---|---|---|---|---|
+| t01-pagination | heatwave | timeout | **LIGHT** | 1 | 1 | 0 | 1502 | 7.75 | FULL_REVIEW (LIGHT combined pass) |
+
+- **Confirmed (the only claim made):** intake now routes t01 to **LIGHT**, not
+  STANDARD. The driver's recorded `tier_justification` cites the fix directly —
+  "non-trivial validation/boundary logic makes EXPRESS doubtful, so it resolves
+  upward one rung to LIGHT (R-103/R-103a)" — i.e. doubt resolved to LIGHT (one
+  rung), not to the STANDARD default. This is the E2 inflation removed, observed
+  live end-to-end, not just in the deterministic decision-table check.
+- **NOT claimed:** a cost/time delta. The run hit the 1500 s cap still inside the
+  LIGHT combined FULL+FINAL review pass (`oracle_pass=1` — the implementation was
+  correct; the run was grinding review ceremony, not stuck on the code), so it did
+  NOT reach terminal APPROVED. For reference only (n=1, not a controlled compare):
+  the pilot t01 at STANDARD was watchdog-killed at 3236 s non-terminal; this LIGHT
+  run reached FULL_REVIEW with correct code in 1502 s / $7.75. LIGHT got further,
+  faster, cheaper — but the standing finding stands: headless HEATWAVE is still
+  slow, and LIGHT reduces the overhead without erasing it. A terminal-APPROVED
+  LIGHT completion and a matched-n comparison remain NOT RUN.
