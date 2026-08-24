@@ -60,6 +60,14 @@ Conforming: *"AC-N-01: p95 latency for `GET /notes` ≤ 200ms at 50 rps, measure
 
 **R-106 (planner half).** *(v4)* When the run-config says `design_doc: true`, the PLANNER emits `docs/design/<task-id>.md` (path per `design_doc_path`) from `templates/technical-design.md` *before* the Planning Document, and the Planning Document references it. It is an input to the plan (resolution per core §2.5); acceptance criteria and every gate are unchanged by its presence.
 
+#### 3.2.4 Jira-sourced planning *(v4.3)*
+
+**R-128 (planner half).** *(v4.3)* On a Jira-sourced run the PLANNER receives the Requirement Brief as its task statement and the driver's recorded `repo_ownership` verdict. If the PLANNER's own investigation produces evidence that the current repository does **not** own the work — the brief's behavior lives in another service, the entry points are absent — it MUST overturn a `correct` verdict in the Planning Document, carrying the evidence; the driver then returns to the R-128 repository-resolution checkpoint (core §9.8). This needs no Escalation Report and no dispatch: the plan carries the evidence and the driver holds the checkpoint.
+
+**R-130 (planner half).** *(v4.3)* A Jira-sourced Planning Document (and, at LIGHT, the LIGHT Plan) MUST carry a `jira_ac_map`: every `J-AC-i` from the brief mapped to one or more plan acceptance-criteria ids. The map MUST cover every J-AC; the plan MUST NOT narrow or redefine a J-AC (the requirement is the ticket's, not the plan's — reviewer half, R-130 in the reviewer shard, makes an unmapped or redefined J-AC a Major). A plan AC with **no** J-AC source is tagged `derived` and justified — ambiguity is surfaced (Unknowns / the GO checkpoint), never resolved by invention. Text runs carry no `jira_ac_map`; it is a required-iff-Jira field, not an N/A row on every plan.
+
+For Jira-sourced runs the PLANNER's review-scope discovery (§3.2) follows the design-doc §4.3 **funnel**: requirement (the brief) → domain terms → entry point in the codebase → call flow → files touched → tests. This is existing PLANNER investigation work focused by the brief, not a new artifact.
+
 ---
 
 ## 4. Stage Rules

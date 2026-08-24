@@ -65,6 +65,19 @@ AC-N-01 | <metric> <operator> <threshold> under <conditions> | Verification: <me
 
 <or: "No non-functional constraints because <justification>" (R-23)>
 
+## Jira Traceability (jira_ac_map)
+
+<!-- Jira-sourced runs ONLY — omit this section entirely for text runs (required-iff-jira, R-130;
+     not an N/A row on a text plan). Every J-AC from the Requirement Brief maps to ≥1 plan AC;
+     an unmapped or redefined J-AC is a Major at PLAN_REVIEW. A plan AC with no J-AC source is
+     tagged `derived` and justified. -->
+
+| J-AC | Plan AC(s) | Note |
+|---|---|---|
+| J-AC-1 | AC-F-01 | |
+
+Derived ACs (no J-AC source): <AC-id — justification, or None> (R-130)
+
 ## Review Scope
 
 Applicable

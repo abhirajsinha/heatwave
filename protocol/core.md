@@ -280,7 +280,9 @@ run_config:
   tier_justification: ""   # one line, R-101 — active
   design_doc: false        # true | false — active (STANDARD/FULL only)
   change_class: feature    # v4: bugfix | feature — driver initial, plan author authoritative (R-114; at LIGHT the IMPLEMENTER, R-123) — active
-  autonomy: autopilot      # RESERVED (G/H): autopilot | gated | interactive — recorded only, no branching (YAGNI)
+  source: { kind: text }   # v4.3: text | jira | jira-pasted — ticket-sourced intake (R-127); absent = text, byte-identical to pre-4.3
+  repo_ownership: {}        # v4.3: repository-ownership verdict recorded before any dispatch (R-128); absent = current-repo default (correct)
+  autonomy: autopilot      # v4.3 ACTIVE (R-129): autopilot | gated — gated = one pre-code OWNER GO checkpoint; default gated for jira source, autopilot for text (interactive still RESERVED, G/H)
   scope: single_repo       # RESERVED (G): single_repo | multi_repo — recorded only, no branching (YAGNI)
 ```
 
@@ -288,7 +290,7 @@ run_config:
 
 **R-114.** *(v4)* At intake the driver records `change_class` in `run_config`: `bugfix` when the task's purpose is to correct defective existing behavior, else `feature`. The plan author (PLANNER; at LIGHT the IMPLEMENTER, R-123) declares the authoritative class in the Planning Document with one line of justification and MAY correct the driver's value (the correction is recorded in the Run Record). EXPRESS runs never carry a change class — EXPRESS has no plan. Misclassification is a valid REVIEWER finding. Only `bugfix` alters behavior (R-113); a record without the field reads `feature`.
 
-Only `tier`, `tier_justification`, `design_doc`, and `change_class` drive behavior. `autonomy` and `scope` are RESERVED for sub-projects G/H: recorded with defaults that reproduce current behavior, consulted by nothing (YAGNI). A Run Record without a `run_config` block (pre-v4) is read as `tier` from `state.yaml`, `design_doc: false`, `autonomy: autopilot`, `scope: single_repo`, `change_class: feature`.
+Behavior-driving fields: `tier`, `tier_justification`, `design_doc`, `change_class`, and — from v4.3 — `source`, `repo_ownership`, and `autonomy` (the Jira-mode intake path: ticket source R-127, repository-ownership gate R-128, GO checkpoint R-129; the GO itself is recorded top-level as `go:` in the Run Record, not in `run_config`). `scope` stays RESERVED for sub-project G: recorded with a default that reproduces current behavior, consulted by nothing (YAGNI). A Run Record without a `run_config` block (pre-v4) is read as `tier` from `state.yaml`, `design_doc: false`, `autonomy: autopilot`, `scope: single_repo`, `change_class: feature`; a v4.3 field absent from a v4–v4.2 record reads as the text-mode default — `source: {kind: text}`, `repo_ownership: {verdict: correct}`, `autonomy: autopilot` — so pre-4.3 runs behave byte-identically.
 
 ---
 

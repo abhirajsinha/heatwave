@@ -73,6 +73,26 @@ roles:
 # design_doc: ask        # ask | always | never; unset = never for existing repos, ask for greenfield
 # design_doc_path: docs/design
 
+# --- Jira mode (v4.3, R-127–R-130) — ALL optional; unset = today's behavior ---
+# Ticket-sourced runs: a Jira key or browse URL in the task makes the driver fetch
+# the ticket read-only via the Atlassian MCP into a Requirement Brief, verify the
+# repo owns the work, and pause once for an OWNER GO before any code. Zero new
+# dispatches. Install the MCP: see COMPANIONS.md (Atlassian row).
+# jira:
+#   mode: auto              # auto | always | never. auto = detect a key/URL (R-127);
+#                           # always = every run must carry a ticket (keyless → one ask);
+#                           # never = keys ignored, every run is a text run.
+#   autonomy: gated         # gated | autopilot — default for JIRA-SOURCED runs only
+#                           # (text runs stay autopilot). gated = one pre-code GO checkpoint.
+#   repo_search_roots: []   # override the derived $HOME depth-6 bound of the R-128 local
+#                           # search (e.g. ["/work", "/src"]); unset = the derived default.
+#   trusted_owners: []      # OPTIONAL allowlist of GitHub owners/orgs whose repos may be
+#                           # offered as a clean clone option at R-128 rung 4 (e.g. ["acme-inc"]).
+#                           # The trusted set is ALWAYS your login + your orgs; this only ADDS
+#                           # orgs you work with but aren't a member of. Disk presence never
+#                           # confers trust — a ticket naming a disk-only owner is flagged with
+#                           # no clone option regardless (R-128 rung 3).
+
 # --- Speed / token engine (v4, R-116–R-118) — ALL optional; unset = today's ---
 # --- behavior: every stage on the session/role model, fresh contexts.      ---
 # cheap_model: ""              # opt-in second model for MECHANICAL stages ONLY (R-116):

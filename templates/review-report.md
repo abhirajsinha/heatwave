@@ -29,6 +29,12 @@ Late findings: <per R-60, or "None">
 | AC ID | Status (Satisfied / Not satisfied / Unverified) | Evidence |
 |---|---|---|
 
+<!-- Jira-sourced runs ONLY (R-130 final half): FINAL_REVIEW carries this traceability table;
+     a J-AC with no verified AC blocks APPROVED (R-66). Omit for text runs. -->
+
+| J-AC | AC | Evidence | Status |
+|---|---|---|---|
+
 ## Findings
 <summary per finding; canonical detail lives in NN-findings-K.yaml (R-109)>
 

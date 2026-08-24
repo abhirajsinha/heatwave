@@ -76,6 +76,14 @@ No special command, no magic words. The adapter makes your agent check for the p
 
 The loop runs non-stop. You're interrupted only for: the platform question (once), an escalation (a budget ran out — you get one specific question), or a decision the protocol reserves for humans.
 
+### Or give it a Jira key (v4.3)
+
+Instead of prose, hand it a ticket:
+
+> "NAV-1234"
+
+or a browse URL, or `jira: NAV-1234`. If the [Atlassian MCP](../COMPANIONS.md) is connected, the driver fetches the story read-only and writes `00-requirement-brief.md` — the problem, the expected behavior, and the ticket's acceptance criteria copied verbatim (or, when the ticket has none, inferred and clearly tagged `derived`, never invented). It then confirms the run is in the repository that owns the work: if that repository is not on your machine, it searches (over a stated bound it tells you), and only if it is genuinely absent does it look on GitHub and **ask before cloning** — it never clones on its own, and never even offers to download from an owner it has no reason to trust. Before any code is written, it shows you a one-screen summary — ticket, requirement, repository, plan, risks — and waits for your **GO**. Every Jira acceptance criterion is then tracked all the way to the final review, so "the build passes" can never quietly stand in for "the story is done." All of this is bookkeeping the coordinator already does; it adds no extra AI calls. If the MCP is not connected, it says so and asks you to paste the ticket — it never silently falls back to treating your key as plain text. Turn it off entirely with `jira.mode: never`.
+
 ## Step 5 — Reading a run (optional but satisfying)
 
 Everything is plain markdown in `.heatwave/runs/<task>/`:

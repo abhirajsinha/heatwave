@@ -15,6 +15,7 @@ AC-F-01 | <observable behavior> | Verification: <executable method>
 AC-N-01 | <metric> <op> <threshold> under <conditions> | Verification: <method>   — or:  AC-N: none — <reason> (R-23)
 review_scope: <files to touch>; categories: <applicable Appendix C names>
 tooling: <test command> — <evidence file>; secrets: <tool | NOT AVAILABLE> (R-99, R-121)
+jira_ac_map: <J-AC-i → AC ids | not a jira-sourced run> (R-130 — required-iff-jira)
 
 ## Files Changed
 | Path | Change type | Line delta |

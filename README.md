@@ -89,6 +89,7 @@ No — ceremony scales with risk. A trivial edit runs **EXPRESS**: the change pl
 
 ## What's new in v4
 
+- **Jira mode (v4.3)** — hand it a Jira key (`NAV-1234`) or a ticket URL and it fetches the story read-only through the Atlassian MCP, writes down what the ticket actually asks for, verifies the run is in the repository that owns the work — and if that repository is not on your machine it searches, then asks before ever cloning — and pauses once for your explicit go-ahead before any code. It adds zero AI calls, so runs stay exactly as fast and cheap as before.
 - **Two-dispatch LIGHT (v4.2)** — a bounded fix skips the separate planning and plan-review dispatches: the implementer writes a short capped plan then the code, and one independent reviewer judges plan and code together in a single combined pass. All four gates hold — the plan is still reviewed by a separate context before approval.
 - **Adaptive intake** — the driver classifies every task on arrival and records the tier; trivial edits run **EXPRESS** (the change plus one independent machine-gated check — no plan at all), and sensitive paths like auth, payments, or migrations can never take that shortcut.
 - **Sharded protocol** — each role loads only its own shard of the rules instead of the whole document, so every context is cheaper; `PROTOCOL.md` is generated from the shards, with a drift check keeping them identical.
@@ -189,7 +190,7 @@ The honest status: the pilot run is **inconclusive** — too few completed proto
 | **[Getting started](docs/getting-started.md)** | Full walkthrough: install → config → first task → resuming → troubleshooting |
 | **[The loop](docs/loop.md)** | How never-losing-progress works under the hood |
 | **[FAQ](docs/faq.md)** | One model? Too much ceremony? What stops the AI from cheating? |
-| **[PROTOCOL.md](PROTOCOL.md)** | The full specification — 129 rules, each explaining the failure it prevents |
+| **[PROTOCOL.md](PROTOCOL.md)** | The full specification — 133 rules, each explaining the failure it prevents |
 | **[Benchmark](benchmark/METHODOLOGY.md)** | How the benchmark works and exactly what it does and doesn't show |
 | **[Companions](COMPANIONS.md)** | Verified plugins, skills, and MCP servers that strengthen each role — official channels, licenses checked |
 | **[Adapters](adapters/README.md)** | How to add support for a new AI tool (~20 lines) |

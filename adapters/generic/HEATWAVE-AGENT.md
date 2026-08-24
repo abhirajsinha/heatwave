@@ -28,3 +28,5 @@ If a non-terminal run exists for the task the user mentions, resume at its recor
 - Run non-stop (R-95–R-97): finish your role's artifact completely in this session — never stop mid-artifact to ask permission or end with "let me know how to proceed". The only valid stops are a terminal state, an escalation with its one answerable question, or a decision the protocol reserves for the human.
 
 Exempt: conversational turns, and spikes explicitly labeled as such at the outset (§0.4).
+
+Jira mode (v4.3): when a task names a Jira issue — a key like `NAV-1234` as its first token, or an `atlassian.net/browse/<KEY>` URL — the driver fetches the ticket read-only through the Atlassian MCP and works from a structured Requirement Brief; if the MCP is absent it reports `NOT AVAILABLE` with the install pointer and asks you to paste the ticket, never a silent fall-through to free text (R-127–R-130).

@@ -10,7 +10,9 @@ run_config:            # written by the driver at intake (core §2.5); absent in
   tier_justification: ""   # one line, R-101 — active
   design_doc: false        # true | false — active (STANDARD/FULL only, R-106)
   change_class: feature    # v4: bugfix | feature — driver initial, plan author authoritative (R-114; at LIGHT the IMPLEMENTER, R-123); absent = feature
-  autonomy: autopilot      # RESERVED (G/H): autopilot | gated | interactive — recorded only, no branching (YAGNI)
+  source: { kind: text, key: "", url: "", site: "", fetched: "" }   # v4.3 (R-127): text | jira | jira-pasted; absent = text (pre-4.3, byte-identical)
+  repo_ownership: { verdict: correct, primary: "", candidates: [], search_bound: "", evidence: "" }   # v4.3 (R-128): verdict correct | elsewhere-local | absent | unknown | multiple; absent = correct
+  autonomy: autopilot      # v4.3 ACTIVE (R-129): autopilot | gated — gated = one pre-code OWNER GO checkpoint; default gated for jira source, autopilot for text (interactive still RESERVED, G/H)
   scope: single_repo       # RESERVED (G): single_repo | multi_repo — recorded only, no branching (YAGNI)
 roles:
   planner:     { configured: , resolved: , substitution_reason: }
@@ -19,6 +21,7 @@ roles:
 hetero_reviewer: ""      # v4 (R-115): "true" | "false (self-preference bias not mitigated)" — computed from roles.*.resolved once both implementer and reviewer have resolved (first FULL_REVIEW dispatch); SET this field in place (never append a new line or duplicate key — R-115); blank/absent = pre-v4-B record or not yet computed; advisory, never gates
 review_session: ""       # v4-C (R-117): persistent | fresh-degraded | fresh-configured — set by the driver at the first post-implementation review dispatch; blank/absent = pre-C record (no session tracking)
 final_delta_range: ""    # v4-C (R-118): "<last-full-sha>..<head-sha>" reviewed at FINAL_REVIEW; blank/absent = pre-C record or explicit full-scope degrade (degrade reason recorded in transitions)
+go: { given: "", at: "", checkpoint: "" }   # v4.3 (R-129): OWNER GO at the pre-code checkpoint — given (go | no-go: replan | no-go: abandon), at (timestamp), checkpoint (pre-plan | post-plan-review); absent = no gate (autopilot / pre-4.3)
 counters:
   plan_iterations: 0
   fix_iterations: 0

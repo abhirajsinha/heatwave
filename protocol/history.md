@@ -51,3 +51,13 @@ Loaded by: never dispatched — rendered into the full generated spec only.
 |---|---|---|
 | Intake as an ordered cascade; LIGHT rung reachable | R-103a | v4.1 — STANDARD inflation at intake (E2) |
 | Two-dispatch LIGHT: plan authored by the IMPLEMENTER before editing, reviewed inside the combined pass; LIGHT output shapes | R-123–R-126; edits to R-0a, R-0b, R-1, R-3, R-7, R-81, R-101, R-104, R-105, R-114, R-116, R-122, §0.5, §2.2, §2.3 | v4.2 — LIGHT cost 4 frontier dispatches (~31 min / $9.98 on lt01); wall is generation-bound (E6/E7) |
+
+---
+
+## Appendix F.3 — Changes in v4.3
+
+| Change | Rules | Addresses |
+|---|---|---|
+| Jira mode: ticket-sourced intake (source + Requirement Brief), repository-ownership gate with a safe missing-repo ladder, one pre-code OWNER GO checkpoint, Jira-AC traceability | R-127–R-130; core §2.5 (`source`, `repo_ownership`, `autonomy` activated); §9.8 | A developer's unit of work is a Jira story, not prose; nothing verified the run was even in the right repository; "build passes" could stand in for "story done". Zero new dispatches / states / tiers / binaries — all driver bookkeeping plus fields on existing artifacts |
+
+**Rule count.** v4.3 adds R-127–R-130, taking the protocol from **129** to **133** distinct rule IDs. The count is derived, never hand-kept: the suffix-aware pattern `grep -ohE '\*\*R-[0-9]+[a-z]?' protocol/*.md | sed 's/\*\*//' | sort -u | wc -l` counts every ID including the lettered R-0a, R-0b, R-103a (a suffix-blind pattern silently drops those three and under-counts by two — the defect that produced a wrong figure during this run's planning). README and this row state 133; both re-derive from that pattern, so the number cannot hand-drift in either direction.

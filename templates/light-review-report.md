@@ -28,6 +28,11 @@ GATE_MET | GATE_NOT_MET — Blockers: N open | Majors: N open | Minor: N | Nit: 
 | AC | Status (Satisfied / Not satisfied / Unverified) | Evidence |
 |---|---|---|
 
+<!-- Jira-sourced LIGHT runs ONLY (R-130 final half): a J-AC with no verified AC blocks APPROVED (R-66). Omit for text runs. -->
+
+| J-AC | AC | Evidence | Status |
+|---|---|---|---|
+
 ## Findings
 <one line each: id | severity | category | location | problem — detail in NN-findings-K.yaml (R-109); or "None">
 
