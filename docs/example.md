@@ -41,7 +41,7 @@ No special command. The agent recognizes production work, creates a run, and ent
 ```yaml
 # state.yaml — right after creation
 task_id: add-health-endpoint
-tier: LIGHT              # proposed by the planner: single-file, no new surface
+tier: STANDARD           # a new /health endpoint is new public surface (R-103a rung 1)
 state: PLANNING
 counters: { plan_iterations: 0, fix_iterations: 0, final_iterations: 0 }
 ```
@@ -91,7 +91,7 @@ Touched: src/app.js (one route added). Consumers: none — new endpoint.
 Shared state/schema: none. Contracts: adds GET /health (additive).
 ```
 
-**The reviewer checks the code against the plan** → `06-review-report.md`. LIGHT tier combines the code review and final review into one pass; it re-runs the tests itself and reports every criterion:
+**The reviewer checks the code against the plan** → `06-review-report.md` (FULL_REVIEW, gate met), then a `07-review-report-final.md` FINAL_REVIEW re-runs the tests itself and reports every criterion:
 
 ```
 ## Verdict
@@ -105,6 +105,8 @@ Blockers: 0 open | Majors: 0 open | Minor: 0 | Nit: 0
 ```
 
 **Done.** `state.yaml` now reads `state: APPROVED`. Your agent tells you the endpoint is ready, and every claim in that sentence has a file behind it.
+
+> **The LIGHT version.** Had this been a bounded change to an *existing* endpoint (no new surface), the driver would have classified it **LIGHT** (R-123): two dispatches, not four. The implementer writes a short plan as §1 of `01-implementation-package.md` *before* it edits, then the code; one independent reviewer judges plan and code together in `02-review-report-1.md`. Same four gates, half the dispatches.
 
 ## 5 · The part that feels like magic: resume
 

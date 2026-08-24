@@ -20,4 +20,7 @@ Argument:              <required for Reclassification proposed | Deferral reques
 ## Blast Radius (fixes)
 <per §5.4, for the fixes themselves>
 
+## LIGHT Plan (revised)
+<!-- LIGHT only, and only when a plan finding was fixed (R-126): restate the corrected LIGHT Plan in full; omit this section otherwise -->
+
 ## Notes

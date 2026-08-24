@@ -18,7 +18,7 @@ Classify the task into a tier yourself (R-101) — no fleet spawns to do this:
 3. Otherwise LIGHT / STANDARD / FULL per core §0.5. The PLANNER may later raise the tier, never lower it.
 4. Record `change_class: bugfix | feature` in `run_config` (R-114) — the PLANNER may correct it; record the correction.
 
-Then: resolve `design_doc` per core §2.5 (from config `design_doc: ask | always | never`; unset defaults: existing repo → `never`, greenfield → `ask`, asked once — alongside the R-98 question when both apply). STANDARD/FULL only: for an EXPRESS or LIGHT run record `design_doc: false` even when config says `always` (core §2.5). Create `.heatwave/runs/<task-id>/`: write the `run_config` block (tier, one-line `tier_justification`, `design_doc`, reserved `autonomy: autopilot`, `scope: single_repo`) into `run-record.yaml` (copied from `.heatwave/templates/run-record.yaml`) and the tier into `state.yaml`, counters at 0. EXPRESS → `state: EXPRESS_IMPLEMENTING`; else → `state: PLANNING`.
+Then: resolve `design_doc` per core §2.5 (from config `design_doc: ask | always | never`; unset defaults: existing repo → `never`, greenfield → `ask`, asked once — alongside the R-98 question when both apply). STANDARD/FULL only: for an EXPRESS or LIGHT run record `design_doc: false` even when config says `always` (core §2.5). Create `.heatwave/runs/<task-id>/`: write the `run_config` block (tier, one-line `tier_justification`, `design_doc`, reserved `autonomy: autopilot`, `scope: single_repo`) into `run-record.yaml` (copied from `.heatwave/templates/run-record.yaml`) and the tier into `state.yaml`, counters at 0. EXPRESS → `state: EXPRESS_IMPLEMENTING`; LIGHT → `state: IMPLEMENTING` (R-123); STANDARD/FULL → `state: PLANNING`.
 
 ## The loop
 
@@ -37,14 +37,17 @@ Repeat until `state` is `APPROVED` or `ABANDONED`:
    | PLANNING | `planner.md` | `core.md` + `planner.md` |
    | PLAN_REVIEW | `plan-reviewer.md` | `core.md` + `reviewer.md` + `planner.md` (the contract under review, incl. §5.1/Appendix C) |
    | IMPLEMENTING | `implementer.md` | `core.md` + `implementer.md` |
+   | IMPLEMENTING (LIGHT) | `implementer.md` (§LIGHT mode) | `core.md` + `implementer.md` + `planner.md` |
    | FULL/TARGETED_REVIEW | `reviewer.md` | `core.md` + `reviewer.md` |
+   | FULL_REVIEW (LIGHT combined) | `final-reviewer.md` | `core.md` + `reviewer.md` + `final-reviewer.md` + `planner.md` |
    | FIXING | `fixer.md` | `core.md` + `fixer.md` |
+   | FIXING (LIGHT) | `fixer.md` | `core.md` + `fixer.md` + `planner.md` |
    | FINAL_REVIEW | `final-reviewer.md` | `core.md` + `reviewer.md` + `final-reviewer.md` |
    | ESCALATED (report) | `reviewer.md` + escalation template | `core.md` + `reviewer.md` |
 
 3. Save the returned artifact into the run directory with the next sequence number (a review's findings ledger + rendered report share one number, R-109).
 4. Apply the transition per core §2.2. Update counters per core §2.3. If a budget is exhausted → `ESCALATED`: produce nothing yourself; dispatch the REVIEWER to write the Escalation Report using `.heatwave/templates/escalation-report.md` (§7.2, R-71–R-72), then stop and present it to the OWNER (the human).
-5. **LIGHT tier (core §0.5):** the FULL_REVIEW dispatch uses the FINAL_REVIEW matrix row (`final-reviewer.md` prompt with `core.md` + `reviewer.md` + `final-reviewer.md`) as the combined FULL+FINAL pass (`review_type: FULL_FINAL_REVIEW (LIGHT)`). Gate met → `APPROVED` directly; gate not met behaves as a FINAL_REVIEW failure (→ FIXING, increments `final_iterations`, next review is FULL per R-14).
+5. **LIGHT tier (core §0.5, R-123):** LIGHT enters `IMPLEMENTING` directly — no PLANNING, no PLAN_REVIEW. The IMPLEMENTER writes the LIGHT Plan as §1 of its package before editing (R-123/R-124); dispatch it with `implementer.md` (§LIGHT mode) + `core.md` + `implementer.md` + `planner.md` (the LIGHT-Plan field contract, R-107). The following `FULL_REVIEW` is the combined FULL+FINAL pass: dispatch `final-reviewer.md` with `core.md` + `reviewer.md` + `final-reviewer.md` + `planner.md` (`review_type: FULL_FINAL_REVIEW (LIGHT)`), where the REVIEWER reviews the LIGHT Plan first (R-125), then the diff, on the LIGHT output shape (R-126). Gate met → `APPROVED` directly; gate not met behaves as a FINAL_REVIEW failure (→ FIXING with `fixer.md` + `planner.md`, increments `final_iterations`, next review is the combined pass again per R-14). A tier-level plan defect → the REVIEWER raises the tier and the run enters `PLANNING` at the raised tier, counters 0 (R-0a/R-125).
 6. Update `state.yaml` and append the transition to `run-record.yaml` **before** dispatching the next role (R-87).
 
 ## EXPRESS path
@@ -52,7 +55,7 @@ Repeat until `state` is `APPROVED` or `ABANDONED`:
 1. `EXPRESS_IMPLEMENTING`: dispatch the IMPLEMENTER per the matrix (EXPRESS mode). Artifact: `01-express-change.md`.
 2. On `Result: done` → `EXPRESS_CHECK`: dispatch `express-checker.md` in a fresh context that did not make the change (R-1/R-2). Artifact: `02-express-check.md`.
 3. `PASS` → `APPROVED`; record the checker's identity + timestamp in the run record (R-82 analog).
-4. `FAIL` or `Result: scope_exceeded` → set the tier per R-104/R-105 (LIGHT, or higher where R-102/R-103 demands), append the promotion justification to the run record, set `state: PLANNING`, and continue the normal loop with counters at 0. EXPRESS never loops.
+4. `FAIL` or `Result: scope_exceeded` → set the tier per R-104/R-105 (LIGHT, or higher where R-102/R-103 demands), append the promotion justification to the run record, set the promoted tier's entry state (`state: IMPLEMENTING` at LIGHT per R-123, `state: PLANNING` at STANDARD+), and continue the normal loop with counters at 0. EXPRESS never loops.
 5. Both artifacts and every transition are recorded (R-16, R-87) so the run resumes anywhere (R-88).
 
 ## Non-stop execution (R-95–R-97)
@@ -61,7 +64,7 @@ Run the loop continuously to a terminal state. You stop ONLY at: (1) APPROVED / 
 
 ## Hard rules
 
-- One state at a time; never skip a state or merge two artifacts into one dispatch (except the LIGHT-tier combined FULL_REVIEW+FINAL_REVIEW pass, core §0.5 — PLAN_REVIEW is never merged away; the EXPRESS tier is its own pipeline per core §2.2, not a merged state).
+- One state at a time; never skip a state or merge two artifacts into one dispatch (except the LIGHT-tier combined FULL_REVIEW+FINAL_REVIEW pass, core §0.5). At LIGHT the plan is §1 of the Implementation Package and is reviewed inside that combined pass (R-123/R-125); at STANDARD/FULL the separate PLAN_REVIEW state is never dropped. The EXPRESS tier is its own pipeline per core §2.2, not a merged state.
 - A context that produced an artifact never reviews it (R-1, R-2).
 - `ESCALATED` waits for the human. Record their Owner Decision Record (§7.3) verbatim, apply its resume state and counter resets, continue.
 - Completed artifacts are immutable (R-89).

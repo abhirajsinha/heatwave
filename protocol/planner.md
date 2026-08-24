@@ -1,6 +1,8 @@
 # Heatwave Protocol — planner (canonical shard)
 
-Loaded by: PLANNING; PLAN_REVIEW (as the contract under review). Section/rule numbers are global to the protocol.
+Loaded by: PLANNING; PLAN_REVIEW (as the contract under review); and, from v4.2, the LIGHT `IMPLEMENTING`, combined pass and `FIXING` as the contract for the LIGHT Plan's fields (R-107, R-123). Section/rule numbers are global to the protocol.
+
+**Not dispatched at LIGHT (R-123).** At LIGHT no PLANNER runs; the IMPLEMENTER authors the **LIGHT Plan** (R-124) as §1 of its Implementation Package and carries every PLANNER duty this shard defines for that plan's fields — acceptance criteria (§3.2.2), review scope (§5.1), tooling declaration and change surface (§6.1, R-122). The authority those rules give the PLANNER reads as the plan author's; the LIGHT Plan is reviewed inside the combined pass (R-125), not in a PLAN_REVIEW state.
 
 ---
 
@@ -31,9 +33,9 @@ Produced by PLANNER in `PLANNING`. Consumed by REVIEWER and IMPLEMENTER.
 | **Review scope** | See 5.1 and Appendix C |
 | **Tooling declaration** | See 6.1 |
 
-**R-19.** A Planning Document missing any required section MUST be rejected in `PLAN_REVIEW` without further evaluation.
+**R-19.** A Planning Document missing any required section MUST be rejected in `PLAN_REVIEW` without further evaluation. (At LIGHT the LIGHT Plan's required fields per R-124 are checked in the combined pass, R-125, not in PLAN_REVIEW.)
 
-**R-20.** Sections that do not apply MUST be marked `N/A` with a one-line justification. Silent omission is a rejection.
+**R-20.** Sections that do not apply MUST be marked `N/A` with a one-line justification. Silent omission is a rejection. (At LIGHT no `N/A` rows are written — R-124 fixes the fields, R-123.)
 
 #### 3.2.2 Acceptance criteria
 
@@ -64,7 +66,7 @@ Conforming: *"AC-N-01: p95 latency for `GET /notes` ≤ 200ms at 50 rps, measure
 
 ### 4.1 PLANNING
 
-**R-33.** The PLANNER MUST produce a complete Planning Document per 3.2 before exiting this state.
+**R-33.** The PLANNER MUST produce a complete Planning Document per 3.2 before exiting this state. (PLANNING is not entered at LIGHT — the IMPLEMENTER writes the LIGHT Plan instead, R-123.)
 
 **R-34.** On re-entry from `PLAN_REVIEW` rejection, the PLANNER MUST address every finding in the rejecting Review Report, using the Fix Report per-finding response schema (3.5) adapted to plan findings.
 
@@ -109,7 +111,7 @@ Mutation     | <per detection/config> | REVIEWER | access: confirmed — stryker
 
 *(v4-D)* Companion detection follows the same evidence discipline (R-120): a secret scanner from a gitleaks binary on PATH, a `.gitleaks.toml`, or a pre-commit hook (`tooling.secrets` in config overrides); UI-evidence capture from Playwright MCP presence in the agent environment (`tooling.ui_evidence` overrides); a docs companion from context7 MCP presence (`tooling.docs` overrides). LIGHT+ declarations SHOULD carry a `secrets` entry — `NOT AVAILABLE` when nothing is detected (R-64) — feeding the FINAL_REVIEW secrets rung (R-121).
 
-**R-122.** *(v4-D)* **Change surface.** For LIGHT+ runs the tooling declaration MUST carry a `change_surface` line: the subset of {auth, payments, external-input, new-endpoint, ui, deps, secrets, api-surface} the change touches, or `none`, with one line of justification, declared by the PLANNER from the plan's own scope (the Appendix C review-scope categories are its evidence). `external-input` means any handling of untrusted input — external, user-supplied, or crossing a service or trust boundary — the input-handling class, not only input originating outside the system. It is consumed by the companion gates: the semantic security pass fires on {auth, external-input, deps, secrets, api-surface}, UI-evidence capture on {ui}, dynamic security per R-119. Misclassification is a valid REVIEWER finding — minimum Major when it would have suppressed a security companion. EXPRESS runs have no plan and no change surface; companions never fire on EXPRESS.
+**R-122.** *(v4-D)* **Change surface.** For LIGHT+ runs the tooling declaration MUST carry a `change_surface` line: the subset of {auth, payments, external-input, new-endpoint, ui, deps, secrets, api-surface} the change touches, or `none`, with one line of justification, declared by the plan author (PLANNER; at LIGHT the IMPLEMENTER, R-123) from the plan's own scope (the Appendix C review-scope categories are its evidence). `external-input` means any handling of untrusted input — external, user-supplied, or crossing a service or trust boundary — the input-handling class, not only input originating outside the system. It is consumed by the companion gates: the semantic security pass fires on {auth, external-input, deps, secrets, api-surface}, UI-evidence capture on {ui}, dynamic security per R-119. Misclassification is a valid REVIEWER finding — minimum Major when it would have suppressed a security companion. EXPRESS runs have no plan and no change surface; companions never fire on EXPRESS.
 
 ---
 

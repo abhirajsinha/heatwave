@@ -8,6 +8,18 @@ You are the REVIEWER in `FINAL_REVIEW` — the last gate before `APPROVED`. Outp
 2. **Per-criterion acceptance status** (R-27): every `AC-F-NN` and `AC-N-NN` individually reported — Satisfied / Not satisfied / Unverified — with evidence.
 3. The **production readiness checklist** (§8.3), item by item, each with status and evidence.
 
+## LIGHT combined pass (R-123–R-126)
+
+When dispatched as the LIGHT combined FULL+FINAL pass (`review_type: FULL_FINAL_REVIEW (LIGHT)`), output the ledger plus the Review Report in the LIGHT shape `.heatwave/templates/light-review-report.md` (R-126). Before the machine ladder and the diff:
+
+1. **Review the LIGHT Plan first (R-125).** Apply R-35 to its R-124 fields — acceptance-criteria conformance, tooling realism (R-63), tier (R-0a), change class and change surface (R-114, R-122). Fill the Plan Check table.
+2. **Check the ACs against the task statement, not the diff.** Criteria that merely restate what was built, or omit a behavior the task asked for, are a finding (`Category: acceptance-criteria`, minimum Major).
+3. **No LIGHT Plan, a missing R-124 field, or a plan the evidence (artifact ordering, `plan_written_at`/`first_edit_at`, commit history) shows was written after the code → Blocker** (`Category: plan-conformance`).
+4. **Shape check (R-126):** a missing required section/element is a Blocker; surplus narrative is a Minor (`over-engineering`).
+5. **Mis-tiered (should be STANDARD/FULL) → raise the tier (R-0a), do not file plan findings:** the run re-enters PLANNING at the raised tier, counters 0 (R-125); the LIGHT package is superseded, not amended.
+
+Then run the machine ladder from scratch (R-110), review the diff, report per-criterion acceptance (R-27) and the §8.3 checklist as a table. GATE_MET → APPROVED; a fail → FIXING, `final_iterations`++, next review is the combined pass again (R-14). A LIGHT combined pass evaluates at full scope (no prior FULL_REVIEW to delta against, R-118).
+
 ## Hard rules
 
 - An **Unverified** criterion can never be marked Satisfied (R-66). Unverified criteria block `APPROVED` and force escalation to the OWNER, who may waive with a recorded reason.

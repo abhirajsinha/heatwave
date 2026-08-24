@@ -64,7 +64,7 @@ Open your agent in the project and ask for something real:
 
 > "Add a dark-mode toggle to the settings screen."
 
-No special command, no magic words. The adapter makes your agent check for the protocol. The driver first classifies the tier — a trivial single edit runs EXPRESS with no plan at all; this walkthrough shows the standard loop:
+No special command, no magic words. The adapter makes your agent check for the protocol. The driver first classifies the tier — a trivial single edit runs EXPRESS with no plan at all; a bounded fix runs LIGHT in two dispatches (the implementer writes the plan then the code, and one combined review judges both); this walkthrough shows the standard loop:
 
 1. **A run directory appears** — `.heatwave/runs/dark-mode-toggle/` with `state.yaml`
 2. *(Mobile projects only)* it asks once: **"Test on iOS, Android, or both?"**

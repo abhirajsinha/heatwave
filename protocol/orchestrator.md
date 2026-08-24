@@ -83,6 +83,8 @@ Rationale:       <why>
 └── ...                   # numbered sequentially in transition order
 ```
 
+A LIGHT run (R-123) has no planning artifacts; its happy-path run directory is `01-implementation-package.md` (LIGHT Plan as §1) and `02-review-report-1.md` + `02-findings-1.yaml` (the combined FULL+FINAL pass), alongside `state.yaml` and `run-record.yaml`.
+
 `state.yaml`:
 
 ```yaml
@@ -120,7 +122,7 @@ Run Record schema is `templates/run-record.yaml`; it is normative. *(v4: replace
 
 ### 9.6 Shard dispatch *(v4)*
 
-**R-107.** *(v4)* The driver dispatches each role with `protocol/core.md` plus the role shard(s) in the dispatch matrix — never the full `PROTOCOL.md`. Context is assembled stable-prefix-first: shards, then config, then prompt, then task artifacts. The ordering is a cache optimization, never a correctness dependency.
+**R-107.** *(v4)* The driver dispatches each role with `protocol/core.md` plus the role shard(s) in the dispatch matrix — never the full `PROTOCOL.md`. Context is assembled stable-prefix-first: shards, then config, then prompt, then task artifacts. The ordering is a cache optimization, never a correctness dependency. At LIGHT, `IMPLEMENTING`, the combined pass and `FIXING` also receive `protocol/planner.md` — the contract for the LIGHT Plan's fields (R-123–R-125).
 
 ### 9.7 Generated protocol *(v4)*
 

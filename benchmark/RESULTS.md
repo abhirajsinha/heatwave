@@ -300,3 +300,59 @@ cannot prove the total-time question either way; it shows the stage-level
 saving is real and that at n=1 it did not surface in the total. No further runs
 spent chasing significance (cost-bounded). The stage-level result + the R-116
 routing verification are the durable takeaways.
+
+---
+
+## Addendum — 2026-08-24: LIGHT-2D two-dispatch A/B (v4.2; n=2)
+
+Measures the v4.2 change that makes a LIGHT run **two dispatches** (IMPLEMENTER
+writes a capped plan then the code; one independent combined FULL+FINAL review)
+instead of four (PLANNING → PLAN_REVIEW → IMPLEMENTING → combined review).
+
+**Command (exactly as run):**
+```
+HW_MODEL='claude-opus-5[1m]' CORPUS=corpus-tiering HW_DEADLINE=1200 \
+  sh benchmark/run.sh --arm heatwave --only lt01-progress-cap --trials 2
+```
+- Repo HEAD at launch: `04b59b5`, working tree **dirty** (the v4.2 change was uncommitted; `install.sh` copies working-tree files into the benchmark scratch, so the runs executed under the new protocol).
+- Model: `HW_MODEL=claude-opus-5[1m]`; CSV `stage_model` = `claude-opus-5[1m]` on **both** new rows.
+- Installed config: the example config's `roles:` block was **commented out for the duration of this A/B only** (restored immediately after), so the runs held the model constant at `claude-opus-5[1m]` rather than inheriting the maintainer role models. `HW_CHEAP_MODEL` unused.
+
+**Baseline (existing terminal LIGHT run, not re-run):** `20260812T094216Z` —
+1878 s / $9.978, oracle pass. Its CSV `stage_model` = **`claude-opus-5[1m]`**.
+
+**No model confound.** Baseline and both new runs ran on the *same* model
+(`claude-opus-5[1m]`, verified from each row's `stage_model`). The wall/cost
+delta is therefore attributable to the ceremony change (four dispatches → two),
+with the model held constant — not to a model difference.
+
+| run_id | tier | outcome/terminal | last_state | dispatches | wall_s | cost_usd | oracle | pkg/report lines | shape check | wall vs 1878 | cost vs $9.98 | target ≤50% |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 20260812T094216Z (baseline) | LIGHT | graded / 1 | APPROVED | 4 | 1878 | 9.978 | pass | 325/163/507/186 (4 artifacts) | — | — | — | — |
+| 20260824T165539Z trial 1 | LIGHT | graded / 1 | APPROVED | 2 (impl + combined review; no planner) | 696 | 4.441 | pass | 141/77 | package PASS, report PASS | 37.1% | 44.5% | **MET** (wall + cost) |
+| 20260824T165539Z trial 2 | LIGHT | graded / 1 | APPROVED | 2 (impl + combined review; no planner) | 692 | 4.414 | pass | 122/71 | package PASS, report +1 surplus `## Approval` section (Minor, R-126 — non-gating) | 36.8% | 44.2% | **MET** (wall + cost) |
+
+- Total cost, 2 paid runs: **$8.855** (≤ $20 budget).
+- Both runs: `state: APPROVED`, tier LIGHT, run-record transitions exactly
+  `START→IMPLEMENTING`, `IMPLEMENTING→FULL_REVIEW`, `FULL_REVIEW→APPROVED`
+  (zero PLANNING/PLAN_REVIEW); `agent.ndjson` shows `heatwave-implementer` and
+  `heatwave-reviewer` as **separate** subagent invocations (no planner
+  dispatched) — R-1/R-2 isolation held with the two contexts that exist.
+- lt01 is a bugfix; each package carries the red→green reproduction (RED: 3/12
+  checks fail on unmodified `progress.py`; GREEN: same check passes after the fix).
+
+**Honesty rule (verbatim):** n=2; directional only; no percentage claim beyond
+what n=2 supports; a miss is a valid result; any unrun or non-terminal run is
+listed as such with its last state; a fabricated hit is a Blocker (R-65).
+
+**Reading:** at n=2, both trials came in at ~37% of baseline wall and ~44% of
+baseline cost — under the ≤50% target on both axes — with the same model, same
+task, same oracle pass. The mechanism is visible in the artifact counts: two
+short capped artifacts (~140/~75 lines) replace four longer ones
+(325/163/507/186), and generation is the wall (E6/E7), so fewer, shorter
+artifacts is less wall. This is a two-sample directional result, not a powered
+measurement; it does not claim a precise percentage, only that the two-dispatch
+structure landed well under the target here. Raw data: CSV
+`benchmark/results/20260824T165539Z-heatwave.csv`; transcripts, run records,
+`agent.ndjson`, and state timelines under
+`benchmark/results/transcripts/20260824T165539Z-heatwave/`.

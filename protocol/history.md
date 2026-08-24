@@ -42,3 +42,12 @@ Loaded by: never dispatched — rendered into the full generated spec only.
 | Machine-evidence ladder, refute-or-promote, reproduce-then-fix, hetero-reviewer visibility | R-110–R-115 | Rigor rested on LLM prose; false-positive Majors cost full fix cycles; "verified" bugfixes were claims; same-model self-preference was invisible |
 | Stage model-tiering, persistent reviewer session, delta-only FINAL_REVIEW | R-116–R-118 | Every stage paid the frontier price; cold review spawns forfeited prompt cache; FINAL re-read files unchanged since the last full review |
 | Companion bindings: deterministic floor auto-use, secrets rung, change-surface gating, opt-in dynamic security | R-119–R-122 | B's gates named no tools; secrets/UI/dynamic/docs evidence had no channel |
+
+---
+
+## Appendix F.2 — Changes in v4.1 and v4.2
+
+| Change | Rules | Addresses |
+|---|---|---|
+| Intake as an ordered cascade; LIGHT rung reachable | R-103a | v4.1 — STANDARD inflation at intake (E2) |
+| Two-dispatch LIGHT: plan authored by the IMPLEMENTER before editing, reviewed inside the combined pass; LIGHT output shapes | R-123–R-126; edits to R-0a, R-0b, R-1, R-3, R-7, R-81, R-101, R-104, R-105, R-114, R-116, R-122, §0.5, §2.2, §2.3 | v4.2 — LIGHT cost 4 frontier dispatches (~31 min / $9.98 on lt01); wall is generation-bound (E6/E7) |

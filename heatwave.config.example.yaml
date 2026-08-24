@@ -76,11 +76,11 @@ roles:
 # --- Speed / token engine (v4, R-116–R-118) — ALL optional; unset = today's ---
 # --- behavior: every stage on the session/role model, fresh contexts.      ---
 # cheap_model: ""              # opt-in second model for MECHANICAL stages ONLY (R-116):
-#                              # EXPRESS_CHECK, driver-side summarization, PLAN_REVIEW of
-#                              # EXPRESS/LIGHT, TARGETED_REVIEW of a small delta. FULL_REVIEW,
-#                              # FINAL_REVIEW, and PLAN_REVIEW of STANDARD/FULL always run the
-#                              # frontier/role model — a config routing them to cheap_model is
-#                              # rejected with a warning, never honored.
+#                              # EXPRESS_CHECK, driver-side summarization, and TARGETED_REVIEW
+#                              # of a small delta. FULL_REVIEW, FINAL_REVIEW, and PLAN_REVIEW of
+#                              # STANDARD/FULL always run the frontier/role model — a config
+#                              # routing them to cheap_model is rejected with a warning, never
+#                              # honored. EXPRESS and LIGHT have no PLAN_REVIEW (R-123).
 # small_diff_threshold: 150    # changed lines; TARGETED_REVIEW at/below this is cheap-eligible
 #                              # (R-116). Default 150 when cheap_model is set and this is not.
 # stage_models: {}             # per-stage overrides WITHIN R-116's sets — may narrow (route an

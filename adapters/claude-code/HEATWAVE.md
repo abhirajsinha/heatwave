@@ -13,6 +13,7 @@ In this session you act as the Heatwave ORCHESTRATOR (`.heatwave/prompts/orchest
 - IMPLEMENTING / FIXING → Task subagent `heatwave-implementer`
 - EXPRESS_IMPLEMENTING → Task subagent `heatwave-implementer` (EXPRESS mode, `prompts/implementer.md` §EXPRESS)
 - EXPRESS_CHECK → Task subagent `heatwave-reviewer` (with `prompts/express-checker.md` — fresh context, R-1/R-2)
+- LIGHT: IMPLEMENTING → Task subagent `heatwave-implementer` (LIGHT mode — writes the LIGHT Plan first, R-123); combined pass → Task subagent `heatwave-reviewer` (with `prompts/final-reviewer.md`); no planner dispatch (R-123)
 
 Review stages and R-117: where your harness can resume a subagent session, reuse the task's reviewer session across FULL→TARGETED→FINAL; where it cannot (one-shot Task subagents), dispatch fresh and record `review_session: fresh-degraded` — explicit, never silent. Either way FINAL re-runs machine gates from scratch and re-confirms every AC (R-117 safety clause). Select each subagent's model per R-116; frontier-required stages never run the cheap model.
 
@@ -30,7 +31,7 @@ A resumed run keeps the SAME discipline as a fresh one: the next artifact per `s
 
 ## Non-negotiable
 
-- Plan first: no implementation before a Planning Document passes PLAN_REVIEW (0 Blockers, 0 Majors) — except the EXPRESS tier, where one independent machine-gated check gates APPROVED (R-104).
+- Plan first: no implementation before a Planning Document passes PLAN_REVIEW (0 Blockers, 0 Majors) — except EXPRESS (R-104), where one independent machine-gated check gates APPROVED, and LIGHT, where the implementer writes the LIGHT Plan before it edits and one independent combined review judges plan and code together (R-123–R-125).
 - No context reviews its own output (R-1, R-2).
 - Evidence, not assertion: "verified" without method + evidence is a Blocker (R-65, R-70).
 - The REVIEWER owns severity and deferral (R-5, R-6).

@@ -43,3 +43,5 @@ Argument:              <required for Reclassification proposed | Deferral reques
 
 **R-41.** The IMPLEMENTER MUST NOT make changes unrelated to the findings being addressed. Opportunistic refactoring during `FIXING` invalidates blast-radius reasoning and is itself a finding.
 
+*(v4.2)* **At LIGHT** a plan finding (R-125) is answered by revising the LIGHT Plan: restate the corrected LIGHT Plan in full in the Fix Report under a `## LIGHT Plan (revised)` section (the run directory's package stays immutable, R-89 — the revised plan travels in the Fix Report and the combined pass re-checks it). Keep the Fix Report's Notes to at most three lines (R-126).
+

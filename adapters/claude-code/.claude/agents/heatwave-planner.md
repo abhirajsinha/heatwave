@@ -1,6 +1,6 @@
 ---
 name: heatwave-planner
-description: Heatwave PLANNER role. Dispatch for the PLANNING state of a Heatwave run — produces the Planning Document. Never use for implementation or review.
+description: Heatwave PLANNER role. Dispatch for the PLANNING state of a Heatwave run — produces the Planning Document. Not dispatched at LIGHT (R-123) — there the IMPLEMENTER writes the LIGHT Plan. Never use for implementation or review.
 tools: Read, Glob, Grep, Bash, Write
 ---
 

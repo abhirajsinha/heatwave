@@ -12,6 +12,8 @@ Loaded by: FINAL_REVIEW. Section/rule numbers are global to the protocol.
 
 *(v4)* Session continuity never shrinks (b) or (d): a persistent reviewer (R-117) re-runs every machine rung from scratch and re-confirms every criterion with fresh evidence — reuse of context, never of a prior verdict. Files unchanged since the last FULL_REVIEW are outside the required reading scope (R-118(c)); reading one is done only as a recorded R-49 scope expansion substantiating a suspected delta-caused regression. Reconciliation (5.6) and the checklist (8.3) still cover the whole task from the artifacts already held. *(v4-D)* The (b) re-run includes the secrets rung when a scanner is declared: a secret scan of the run's full diff, any hit a Blocker (R-121).
 
+*(v4.2)* **LIGHT combined pass.** When dispatched as the LIGHT combined FULL+FINAL pass (§0.5, R-123), the REVIEWER reviews the **LIGHT Plan first** (R-125) — its R-124 fields checked against the task statement, tier, change class and change surface — then the diff, then re-runs the machine ladder from scratch (R-110), reports per-criterion acceptance status (R-27) and the §8.3 readiness checklist as a table, and emits the Review Report in the LIGHT shape `templates/light-review-report.md` (R-126). A LIGHT combined pass has no prior FULL_REVIEW, so it evaluates at full scope (R-118 degrade). GATE_MET → APPROVED; a fail increments `final_iterations` and the next review is the combined pass again (R-14). A tier-level plan defect is raised as a tier increase, not a finding — the run re-enters PLANNING at the raised tier (R-125).
+
 ---
 
 ### 8.3 Production readiness

@@ -8,9 +8,9 @@ Loaded by: every dispatch, all states. Section/rule numbers are global to the pr
 
 # Heatwave — AI Development & Verification Protocol
 
-**Version:** 4.0
+**Version:** 4.2
 **Status:** Active
-**Supersedes:** v3.1 (open-source release)
+**Supersedes:** v4.1 (intake cascade), v4.0, v3.1 (open-source release) — Appendix F
 
 Heatwave is a tool-agnostic protocol for AI-performed software development. It works with any coding agent — Claude Code, Codex, Gemini CLI, Cursor, or a plain chat session — because it governs *contexts and artifacts*, not any vendor's features. See `README.md` for installation and the per-tool adapters.
 
@@ -60,20 +60,20 @@ This protocol applies to any change intended to reach production. Purely explora
 
 ### 0.5 Change tiers
 
-Ceremony scales to the change; independent verification does not. Every tier except EXPRESS keeps all four gates: a plan reviewed by a separate context, distinct role contexts, evidence over assertion, and the completion gate (Section 8) — what those tiers change is how much of the Planning Document must be written out. EXPRESS (v4) drops the plan and its review but substitutes its own independent gate: a deterministic machine check plus a confirmation glance by a fresh context that did not make the change (R-104). No tier, including EXPRESS, ever lets a context approve its own work.
+Ceremony scales to the change; independent verification does not. Every tier except EXPRESS keeps all four gates: a plan reviewed by a separate context, distinct role contexts, evidence over assertion, and the completion gate (Section 8) — what those tiers change is how much of the Planning Document must be written out, and at LIGHT *who* writes it and *when* it is reviewed: the IMPLEMENTER writes the LIGHT Plan before it edits, and one independent combined pass reviews plan and code together (R-123–R-126). EXPRESS (v4) drops the plan and its review but substitutes its own independent gate: a deterministic machine check plus a confirmation glance by a fresh context that did not make the change (R-104). No tier, including EXPRESS, ever lets a context approve its own work.
 
 | Tier | Applies to | Planning Document | Reviews |
 |---|---|---|---|
 | **EXPRESS** *(v4)* | A single obvious edit: copy, label, color, config value, typo. No new surface. | None — no Planning Document. | No PLAN_REVIEW. IMPLEMENTER makes the change; one independent EXPRESS_CHECK (deterministic machine gate + fresh-context confirmation glance) gates APPROVED. Any failure promotes to LIGHT — EXPRESS never loops. |
-| **LIGHT** | Single-file (or a few closely-related same-subsystem) fixes, copy changes, config tweaks with no new surface | Problem statement, acceptance criteria (may be a single AC-F), review scope, tooling declaration. All other sections MAY be collapsed to one `N/A — LIGHT tier` line each. | PLAN_REVIEW still precedes IMPLEMENTING. FULL_REVIEW and FINAL_REVIEW MAY be combined into one REVIEWER pass (full evaluation + per-criterion acceptance status + readiness checklist). A combined pass that fails behaves as a FINAL_REVIEW failure: → FIXING, increments `final_iterations`, next review is FULL (R-14). |
+| **LIGHT** | Single-file (or a few closely-related same-subsystem) fixes, copy changes, config tweaks with no new surface | **LIGHT Plan** (R-124): problem statement, tier, change class, change surface, acceptance criteria (may be a single AC-F), review scope, tooling declaration — at most 25 non-blank lines, written by the IMPLEMENTER as §1 of its Implementation Package before it edits (R-123). No PLANNER dispatch; no other §3.2 sections; no `N/A` rows. | No PLAN_REVIEW state: the separate REVIEWER reviews the plan inside one combined FULL+FINAL pass (full evaluation of plan and code, per-criterion acceptance status, readiness checklist — R-125) on the LIGHT output shape (R-126). A combined pass that fails behaves as a FINAL_REVIEW failure: → FIXING, increments `final_iterations`, next review is the combined pass again (R-14). Two role dispatches on the happy path. |
 | **STANDARD** | A feature, or a bugfix larger than a single bounded fix, touching one subsystem | All sections; N/A allowed per R-20. | Full state machine. |
 | **FULL** | Cross-cutting changes: schema migrations, auth, new services, anything touching money or user data | All sections, no collapsed entries; non-functional criteria mandatory. | Full state machine; FINAL_REVIEW checklist (8.3) item-by-item. |
 
-**R-0a.** The PLANNER proposes the tier in the Planning Document with one line of justification; the REVIEWER MAY raise it (never lower it) at PLAN_REVIEW.
+**R-0a.** The plan author — the PLANNER, or at LIGHT the IMPLEMENTER (R-123) — proposes the tier in the Planning Document with one line of justification; the REVIEWER MAY raise it (never lower it) at PLAN_REVIEW or at the LIGHT combined pass (R-125).
 
-**R-0b.** Tier selection is recorded in the Run Record. A change that grows beyond its tier mid-implementation is a Deviation Record (3.2.1) and re-enters PLAN_REVIEW at the higher tier.
+**R-0b.** Tier selection is recorded in the Run Record. A change that grows beyond its tier mid-implementation is a Deviation Record (3.2.1) and re-enters PLAN_REVIEW at the higher tier — from LIGHT, which has no PLAN_REVIEW, it enters PLANNING at the higher tier (R-125).
 
-**R-101.** *(v4)* The driver classifies every new task into a tier at intake, before dispatching any role, and records the tier plus a one-line justification in `run_config` and the Run Record. When a PLANNER is spawned (LIGHT+), it MAY raise the tier, never lower it; the REVIEWER MAY raise it at review (R-0a).
+**R-101.** *(v4)* The driver classifies every new task into a tier at intake, before dispatching any role, and records the tier plus a one-line justification in `run_config` and the Run Record. When a PLANNER is spawned (STANDARD+), it MAY raise the tier, never lower it; at LIGHT the IMPLEMENTER raises it by the R-105 path; the REVIEWER MAY raise it at review (R-0a).
 
 **R-102.** *(v4)* A task touching authentication, payments/money, user data, schema/migrations, or public API surface MUST be classified STANDARD or higher. EXPRESS is forbidden on these paths.
 
@@ -111,18 +111,18 @@ The protocol defines four roles. Three are AI-performed; one is human.
 
 | Role | Performs | Decides |
 |---|---|---|
-| **PLANNER** | Requirements analysis, architecture, acceptance criteria, initial review scope | What to build and how |
+| **PLANNER** | Requirements analysis, architecture, acceptance criteria, initial review scope (STANDARD/FULL; at LIGHT these duties are carried by the IMPLEMENTER's LIGHT Plan, R-123) | What to build and how |
 | **IMPLEMENTER** | Code, tests, fixes, evidence collection | How to satisfy the plan within its constraints |
 | **REVIEWER** | Plan review, feature review, severity classification, deferral approval, final approval | Whether the work is correct and complete |
 | **OWNER** (human) | Escalation decisions, protocol waivers, scope arbitration | Everything the roles above cannot resolve |
 
 ### 1.2 Context isolation
 
-**R-1.** PLANNER, IMPLEMENTER, and REVIEWER MUST occupy three mutually distinct contexts. No context may hold the conversational history of another role for the same task.
+**R-1.** PLANNER, IMPLEMENTER, and REVIEWER MUST occupy three mutually distinct contexts. No context may hold the conversational history of another role for the same task. At LIGHT no PLANNER is dispatched (R-123); the rule binds the two contexts that exist.
 
 **R-2.** A REVIEWER context MUST NOT have authored any artifact it is reviewing. This applies to plan review as well as feature review: the context that reviews the Planning Document MUST NOT be the context that wrote it.
 
-**R-3.** The REVIEWER receives artifacts, not conversations. Specifically, the REVIEWER is given: the Planning Document, the Implementation Package, the prior Review Reports for this task (if any), and the Fix Reports responding to them. It is not given the PLANNER's or IMPLEMENTER's reasoning transcripts.
+**R-3.** The REVIEWER receives artifacts, not conversations. Specifically, the REVIEWER is given: the Planning Document (at LIGHT, the LIGHT Plan section of the Implementation Package), the Implementation Package, the prior Review Reports for this task (if any), and the Fix Reports responding to them. It is not given the PLANNER's or IMPLEMENTER's reasoning transcripts.
 
 **R-4.** Review continuity across iterations is permitted and preferred — the same REVIEWER context MAY carry through iterations 1..N, since finding reconciliation (Section 5.6) depends on it. If context limits force a fresh REVIEWER, the prior Review Reports MUST be supplied and the new context MUST perform reconciliation from them.
 
@@ -136,7 +136,7 @@ The protocol defines four roles. Three are AI-performed; one is human.
 
 **R-6.** Deferral of a finding requires REVIEWER approval. The IMPLEMENTER MUST NOT unilaterally defer. A finding is deferred only when the Review Report records it as `Status: Deferred (approved)`.
 
-**R-7.** The IMPLEMENTER MUST NOT modify the Planning Document, acceptance criteria, or review scope. It MAY request changes via a Deviation Record (Section 3.2.1).
+**R-7.** The IMPLEMENTER MUST NOT modify the Planning Document, acceptance criteria, or review scope. It MAY request changes via a Deviation Record (Section 3.2.1). At LIGHT the IMPLEMENTER authors the LIGHT Plan and is then bound by it (R-123).
 
 **R-8.** The REVIEWER MAY expand review scope (Section 5.2). The REVIEWER MUST NOT narrow scope below what the approved plan specifies; narrowing requires OWNER approval.
 
@@ -176,10 +176,10 @@ roles:
 |---|---|
 | EXPRESS_CHECK | FULL_REVIEW |
 | Artifact summarization performed by the driver | FINAL_REVIEW (including the LIGHT combined pass) |
-| PLAN_REVIEW when tier ∈ {EXPRESS†, LIGHT} | PLAN_REVIEW when tier ∈ {STANDARD, FULL} |
+| PLAN_REVIEW when tier ∈ {EXPRESS†, LIGHT†} | PLAN_REVIEW when tier ∈ {STANDARD, FULL} |
 | TARGETED_REVIEW when the fix delta ≤ `small_diff_threshold` changed lines | TARGETED_REVIEW above the threshold |
 
-† vacuous — EXPRESS has no PLAN_REVIEW (§0.5); listed for completeness of the eligible set.
+† vacuous — EXPRESS has no PLAN_REVIEW (§0.5) and neither has LIGHT from v4.2 (R-123); listed for completeness of the eligible set.
 
 A `stage_models` entry that routes a frontier-required stage to the configured cheap model is **rejected**: the driver records a one-line warning in the Run Record and dispatches that stage on the role's preferred/session model. An entry naming an unknown stage is ignored with the same warning. The model that served each stage is recorded per dispatch (`stage_model` in the Run Record transitions). Model identity never changes what a gate requires — tiering changes how cheaply the same gates run, never the gates.
 
@@ -210,11 +210,17 @@ A `stage_models` entry that routes a frontier-required stage to the configured c
 START → intake (driver, R-101; writes run_config)
   ├─ EXPRESS → EXPRESS_IMPLEMENTING
   │              ├─ change made      → EXPRESS_CHECK
-  │              └─ scope_exceeded   → PLANNING   [tier promoted per R-105]
+  │              └─ scope_exceeded   → <promoted tier's entry state>  [IMPLEMENTING at LIGHT (R-123); PLANNING at STANDARD+; R-104/R-105]
   │            EXPRESS_CHECK
   │              ├─ pass → APPROVED
-  │              └─ fail → PLANNING              [tier promoted to ≥ LIGHT, R-104; no fix loop]
-  └─ LIGHT | STANDARD | FULL → PLANNING
+  │              └─ fail → <promoted tier's entry state>  [IMPLEMENTING at LIGHT (R-123); PLANNING at STANDARD+; R-104/R-105; no fix loop]
+  ├─ LIGHT → IMPLEMENTING                              [R-123: LIGHT Plan is §1 of the package; PLANNING/PLAN_REVIEW never entered]
+  │            ├─ scope_exceeded → PLANNING            [tier raised per R-105; counters 0]
+  │            └─ package ───────→ FULL_REVIEW         [combined FULL+FINAL pass, §0.5; plan reviewed here, R-125]
+  │                                  ├─ gate met ─────→ APPROVED
+  │                                  ├─ gate not met ─→ FIXING → FULL_REVIEW (combined again)   [increments final_iterations, R-14]
+  │                                  └─ tier raised ──→ PLANNING at the raised tier             [R-0a/R-125; counters 0]
+  └─ STANDARD | FULL → PLANNING
         └─→ PLAN_REVIEW
               ├─ rejected ──→ PLANNING            [increments plan_iterations]
               └─ approved ──→ IMPLEMENTING
@@ -240,7 +246,9 @@ ESCALATED
   └─ owner: abandon ───→ ABANDONED
 ```
 
-**R-104.** *(v4)* EXPRESS runs `EXPRESS_IMPLEMENTING → EXPRESS_CHECK`. The check is performed by a context that did not make the change (R-1/R-2) and consists of (1) a deterministic machine gate — the project's build, lint, and tests relevant to the touched files — and (2) a confirmation glance — the diff does what was asked, touches ≤ 2 non-sensitive files, adds no dependency or public surface. Pass → `APPROVED`. Any failure → the driver promotes the run to LIGHT (or higher per R-102/R-103) and enters `PLANNING` with counters at 0. EXPRESS has no fix loop.
+**R-104.** *(v4)* EXPRESS runs `EXPRESS_IMPLEMENTING → EXPRESS_CHECK`. The check is performed by a context that did not make the change (R-1/R-2) and consists of (1) a deterministic machine gate — the project's build, lint, and tests relevant to the touched files — and (2) a confirmation glance — the diff does what was asked, touches ≤ 2 non-sensitive files, adds no dependency or public surface. Pass → `APPROVED`. Any failure → the driver promotes the run to LIGHT (or higher per R-102/R-103) and enters that tier's entry state — `IMPLEMENTING` for LIGHT (R-123), `PLANNING` for STANDARD/FULL — with counters at 0. EXPRESS has no fix loop.
+
+**R-123.** *(v4.2)* **Two-dispatch LIGHT.** A LIGHT run transitions from intake directly to `IMPLEMENTING`; `PLANNING` and `PLAN_REVIEW` are not entered at LIGHT and `plan_iterations` stays 0. The IMPLEMENTER authors the **LIGHT Plan** (R-124) as the first section of its Implementation Package and MUST write that section to the package file in the run directory *before* its first project-source edit; the package is completed after the change and its machine evidence. At LIGHT the plan author is the IMPLEMENTER: every duty this protocol assigns to the PLANNER for the fields the LIGHT Plan carries — tier (R-0a), change class (R-114), acceptance criteria (§3.2.2), review scope (§5.1), tooling declaration (§6.1), change surface (R-122) — is performed by the IMPLEMENTER, and the authority those rules give the PLANNER reads as the plan author's. Once written, the LIGHT Plan binds its author exactly as an approved plan binds an IMPLEMENTER (R-7, R-37, R-38): divergence in the same dispatch is a Deviation Record, and the plan is revised only in `FIXING`, in response to a finding, restated in full in the Fix Report. The `FULL_REVIEW` that follows is the §0.5 combined FULL+FINAL pass, where the plan is reviewed (R-125). R-1/R-2/R-117 are unchanged: the REVIEWER context is never the IMPLEMENTER's, and with no PLANNER dispatched the distinct-context requirement is met by the two contexts that exist. A LIGHT run that entered `PLANNING` or `PLAN_REVIEW` before v4.2 continues at its recorded state (R-88) — this rule governs intake, never resumption.
 
 ### 2.3 Counters and budgets
 
@@ -248,7 +256,7 @@ Three independent counters:
 
 | Counter | Increments on | Budget | At exhaustion |
 |---|---|---|---|
-| `plan_iterations` | Each plan rejection | 3 | → `ESCALATED` |
+| `plan_iterations` | Each plan rejection (STANDARD/FULL; always 0 at LIGHT, R-123) | 3 | → `ESCALATED` |
 | `fix_iterations` | Each FIXING entry from TARGETED_REVIEW | 5 | → `ESCALATED` |
 | `final_iterations` | Each FIXING entry from FINAL_REVIEW | 2 | → `ESCALATED` |
 
@@ -273,14 +281,14 @@ run_config:
   tier: EXPRESS            # EXPRESS | LIGHT | STANDARD | FULL — active
   tier_justification: ""   # one line, R-101 — active
   design_doc: false        # true | false — active (STANDARD/FULL only)
-  change_class: feature    # v4: bugfix | feature — driver initial, PLANNER authoritative (R-114) — active
+  change_class: feature    # v4: bugfix | feature — driver initial, plan author authoritative (R-114; at LIGHT the IMPLEMENTER, R-123) — active
   autonomy: autopilot      # RESERVED (G/H): autopilot | gated | interactive — recorded only, no branching (YAGNI)
   scope: single_repo       # RESERVED (G): single_repo | multi_repo — recorded only, no branching (YAGNI)
 ```
 
 **R-106 (driver half).** *(v4)* At intake the driver resolves `design_doc` from config (`ask` | `always` | `never`; unset defaults: existing repo → `never`, greenfield/new area → `ask`, asked once) and records it in `run_config`. It applies to STANDARD/FULL only; EXPRESS and LIGHT never generate one. *(The planner half — emitting the document — is §3.2.3.)*
 
-**R-114.** *(v4)* At intake the driver records `change_class` in `run_config`: `bugfix` when the task's purpose is to correct defective existing behavior, else `feature`. The PLANNER declares the authoritative class in the Planning Document with one line of justification and MAY correct the driver's value (the correction is recorded in the Run Record). EXPRESS runs never carry a change class — EXPRESS has no plan. Misclassification is a valid REVIEWER finding. Only `bugfix` alters behavior (R-113); a record without the field reads `feature`.
+**R-114.** *(v4)* At intake the driver records `change_class` in `run_config`: `bugfix` when the task's purpose is to correct defective existing behavior, else `feature`. The plan author (PLANNER; at LIGHT the IMPLEMENTER, R-123) declares the authoritative class in the Planning Document with one line of justification and MAY correct the driver's value (the correction is recorded in the Run Record). EXPRESS runs never carry a change class — EXPRESS has no plan. Misclassification is a valid REVIEWER finding. Only `bugfix` alters behavior (R-113); a record without the field reads `feature`.
 
 Only `tier`, `tier_justification`, `design_doc`, and `change_class` drive behavior. `autonomy` and `scope` are RESERVED for sub-projects G/H: recorded with defaults that reproduce current behavior, consulted by nothing (YAGNI). A Run Record without a `run_config` block (pre-v4) is read as `tier` from `state.yaml`, `design_doc: false`, `autonomy: autopilot`, `scope: single_repo`, `change_class: feature`.
 
@@ -297,6 +305,8 @@ Only `tier`, `tier_justification`, `design_doc`, and `change_class` drive behavi
 **R-18.** Every artifact MUST carry: `task_id`, `artifact_type`, `iteration`, `produced_by` (role + resolved model), `timestamp`.
 
 Artifact skeletons are the files in `templates/`; they are normative. *(v4: replaces Appendix D, which duplicated them.)*
+
+**R-126.** *(v4.2)* **LIGHT output shape.** At LIGHT every artifact MUST take the shape its LIGHT template fixes, and the REVIEWER checks the shape. The Implementation Package (`templates/light-implementation-package.md`) is: the LIGHT Plan; a touched-file table with a diff reference the REVIEWER can resolve; the machine evidence; and a five-line change note — `change`, `blast_radius`, `deviations`, `known_limitations`, `tooling_gaps`, one line each, `None` written explicitly (R-28, R-53, R-64, R-93) — with no change-summary prose and no walkthrough. The Review Report (`templates/light-review-report.md`) is: a one-line verdict; the plan-check table (R-125); the machine-evidence table (R-110); the per-criterion acceptance table (R-27); findings as one line each pointing to the ledger (R-109); reconciliation from iteration 2 (R-58); the §8.3 readiness table; scope changes (R-49) — with no summary narrative. The Fix Report is the §3.5 per-finding blocks with executed evidence (R-32), a restated LIGHT Plan only when a plan finding was fixed, and notes of at most three lines. Caps bind narrative only: evidence is never cut to fit — R-65 and R-68 hold in full; long command output MAY be trimmed to the relevant lines with the total line count stated and MUST NOT be replaced by a prose summary. A missing required element is a Blocker (R-16 — the artifact is incomplete); surplus narrative is a Minor (`Category: over-engineering`), recorded, never gating. EXPRESS, STANDARD and FULL artifact shapes are unchanged.
 
 ---
 
@@ -382,7 +392,7 @@ Where "open" excludes findings with `Status: Deferred (approved)`, `Status: Waiv
 
 **R-81.** `APPROVED` requires:
 
-- Plan approved (`PLAN_REVIEW` gate met)
+- Plan approved (`PLAN_REVIEW` gate met; at LIGHT, per R-125)
 - Implementation complete, all deviations declared
 - `FINAL_REVIEW` gate met
 - Production readiness checklist complete with evidence
@@ -408,7 +418,9 @@ Where "open" excludes findings with `Status: Deferred (approved)`, `Status: Waiv
 
 # Heatwave Protocol — planner (canonical shard)
 
-Loaded by: PLANNING; PLAN_REVIEW (as the contract under review). Section/rule numbers are global to the protocol.
+Loaded by: PLANNING; PLAN_REVIEW (as the contract under review); and, from v4.2, the LIGHT `IMPLEMENTING`, combined pass and `FIXING` as the contract for the LIGHT Plan's fields (R-107, R-123). Section/rule numbers are global to the protocol.
+
+**Not dispatched at LIGHT (R-123).** At LIGHT no PLANNER runs; the IMPLEMENTER authors the **LIGHT Plan** (R-124) as §1 of its Implementation Package and carries every PLANNER duty this shard defines for that plan's fields — acceptance criteria (§3.2.2), review scope (§5.1), tooling declaration and change surface (§6.1, R-122). The authority those rules give the PLANNER reads as the plan author's; the LIGHT Plan is reviewed inside the combined pass (R-125), not in a PLAN_REVIEW state.
 
 ---
 
@@ -439,9 +451,9 @@ Produced by PLANNER in `PLANNING`. Consumed by REVIEWER and IMPLEMENTER.
 | **Review scope** | See 5.1 and Appendix C |
 | **Tooling declaration** | See 6.1 |
 
-**R-19.** A Planning Document missing any required section MUST be rejected in `PLAN_REVIEW` without further evaluation.
+**R-19.** A Planning Document missing any required section MUST be rejected in `PLAN_REVIEW` without further evaluation. (At LIGHT the LIGHT Plan's required fields per R-124 are checked in the combined pass, R-125, not in PLAN_REVIEW.)
 
-**R-20.** Sections that do not apply MUST be marked `N/A` with a one-line justification. Silent omission is a rejection.
+**R-20.** Sections that do not apply MUST be marked `N/A` with a one-line justification. Silent omission is a rejection. (At LIGHT no `N/A` rows are written — R-124 fixes the fields, R-123.)
 
 #### 3.2.2 Acceptance criteria
 
@@ -472,7 +484,7 @@ Conforming: *"AC-N-01: p95 latency for `GET /notes` ≤ 200ms at 50 rps, measure
 
 ### 4.1 PLANNING
 
-**R-33.** The PLANNER MUST produce a complete Planning Document per 3.2 before exiting this state.
+**R-33.** The PLANNER MUST produce a complete Planning Document per 3.2 before exiting this state. (PLANNING is not entered at LIGHT — the IMPLEMENTER writes the LIGHT Plan instead, R-123.)
 
 **R-34.** On re-entry from `PLAN_REVIEW` rejection, the PLANNER MUST address every finding in the rejecting Review Report, using the Fix Report per-finding response schema (3.5) adapted to plan findings.
 
@@ -517,7 +529,7 @@ Mutation     | <per detection/config> | REVIEWER | access: confirmed — stryker
 
 *(v4-D)* Companion detection follows the same evidence discipline (R-120): a secret scanner from a gitleaks binary on PATH, a `.gitleaks.toml`, or a pre-commit hook (`tooling.secrets` in config overrides); UI-evidence capture from Playwright MCP presence in the agent environment (`tooling.ui_evidence` overrides); a docs companion from context7 MCP presence (`tooling.docs` overrides). LIGHT+ declarations SHOULD carry a `secrets` entry — `NOT AVAILABLE` when nothing is detected (R-64) — feeding the FINAL_REVIEW secrets rung (R-121).
 
-**R-122.** *(v4-D)* **Change surface.** For LIGHT+ runs the tooling declaration MUST carry a `change_surface` line: the subset of {auth, payments, external-input, new-endpoint, ui, deps, secrets, api-surface} the change touches, or `none`, with one line of justification, declared by the PLANNER from the plan's own scope (the Appendix C review-scope categories are its evidence). `external-input` means any handling of untrusted input — external, user-supplied, or crossing a service or trust boundary — the input-handling class, not only input originating outside the system. It is consumed by the companion gates: the semantic security pass fires on {auth, external-input, deps, secrets, api-surface}, UI-evidence capture on {ui}, dynamic security per R-119. Misclassification is a valid REVIEWER finding — minimum Major when it would have suppressed a security companion. EXPRESS runs have no plan and no change surface; companions never fire on EXPRESS.
+**R-122.** *(v4-D)* **Change surface.** For LIGHT+ runs the tooling declaration MUST carry a `change_surface` line: the subset of {auth, payments, external-input, new-endpoint, ui, deps, secrets, api-surface} the change touches, or `none`, with one line of justification, declared by the plan author (PLANNER; at LIGHT the IMPLEMENTER, R-123) from the plan's own scope (the Appendix C review-scope categories are its evidence). `external-input` means any handling of untrusted input — external, user-supplied, or crossing a service or trust boundary — the input-handling class, not only input originating outside the system. It is consumed by the companion gates: the semantic security pass fires on {auth, external-input, deps, secrets, api-surface}, UI-evidence capture on {ui}, dynamic security per R-119. Misclassification is a valid REVIEWER finding — minimum Major when it would have suppressed a security companion. EXPRESS runs have no plan and no change surface; companions never fire on EXPRESS.
 
 ---
 
@@ -615,7 +627,7 @@ Not applicable
 
 # Heatwave Protocol — implementer (canonical shard)
 
-Loaded by: IMPLEMENTING; EXPRESS_IMPLEMENTING. Section/rule numbers are global to the protocol.
+Loaded by: IMPLEMENTING; EXPRESS_IMPLEMENTING; FIXING. Section/rule numbers are global to the protocol. At LIGHT the IMPLEMENTER also authors the LIGHT Plan (R-123/R-124, §3.3.1) as §1 of its Implementation Package before it edits.
 
 ---
 
@@ -655,9 +667,17 @@ Produced by IMPLEMENTER in `IMPLEMENTING`. Consumed by REVIEWER.
 
 **R-28.** `Blast radius declaration` and `Deviation Records` MUST NOT be empty fields. Absence is expressed as an explicit `None`, which is a claim the REVIEWER may find against.
 
+#### 3.3.1 LIGHT Plan and LIGHT package *(v4.2)*
+
+**R-124.** *(v4.2)* **LIGHT Plan.** The LIGHT Plan is the §0.5 LIGHT-minimum Planning Document in a fixed shape of at most **25 non-blank lines**: `problem` (1–3 lines); `tier: LIGHT — <one-line justification>`; `change_class: bugfix | feature — <one line>` (R-114); `change_surface: <subset or none> — <one line>` (R-122); acceptance criteria one line each — at least one `AC-F` (for a bugfix run one of them is the failing-reproduction criterion, R-113) and either at least one `AC-N` or `AC-N: none — <reason>` (R-23) — each with its verification method (R-27); `review_scope`: the files to be touched plus the applicable Appendix C categories on one line (`plan-conformance` and `verification-integrity` always apply and are not listed); `tooling`: the test command(s), each with the project evidence that proves it exists (R-99), and a `secrets` entry or `NOT AVAILABLE` (R-121). No other §3.2 section is written and no `N/A` rows are written — R-19 and R-20 apply to the fields above only. Every field is a claim the REVIEWER finds against.
+
+At LIGHT the Implementation Package takes the shape `templates/light-implementation-package.md` fixes (R-126): the LIGHT Plan as §1 (written to disk before the first source edit, R-123), a touched-file table with a diff reference the REVIEWER can resolve, the machine evidence (a bugfix run's red→green reproduction, R-113), and a five-line change note — `change`, `blast_radius`, `deviations`, `known_limitations`, `tooling_gaps`, one line each, `None` written explicitly. No change-summary prose, no walkthrough. On the R-105 scope-exceeded path the diff and machine-evidence blocks are replaced by `Result: scope_exceeded — <reason>`.
+
 ---
 
 ### 4.3 IMPLEMENTING
+
+*(v4.2)* At LIGHT the IMPLEMENTER also authors the LIGHT Plan as §1 of the package before editing — see §3.3.1 and R-123; it is then bound by that plan exactly as an approved plan binds it.
 
 **R-37.** The IMPLEMENTER MUST build to the approved plan. Divergence is permitted but MUST be declared per 3.2.1.
 
@@ -667,7 +687,7 @@ Produced by IMPLEMENTER in `IMPLEMENTING`. Consumed by REVIEWER.
 
 ### 4.8 EXPRESS_IMPLEMENTING *(v4)*
 
-**R-105.** *(v4)* If the EXPRESS IMPLEMENTER finds the change larger or riskier than classified, it MUST NOT edit; it produces an EXPRESS Change note with `Result: scope_exceeded — <reason>`. The driver promotes the tier and enters `PLANNING`. This is the R-0b deviation path applied to intake misclassification.
+**R-105.** *(v4; generalized v4.2)* If the IMPLEMENTER at EXPRESS or LIGHT finds the change larger, riskier, or on a sensitive path (R-102) relative to its classification, it MUST NOT edit further. At EXPRESS it produces an EXPRESS Change note with `Result: scope_exceeded — <reason>`. At LIGHT it reverts any edit already made in this dispatch (naming the files reverted) and produces the Implementation Package with the LIGHT Plan as written and `Result: scope_exceeded — <reason>` in place of the diff and evidence. The driver promotes the tier and enters `PLANNING` at the promoted tier with counters at 0. This is the R-0b deviation path applied to intake misclassification.
 
 In EXPRESS mode the ponytail discipline (Appendix G) applies in full — the tier exists precisely for the single smallest change that works — and the evidence rules are unchanged: attach real output for every check run (R-65), and declare any check that does not exist as `NOT AVAILABLE` (R-64), never narrated as run.
 
@@ -731,6 +751,8 @@ Produced by REVIEWER in `PLAN_REVIEW`, `FULL_REVIEW`, `TARGETED_REVIEW`, `FINAL_
 8. Summary narrative — free prose, ≤ 400 words, no findings introduced here
 ```
 
+*(v4.2)* At LIGHT the Review Report takes the shape `templates/light-review-report.md` (R-126): a one-line verdict, the plan-check table (R-125), the machine-evidence table, the per-criterion acceptance table, one-line findings pointing to the ledger, reconciliation from iteration 2, and the §8.3 readiness table — no summary narrative.
+
 **R-29.** Findings MUST use the Appendix A schema, carried in the findings ledger from v4 (R-109); the report's Findings section summarizes and references it. Narrative belongs in §8 and MUST NOT introduce a finding. A concern that does not merit a structured finding is not a finding and MUST NOT gate approval.
 
 > **Rationale for R-29.** v2 said free-form comments were "discouraged," which is not an enforceable rule — reviewers produce prose, and prose concerns then float in an undefined state where they neither block nor get tracked. Giving narrative a sanctioned home with an explicit no-findings rule resolves this without pretending reviewers won't write prose.
@@ -751,6 +773,8 @@ Produced by REVIEWER in `PLAN_REVIEW`, `FULL_REVIEW`, `TARGETED_REVIEW`, `FINAL_
 
 ### 4.2 PLAN_REVIEW
 
+*(v4.2)* PLAN_REVIEW is not entered at LIGHT — at LIGHT the plan is reviewed inside the combined FULL+FINAL pass (R-125), by a REVIEWER context distinct from the IMPLEMENTER that wrote it (R-1/R-2). R-35/R-36 below govern that plan check as well.
+
 **R-35.** The REVIEWER MUST evaluate: completeness against 3.2, acceptance criteria conformance against 3.2.2, review scope justification against 5.1, tooling declaration realism against 6.1, and internal consistency (does the architecture support the requirements; do the criteria cover the requirements; is the rollback plan actually executable).
 
 **R-36.** Plan approval requires zero Blockers and zero Majors, per the same gate as feature review (Section 8).
@@ -764,6 +788,8 @@ FULL_REVIEW opens with the machine-evidence ladder for the run's tier (R-110); L
 *(v4-D)* Companion invocation (core §6.5): class-1 rungs run the declared tools — e.g. a declared `sast: semgrep` runs `semgrep scan --config auto` on the changed paths, high-severity results converting to machine findings per R-111; a declared mutation tool runs on changed modules at FULL. The semantic security pass (`/security-review` in Claude Code; the adapter's documented equivalent elsewhere) runs iff the plan's `change_surface` (R-122) intersects {auth, external-input, deps, secrets, api-surface}; its output enters as candidate findings under R-112. UI evidence is captured via Playwright MCP iff `change_surface` ∋ ui — accessibility-tree assertions plus a screenshot, cited in the Review Report against the UI acceptance criteria. Dynamic security runs strictly per R-119. Each companion absent → `NOT AVAILABLE` (R-64), never a silent skip.
 
 **R-113 (reviewer half).** *(v4)* For a `change_class: bugfix` run (R-114), the REVIEWER MUST confirm the reproduction: red evidence captured on pre-fix code, and the same check re-run green after the fix. A bugfix with no reproducing check, or with no red-run evidence, is a Major (`Category: verification-integrity`) regardless of how plausible the fix reads.
+
+**R-125.** *(v4.2)* **Plan review inside the LIGHT combined pass.** At the LIGHT combined FULL+FINAL pass the REVIEWER MUST evaluate the LIGHT Plan before the diff, applying R-35 to the R-124 fields — acceptance-criteria conformance (§3.2.2), tooling realism (R-63), tier (R-0a), change class and change surface (R-114, R-122) — and MUST check the acceptance criteria against the task statement, not against the diff: criteria that merely restate what was built, or that omit a behavior the task asked for, are a finding (`Category: acceptance-criteria`, minimum Major). A package with no LIGHT Plan, a LIGHT Plan missing an R-124 field, or a LIGHT Plan that the available evidence (artifact ordering, timestamps, commit history) shows was written after the code, is a Blocker (`Category: plan-conformance`). Plan findings carry normal severities, enter the ledger, and are answered in `FIXING` like any other finding; a failed combined pass increments `final_iterations` and the next review is the combined pass again (§0.5, R-14). When the REVIEWER judges the task mis-tiered — it should have run STANDARD or FULL — it raises the tier (R-0a) instead of filing plan findings: the driver enters `PLANNING` at the raised tier with counters at 0; the LIGHT package is superseded, not amended (R-89); R-0b's "re-enters PLAN_REVIEW" reads as "enters PLANNING" for a run that had none. R-81's "plan approved" is satisfied at LIGHT by a combined pass reporting GATE_MET with no open plan finding.
 
 ### 4.6 TARGETED_REVIEW
 
@@ -914,6 +940,8 @@ Argument:              <required for Reclassification proposed | Deferral reques
 
 **R-41.** The IMPLEMENTER MUST NOT make changes unrelated to the findings being addressed. Opportunistic refactoring during `FIXING` invalidates blast-radius reasoning and is itself a finding.
 
+*(v4.2)* **At LIGHT** a plan finding (R-125) is answered by revising the LIGHT Plan: restate the corrected LIGHT Plan in full in the Fix Report under a `## LIGHT Plan (revised)` section (the run directory's package stays immutable, R-89 — the revised plan travels in the Fix Report and the combined pass re-checks it). Keep the Fix Report's Notes to at most three lines (R-126).
+
 
 ---
 
@@ -930,6 +958,8 @@ Loaded by: FINAL_REVIEW. Section/rule numbers are global to the protocol.
 **R-45.** Findings raised in `FINAL_REVIEW` that were passable in prior iterations MUST be reconciled per 5.6 — the report MUST state why the earlier pass was wrong or what changed.
 
 *(v4)* Session continuity never shrinks (b) or (d): a persistent reviewer (R-117) re-runs every machine rung from scratch and re-confirms every criterion with fresh evidence — reuse of context, never of a prior verdict. Files unchanged since the last FULL_REVIEW are outside the required reading scope (R-118(c)); reading one is done only as a recorded R-49 scope expansion substantiating a suspected delta-caused regression. Reconciliation (5.6) and the checklist (8.3) still cover the whole task from the artifacts already held. *(v4-D)* The (b) re-run includes the secrets rung when a scanner is declared: a secret scan of the run's full diff, any hit a Blocker (R-121).
+
+*(v4.2)* **LIGHT combined pass.** When dispatched as the LIGHT combined FULL+FINAL pass (§0.5, R-123), the REVIEWER reviews the **LIGHT Plan first** (R-125) — its R-124 fields checked against the task statement, tier, change class and change surface — then the diff, then re-runs the machine ladder from scratch (R-110), reports per-criterion acceptance status (R-27) and the §8.3 readiness checklist as a table, and emits the Review Report in the LIGHT shape `templates/light-review-report.md` (R-126). A LIGHT combined pass has no prior FULL_REVIEW, so it evaluates at full scope (R-118 degrade). GATE_MET → APPROVED; a fail increments `final_iterations` and the next review is the combined pass again (R-14). A tier-level plan defect is raised as a tier increase, not a finding — the run re-enters PLANNING at the raised tier (R-125).
 
 ---
 
@@ -1041,6 +1071,8 @@ Rationale:       <why>
 └── ...                   # numbered sequentially in transition order
 ```
 
+A LIGHT run (R-123) has no planning artifacts; its happy-path run directory is `01-implementation-package.md` (LIGHT Plan as §1) and `02-review-report-1.md` + `02-findings-1.yaml` (the combined FULL+FINAL pass), alongside `state.yaml` and `run-record.yaml`.
+
 `state.yaml`:
 
 ```yaml
@@ -1078,7 +1110,7 @@ Run Record schema is `templates/run-record.yaml`; it is normative. *(v4: replace
 
 ### 9.6 Shard dispatch *(v4)*
 
-**R-107.** *(v4)* The driver dispatches each role with `protocol/core.md` plus the role shard(s) in the dispatch matrix — never the full `PROTOCOL.md`. Context is assembled stable-prefix-first: shards, then config, then prompt, then task artifacts. The ordering is a cache optimization, never a correctness dependency.
+**R-107.** *(v4)* The driver dispatches each role with `protocol/core.md` plus the role shard(s) in the dispatch matrix — never the full `PROTOCOL.md`. Context is assembled stable-prefix-first: shards, then config, then prompt, then task artifacts. The ordering is a cache optimization, never a correctness dependency. At LIGHT, `IMPLEMENTING`, the combined pass and `FIXING` also receive `protocol/planner.md` — the contract for the LIGHT Plan's fields (R-123–R-125).
 
 ### 9.7 Generated protocol *(v4)*
 
@@ -1131,3 +1163,12 @@ Loaded by: never dispatched — rendered into the full generated spec only.
 | Machine-evidence ladder, refute-or-promote, reproduce-then-fix, hetero-reviewer visibility | R-110–R-115 | Rigor rested on LLM prose; false-positive Majors cost full fix cycles; "verified" bugfixes were claims; same-model self-preference was invisible |
 | Stage model-tiering, persistent reviewer session, delta-only FINAL_REVIEW | R-116–R-118 | Every stage paid the frontier price; cold review spawns forfeited prompt cache; FINAL re-read files unchanged since the last full review |
 | Companion bindings: deterministic floor auto-use, secrets rung, change-surface gating, opt-in dynamic security | R-119–R-122 | B's gates named no tools; secrets/UI/dynamic/docs evidence had no channel |
+
+---
+
+## Appendix F.2 — Changes in v4.1 and v4.2
+
+| Change | Rules | Addresses |
+|---|---|---|
+| Intake as an ordered cascade; LIGHT rung reachable | R-103a | v4.1 — STANDARD inflation at intake (E2) |
+| Two-dispatch LIGHT: plan authored by the IMPLEMENTER before editing, reviewed inside the combined pass; LIGHT output shapes | R-123–R-126; edits to R-0a, R-0b, R-1, R-3, R-7, R-81, R-101, R-104, R-105, R-114, R-116, R-122, §0.5, §2.2, §2.3 | v4.2 — LIGHT cost 4 frontier dispatches (~31 min / $9.98 on lt01); wall is generation-bound (E6/E7) |

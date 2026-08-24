@@ -21,6 +21,8 @@ Produced by REVIEWER in `PLAN_REVIEW`, `FULL_REVIEW`, `TARGETED_REVIEW`, `FINAL_
 8. Summary narrative — free prose, ≤ 400 words, no findings introduced here
 ```
 
+*(v4.2)* At LIGHT the Review Report takes the shape `templates/light-review-report.md` (R-126): a one-line verdict, the plan-check table (R-125), the machine-evidence table, the per-criterion acceptance table, one-line findings pointing to the ledger, reconciliation from iteration 2, and the §8.3 readiness table — no summary narrative.
+
 **R-29.** Findings MUST use the Appendix A schema, carried in the findings ledger from v4 (R-109); the report's Findings section summarizes and references it. Narrative belongs in §8 and MUST NOT introduce a finding. A concern that does not merit a structured finding is not a finding and MUST NOT gate approval.
 
 > **Rationale for R-29.** v2 said free-form comments were "discouraged," which is not an enforceable rule — reviewers produce prose, and prose concerns then float in an undefined state where they neither block nor get tracked. Giving narrative a sanctioned home with an explicit no-findings rule resolves this without pretending reviewers won't write prose.
@@ -41,6 +43,8 @@ Produced by REVIEWER in `PLAN_REVIEW`, `FULL_REVIEW`, `TARGETED_REVIEW`, `FINAL_
 
 ### 4.2 PLAN_REVIEW
 
+*(v4.2)* PLAN_REVIEW is not entered at LIGHT — at LIGHT the plan is reviewed inside the combined FULL+FINAL pass (R-125), by a REVIEWER context distinct from the IMPLEMENTER that wrote it (R-1/R-2). R-35/R-36 below govern that plan check as well.
+
 **R-35.** The REVIEWER MUST evaluate: completeness against 3.2, acceptance criteria conformance against 3.2.2, review scope justification against 5.1, tooling declaration realism against 6.1, and internal consistency (does the architecture support the requirements; do the criteria cover the requirements; is the rollback plan actually executable).
 
 **R-36.** Plan approval requires zero Blockers and zero Majors, per the same gate as feature review (Section 8).
@@ -54,6 +58,8 @@ FULL_REVIEW opens with the machine-evidence ladder for the run's tier (R-110); L
 *(v4-D)* Companion invocation (core §6.5): class-1 rungs run the declared tools — e.g. a declared `sast: semgrep` runs `semgrep scan --config auto` on the changed paths, high-severity results converting to machine findings per R-111; a declared mutation tool runs on changed modules at FULL. The semantic security pass (`/security-review` in Claude Code; the adapter's documented equivalent elsewhere) runs iff the plan's `change_surface` (R-122) intersects {auth, external-input, deps, secrets, api-surface}; its output enters as candidate findings under R-112. UI evidence is captured via Playwright MCP iff `change_surface` ∋ ui — accessibility-tree assertions plus a screenshot, cited in the Review Report against the UI acceptance criteria. Dynamic security runs strictly per R-119. Each companion absent → `NOT AVAILABLE` (R-64), never a silent skip.
 
 **R-113 (reviewer half).** *(v4)* For a `change_class: bugfix` run (R-114), the REVIEWER MUST confirm the reproduction: red evidence captured on pre-fix code, and the same check re-run green after the fix. A bugfix with no reproducing check, or with no red-run evidence, is a Major (`Category: verification-integrity`) regardless of how plausible the fix reads.
+
+**R-125.** *(v4.2)* **Plan review inside the LIGHT combined pass.** At the LIGHT combined FULL+FINAL pass the REVIEWER MUST evaluate the LIGHT Plan before the diff, applying R-35 to the R-124 fields — acceptance-criteria conformance (§3.2.2), tooling realism (R-63), tier (R-0a), change class and change surface (R-114, R-122) — and MUST check the acceptance criteria against the task statement, not against the diff: criteria that merely restate what was built, or that omit a behavior the task asked for, are a finding (`Category: acceptance-criteria`, minimum Major). A package with no LIGHT Plan, a LIGHT Plan missing an R-124 field, or a LIGHT Plan that the available evidence (artifact ordering, timestamps, commit history) shows was written after the code, is a Blocker (`Category: plan-conformance`). Plan findings carry normal severities, enter the ledger, and are answered in `FIXING` like any other finding; a failed combined pass increments `final_iterations` and the next review is the combined pass again (§0.5, R-14). When the REVIEWER judges the task mis-tiered — it should have run STANDARD or FULL — it raises the tier (R-0a) instead of filing plan findings: the driver enters `PLANNING` at the raised tier with counters at 0; the LIGHT package is superseded, not amended (R-89); R-0b's "re-enters PLAN_REVIEW" reads as "enters PLANNING" for a run that had none. R-81's "plan approved" is satisfied at LIGHT by a combined pass reporting GATE_MET with no open plan finding.
 
 ### 4.6 TARGETED_REVIEW
 

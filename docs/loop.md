@@ -48,8 +48,9 @@ Kill the session here. Open a new one, in any tool, and say "continue the export
 ```
 intake (driver classifies the tier, R-101)
   ├─EXPRESS→ EXPRESS_IMPLEMENTING → EXPRESS_CHECK ─pass→ APPROVED
-  │             └─scope_exceeded→ PLANNING   └─fail→ PLANNING   (tier promoted, R-104/R-105; EXPRESS never loops)
-  └─LIGHT / STANDARD / FULL→ PLANNING
+  │             └─scope_exceeded / fail→ promoted tier's entry state   (IMPLEMENTING at LIGHT / PLANNING at STANDARD+; R-104/R-105; EXPRESS never loops)
+  ├─LIGHT→ IMPLEMENTING → FULL_REVIEW (combined) ─gate met→ APPROVED / not met→ FIXING (budget 2) → combined again   (R-123; no PLANNING/PLAN_REVIEW)
+  └─STANDARD / FULL→ PLANNING
 
 PLANNING → PLAN_REVIEW ─rejected→ PLANNING            (budget: 3)
                 └─approved→ IMPLEMENTING → FULL_REVIEW

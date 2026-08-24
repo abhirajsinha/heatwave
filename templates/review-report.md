@@ -1,5 +1,7 @@
 # Review Report
 
+<!-- LIGHT uses templates/light-review-report.md (R-126); this file serves PLAN_REVIEW / FULL / TARGETED / FINAL and the STANDARD/FULL combined view. -->
+
 task_id: | artifact_type: review-report | iteration: | review_type: PLAN_REVIEW | FULL_REVIEW | TARGETED_REVIEW | FINAL_REVIEW | FULL_FINAL_REVIEW (LIGHT) | produced_by: REVIEWER (<model>) | timestamp:
 
 ## Verdict
