@@ -1,0 +1,44 @@
+# Heatwave Run Record — append-only.
+
+task_id: global-role-models
+created: 2026-08-24T21:42:00+05:30
+tier: EXPRESS
+terminal_state: APPROVED
+run_config:
+  tier: EXPRESS
+  tier_justification: "Single locatable edit to heatwave.config.example.yaml (roles default block); 1 file, no new dependency, no new surface, no sensitive path — R-103 all hold."
+  design_doc: false
+  autonomy: autopilot
+  scope: single_repo
+roles:
+  planner:     { configured: , resolved: , substitution_reason: }   # EXPRESS — no planner
+  implementer: { configured: claude-opus-4-8, resolved: claude-opus-4-8, substitution_reason: }  # headless dispatch
+  reviewer:    { configured: claude-fable-5, resolved: claude-fable-5, substitution_reason: }   # EXPRESS_CHECK PASS 2026-08-24T22:10+05:30 (R-82 analog)
+hetero_reviewer: ""
+review_session: ""
+final_delta_range: ""
+counters:
+  plan_iterations: 0
+  fix_iterations: 0
+  final_iterations: 0
+tooling_resolutions:
+  mobile_platform: ""
+  out_of_scope_platforms: []
+companions:
+  detected: []
+  fired: []
+  strix: ""
+  strix_docker_up: ""
+  strix_docker_down: ""
+transitions:
+  - { from: START, to: EXPRESS_IMPLEMENTING, artifact: run_config (intake), timestamp: 2026-08-24T21:42:00+05:30 }
+  - { from: EXPRESS_IMPLEMENTING, to: EXPRESS_CHECK, artifact: 01-express-change.md, timestamp: 2026-08-24T21:52:00+05:30, stage_model: claude-opus-4-8 }
+  - { from: EXPRESS_CHECK, to: APPROVED, artifact: 02-express-check.md (PASS), timestamp: 2026-08-24T22:10:00+05:30, stage_model: claude-fable-5 }
+findings: []
+deferrals: []
+waivers: []
+scope_expansions: []
+deviations: []
+unverified_criteria: []
+escalations: []
+backlog: []

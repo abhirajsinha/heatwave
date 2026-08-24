@@ -15,10 +15,13 @@
 # implementer — a same-model reviewer under-critiques its own style. The run
 # record flags the gap either way: hetero_reviewer: "false (self-preference
 # bias not mitigated)" when they match. Advisory only — zero-config stays valid.
-# roles:
-#   planner:     { preferred: your-best-reasoning-model, fallback: [] }
-#   implementer: { preferred: your-best-coding-model,    fallback: [] }
-#   reviewer:    { preferred: your-best-reasoning-model, fallback: [] }
+# Maintainer defaults (strongest reasoning model plans and reviews, strongest
+# coding model implements). On another stack, substitute your own model ids or
+# re-comment this block for zero-config session-model behavior.
+roles:
+  planner:     { preferred: claude-fable-5, fallback: ["claude-opus-4-8[1m]"] }
+  implementer: { preferred: "claude-opus-4-8[1m]", fallback: [claude-opus-4-8, claude-opus-5] }
+  reviewer:    { preferred: claude-fable-5, fallback: ["claude-opus-4-8[1m]"] }
 
 # --- Test tooling (default: auto-detected from the project) ------------------
 # Set an entry only when detection gets it wrong, or for tools that leave no
