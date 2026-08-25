@@ -356,3 +356,58 @@ structure landed well under the target here. Raw data: CSV
 `benchmark/results/20260824T165539Z-heatwave.csv`; transcripts, run records,
 `agent.ndjson`, and state timelines under
 `benchmark/results/transcripts/20260824T165539Z-heatwave/`.
+
+---
+
+## Addendum — 2026-08-25: v4.4 context-brief + capped-STANDARD-review baseline (targets, not gates)
+
+This addendum pins the **baseline** for the v4.4 change (context brief at intake +
+STANDARD review output-shape cap, R-131/R-132) and records the **follow-up method**.
+Per the run's AC-N-04, the wall/cost improvement itself is **not** claimed here — no
+post-v4.4 STANDARD run exists yet; claiming it now would be assertion, not evidence
+(R-65/R-66). What is pinned is the measurement machinery and honest targets.
+
+**Baseline — `jira-mode` (the clean STANDARD sample this session).** Per-stage wall
+and token totals as reported by the harness (intake note table; provenance: per-dispatch
+harness wall/token counts for each subagent):
+
+| Stage | Wall | Share |
+|---|---|---|
+| Jira intake + repo-ownership ladder | 0 min (0 dispatches) | 0% |
+| PLANNING | 10.6 min | 14% |
+| PLAN_REVIEW ×2 | 8.5 min | 11% |
+| IMPLEMENTING | 19.3 min | 25% |
+| **FULL + TARGETED + FINAL review** | **30.4 min** | **40%** |
+| FIXING | 7.4 min | 10% |
+| **Total** | **~76 min, ~1.8M subagent tokens** | |
+
+**Baseline — review-artifact length**, measured directly from `.heatwave/runs/jira-mode/`
+this session (`wc -w`, and non-blank lines via `grep -cv '^[[:space:]]*$'`):
+
+| Artifact | Words | Non-blank lines |
+|---|---|---|
+| 02-plan-review-1.md | 2450 | 167 |
+| 04-plan-review-2.md | 1669 | 48 |
+| 06-review-report-1.md | 3301 | 99 |
+| 08-review-report-2.md | 1906 | 59 |
+| 09-final-review.md | 2421 | 83 |
+| **review-artifact total** | **11,747 words** | **456 non-blank lines** |
+
+These are unbounded-prose STANDARD reviews — the premise R-132 caps.
+
+**Follow-up method (free, no paid A/B).** The next real STANDARD run in this repo
+carries per-stage wall in its run-record transition timestamps, and its review artifacts
+are measured with the same `wc -w` / non-blank-line commands. No dedicated benchmark
+arm is spent: the only corpus fixtures are eight single-module katas + one LIGHT fixture
+(`benchmark/corpus`, `benchmark/corpus-tiering`), none of which classifies STANDARD
+honestly (R-103a) — forcing them through STANDARD would measure tier inflation, at
+~76 min / ~1.8M tokens per arm, on an unrepresentative ceremony. Cost of measurement: **$0 now**.
+
+**Targets — labeled targets, never gates (an honest miss is a valid result):**
+
+- review-cluster wall ≤ **60%** of the baseline 40% share (i.e. the review cluster stops being the dominant stage);
+- review-artifact length ≤ **50%** of the baseline (≤ ~5,900 words / ≤ ~228 non-blank lines across the same review set);
+- PLANNING cache-creation (input) tokens directionally lower, the planner substituting targeted reads for exploratory ones.
+
+n will be stated when the follow-up run exists (n=0 today). These are directional
+targets measured from run records, not asserted results — a fabricated hit is a Blocker (R-65).

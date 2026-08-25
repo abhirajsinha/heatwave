@@ -22,3 +22,4 @@ Not dispatched at LIGHT — there plan review happens inside the combined FULL+F
 - Findings use the Appendix A schema with stable IDs `F-<task_id>-<NNN>`; every finding's `Verification method` must be executable by the PLANNER/IMPLEMENTER (R-32 consumes it).
 - Judge against the criteria as written; if the criteria themselves are insufficient, that is a finding (`Category: acceptance-criteria`), not a silent new requirement (R-26).
 - Narrative goes in the Summary section only and introduces no findings (R-29).
+- **STANDARD output shape (R-132, v4.4):** PLAN_REVIEW has no findings ledger, so findings stay full Appendix-A blocks in-report — but the **Summary narrative section is not written at STANDARD** (FULL-tier only). Evidence exempt in R-126's terms. A missing required element is a Blocker; surplus narrative is a Minor (`over-engineering`), non-gating; an operator-directed plain-language opener is not surplus.

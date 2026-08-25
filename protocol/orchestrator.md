@@ -147,3 +147,21 @@ The run **never modifies a second repository** (multi-repo implementation stays 
 
 A killed session resumes (R-88) at the recorded verdict/GO and never re-fetches the ticket — the brief is a completed, immutable artifact (R-89).
 
+### 9.9 Context brief *(v4.4)*
+
+The context brief is a file-level intake artifact the driver derives so the PLANNER starts from a map of the work instead of rediscovering the tree. It rides the same intake pass as the R-128 repository gate, at **zero role dispatches**, and is the same class of driver work R-127 established as normalization, not planning (R-83 intact). It has a planner half in the planner shard.
+
+**R-131 (driver half).** *(v4.4)* On a STANDARD or FULL run, after tier classification and the R-128 repository gate, the driver writes `00-context-brief.md` (template `templates/context-brief.md`) into the run dir **before the PLANNING dispatch**. Every line is derived from a **re-runnable command quoted in the brief** — nothing hand-kept:
+
+- **Primary repository** — path, normalized remote URL (the R-128 identity: lowercase `host/owner/name`, `.git` and protocol/user stripped; `no remote — path only` when the working tree has none), and the recorded `repo_ownership` verdict.
+- **Detected tooling evidence** — the manifest/CI files the R-99 evidence classes match, cited by path. This pre-feeds the PLANNER's tooling declaration with citable evidence; it never replaces the PLANNER's own detection.
+- **Domain terms** — the literal strings grepped, listed verbatim so term choice is auditable. Terms come from the task/brief text — the same normalization judgment R-127 grants the driver, never planning.
+- **Relevant files** — per repo, the quoted `git grep -lF -e <term>` command and its matched paths, **≤ 30 paths per repo** with the total match count stated when truncated; an empty result is stated honestly, never padded.
+- **Additional repositories** — identity + path + a trusted/untrusted flag. **The additional-repository set is exactly the repository identities named in the task/brief text as resolved by the R-128 ladder — the driver never enumerates the filesystem, `$HOME`, or any directory tree to discover repositories the task did not name.** File-level listing is produced only for the primary repo and for a named additional repo whose remote owner is inside the R-128 derived trusted-owner set (authenticated login + orgs + the explicit `jira.trusted_owners` allowlist). A repo outside that set — including one merely present on disk — is identified (path + URL) and flagged, **never file-listed**. **Trust derives from operator identity, never disk presence** — the R-128 invariant, extended from cloning to reading. Where GitHub access is unavailable the trusted-owner set degrades **fail-closed** to the explicit `jira.trusted_owners` allowlist alone: an owner whose membership cannot be established is treated as outside-set — flagged, not listed.
+
+Untrusted-input discipline: domain terms are passed as **fixed-string, single-quoted arguments** (`git grep -lF -e <term>`), never interpolated into shell syntax, so a hostile term lands as a literal search string with no execution. The brief carries **paths and counts only — never a file-body excerpt from any repo** — and the driver takes no action based on brief content. The brief is **≤ 40 non-blank lines**.
+
+Recording and skips, recorded never silent: the driver records `run_config.context_brief: emitted | skipped-<reason>`. No brief is written for **LIGHT or EXPRESS** (no PLANNER consumes it), when the working directory is **not a git repo** (`skipped-not-a-git-repo`), or when config sets `context_brief: never` (`skipped-config`). A LIGHT or EXPRESS run **promoted into PLANNING** (R-104/R-105) gets its brief emitted at promotion, before the PLANNING dispatch. On a **Jira-sourced** run the context brief is written after `00-requirement-brief.md` and the repository gate; the two share the `00` intake prefix deliberately (R-86 pair precedent). A killed session resumes on the brief already on disk — immutable (R-89), never re-derived. The brief adds **no role dispatch, no state, no counter**.
+
+Intake ordering with the brief: **detect → fetch (Jira) → repository gate → context brief → tier entry state → GO checkpoint.**
+

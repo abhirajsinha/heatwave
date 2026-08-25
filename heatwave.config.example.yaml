@@ -73,6 +73,12 @@ roles:
 # design_doc: ask        # ask | always | never; unset = never for existing repos, ask for greenfield
 # design_doc_path: docs/design
 
+# --- Context brief (v4.4, R-131) — STANDARD/FULL intake; unset = auto ----------
+# The driver derives a file-level context brief (00-context-brief.md) at STANDARD/FULL
+# intake — primary repo, tooling evidence, domain terms, relevant files per repo — and
+# hands it to the planner as advisory input. Zero AI calls; paths and counts only.
+# context_brief: auto      # auto | never. never = skip it (recorded skipped-config).
+
 # --- Jira mode (v4.3, R-127–R-130) — ALL optional; unset = today's behavior ---
 # Ticket-sourced runs: a Jira key or browse URL in the task makes the driver fetch
 # the ticket read-only via the Atlassian MCP into a Requirement Brief, verify the

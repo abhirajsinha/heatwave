@@ -14,6 +14,7 @@ run_config:            # written by the driver at intake (core §2.5); absent in
   repo_ownership: { verdict: correct, primary: "", candidates: [], search_bound: "", evidence: "" }   # v4.3 (R-128): verdict correct | elsewhere-local | absent | unknown | multiple; absent = correct
   autonomy: autopilot      # v4.3 ACTIVE (R-129): autopilot | gated — gated = one pre-code OWNER GO checkpoint; default gated for jira source, autopilot for text (interactive still RESERVED, G/H)
   scope: single_repo       # RESERVED (G): single_repo | multi_repo — recorded only, no branching (YAGNI)
+  context_brief: ""        # v4.4 (R-131): emitted | skipped-<reason> — STANDARD/FULL driver-derived context brief; absent = pre-4.4 (no brief)
 roles:
   planner:     { configured: , resolved: , substitution_reason: }
   implementer: { configured: , resolved: , substitution_reason: }

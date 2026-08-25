@@ -6,9 +6,9 @@ Loaded by: every dispatch, all states. Section/rule numbers are global to the pr
 
 # Heatwave — AI Development & Verification Protocol
 
-**Version:** 4.2
+**Version:** 4.4
 **Status:** Active
-**Supersedes:** v4.1 (intake cascade), v4.0, v3.1 (open-source release) — Appendix F
+**Supersedes:** v4.3 (Jira mode), v4.2 (two-dispatch LIGHT), v4.1 (intake cascade), v4.0, v3.1 (open-source release) — Appendix F
 
 Heatwave is a tool-agnostic protocol for AI-performed software development. It works with any coding agent — Claude Code, Codex, Gemini CLI, Cursor, or a plain chat session — because it governs *contexts and artifacts*, not any vendor's features. See `README.md` for installation and the per-tool adapters.
 
@@ -64,7 +64,7 @@ Ceremony scales to the change; independent verification does not. Every tier exc
 |---|---|---|---|
 | **EXPRESS** *(v4)* | A single obvious edit: copy, label, color, config value, typo. No new surface. | None — no Planning Document. | No PLAN_REVIEW. IMPLEMENTER makes the change; one independent EXPRESS_CHECK (deterministic machine gate + fresh-context confirmation glance) gates APPROVED. Any failure promotes to LIGHT — EXPRESS never loops. |
 | **LIGHT** | Single-file (or a few closely-related same-subsystem) fixes, copy changes, config tweaks with no new surface | **LIGHT Plan** (R-124): problem statement, tier, change class, change surface, acceptance criteria (may be a single AC-F), review scope, tooling declaration — at most 25 non-blank lines, written by the IMPLEMENTER as §1 of its Implementation Package before it edits (R-123). No PLANNER dispatch; no other §3.2 sections; no `N/A` rows. | No PLAN_REVIEW state: the separate REVIEWER reviews the plan inside one combined FULL+FINAL pass (full evaluation of plan and code, per-criterion acceptance status, readiness checklist — R-125) on the LIGHT output shape (R-126). A combined pass that fails behaves as a FINAL_REVIEW failure: → FIXING, increments `final_iterations`, next review is the combined pass again (R-14). Two role dispatches on the happy path. |
-| **STANDARD** | A feature, or a bugfix larger than a single bounded fix, touching one subsystem | All sections; N/A allowed per R-20. | Full state machine. |
+| **STANDARD** | A feature, or a bugfix larger than a single bounded fix, touching one subsystem | All sections; N/A allowed per R-20. | Full state machine; review reports take the capped `templates/review-report.md` shape (R-132). |
 | **FULL** | Cross-cutting changes: schema migrations, auth, new services, anything touching money or user data | All sections, no collapsed entries; non-functional criteria mandatory. | Full state machine; FINAL_REVIEW checklist (8.3) item-by-item. |
 
 **R-0a.** The plan author — the PLANNER, or at LIGHT the IMPLEMENTER (R-123) — proposes the tier in the Planning Document with one line of justification; the REVIEWER MAY raise it (never lower it) at PLAN_REVIEW or at the LIGHT combined pass (R-125).
@@ -284,13 +284,14 @@ run_config:
   repo_ownership: {}        # v4.3: repository-ownership verdict recorded before any dispatch (R-128); absent = current-repo default (correct)
   autonomy: autopilot      # v4.3 ACTIVE (R-129): autopilot | gated — gated = one pre-code OWNER GO checkpoint; default gated for jira source, autopilot for text (interactive still RESERVED, G/H)
   scope: single_repo       # RESERVED (G): single_repo | multi_repo — recorded only, no branching (YAGNI)
+  context_brief: ""        # v4.4 (R-131): emitted | skipped-<reason> — STANDARD/FULL driver-derived context brief; absent = pre-4.4 (no brief)
 ```
 
 **R-106 (driver half).** *(v4)* At intake the driver resolves `design_doc` from config (`ask` | `always` | `never`; unset defaults: existing repo → `never`, greenfield/new area → `ask`, asked once) and records it in `run_config`. It applies to STANDARD/FULL only; EXPRESS and LIGHT never generate one. *(The planner half — emitting the document — is §3.2.3.)*
 
 **R-114.** *(v4)* At intake the driver records `change_class` in `run_config`: `bugfix` when the task's purpose is to correct defective existing behavior, else `feature`. The plan author (PLANNER; at LIGHT the IMPLEMENTER, R-123) declares the authoritative class in the Planning Document with one line of justification and MAY correct the driver's value (the correction is recorded in the Run Record). EXPRESS runs never carry a change class — EXPRESS has no plan. Misclassification is a valid REVIEWER finding. Only `bugfix` alters behavior (R-113); a record without the field reads `feature`.
 
-Behavior-driving fields: `tier`, `tier_justification`, `design_doc`, `change_class`, and — from v4.3 — `source`, `repo_ownership`, and `autonomy` (the Jira-mode intake path: ticket source R-127, repository-ownership gate R-128, GO checkpoint R-129; the GO itself is recorded top-level as `go:` in the Run Record, not in `run_config`). `scope` stays RESERVED for sub-project G: recorded with a default that reproduces current behavior, consulted by nothing (YAGNI). A Run Record without a `run_config` block (pre-v4) is read as `tier` from `state.yaml`, `design_doc: false`, `autonomy: autopilot`, `scope: single_repo`, `change_class: feature`; a v4.3 field absent from a v4–v4.2 record reads as the text-mode default — `source: {kind: text}`, `repo_ownership: {verdict: correct}`, `autonomy: autopilot` — so pre-4.3 runs behave byte-identically.
+Behavior-driving fields: `tier`, `tier_justification`, `design_doc`, `change_class`, and — from v4.3 — `source`, `repo_ownership`, and `autonomy` (the Jira-mode intake path: ticket source R-127, repository-ownership gate R-128, GO checkpoint R-129; the GO itself is recorded top-level as `go:` in the Run Record, not in `run_config`); and — from v4.4 — `context_brief` (R-131: the driver-derived context brief's outcome, `emitted | skipped-<reason>`; absent = pre-4.4, no brief). `scope` stays RESERVED for sub-project G: recorded with a default that reproduces current behavior, consulted by nothing (YAGNI). A Run Record without a `run_config` block (pre-v4) is read as `tier` from `state.yaml`, `design_doc: false`, `autonomy: autopilot`, `scope: single_repo`, `change_class: feature`; a v4.3 field absent from a v4–v4.2 record reads as the text-mode default — `source: {kind: text}`, `repo_ownership: {verdict: correct}`, `autonomy: autopilot` — so pre-4.3 runs behave byte-identically.
 
 ---
 

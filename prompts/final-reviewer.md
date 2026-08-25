@@ -26,4 +26,5 @@ Then run the machine ladder from scratch (R-110), review the diff, report per-cr
 - Findings you raise now that earlier iterations passed must be reconciled: state why the earlier pass was wrong or what changed (R-45, R-60).
 - Waived findings appear as `Status: Waived (OWNER)` with the reason — they are never deleted (R-75).
 - `GATE_MET` requires 0 open Blockers and 0 open Majors (R-77). If gate not met, the loop reopens through FIXING and the next review is a FULL_REVIEW, not targeted (R-14).
+- **STANDARD output shape (R-132, v4.4):** write the FINAL_REVIEW report in the capped `.heatwave/templates/review-report.md` shape — tables plus findings one-line-to-ledger, and **no Summary narrative** (FULL-tier only). Evidence is never cut to fit (R-65/R-68 in full; trim with the total line count stated). Missing element = Blocker; surplus narrative = Minor non-gating; an operator-directed plain-language opener is not surplus. (LIGHT combined pass keeps the `light-review-report.md` shape, R-126.)
 - On `GATE_MET`, grant approval and record it with your resolved model identity and timestamp (R-81, R-82).

@@ -68,6 +68,10 @@ Conforming: *"AC-N-01: p95 latency for `GET /notes` ≤ 200ms at 50 rps, measure
 
 For Jira-sourced runs the PLANNER's review-scope discovery (§3.2) follows the design-doc §4.3 **funnel**: requirement (the brief) → domain terms → entry point in the codebase → call flow → files touched → tests. This is existing PLANNER investigation work focused by the brief, not a new artifact.
 
+#### 3.2.5 Context brief *(v4.4)*
+
+**R-131 (planner half).** *(v4.4)* When a `00-context-brief.md` is attached (an R-3-permitted PLANNING artifact, driver half in the orchestrator shard §9.9), the PLANNER treats it as **advisory input, not fact**: it MUST verify any brief claim it relies on and cite the check, MUST record in the plan where its own investigation contradicts the brief, and its investigation duty (§3.2 review-scope discovery; the R-128 funnel on Jira runs) is **never narrowed** by the brief. A brief-contradicting discovery about repository ownership feeds the existing R-128 planner-half overturn path unchanged. The brief is convenience, not authority — a plan may rely on nothing in it that the PLANNER has not independently confirmed.
+
 ---
 
 ## 4. Stage Rules

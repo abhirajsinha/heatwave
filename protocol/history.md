@@ -61,3 +61,15 @@ Loaded by: never dispatched — rendered into the full generated spec only.
 | Jira mode: ticket-sourced intake (source + Requirement Brief), repository-ownership gate with a safe missing-repo ladder, one pre-code OWNER GO checkpoint, Jira-AC traceability | R-127–R-130; core §2.5 (`source`, `repo_ownership`, `autonomy` activated); §9.8 | A developer's unit of work is a Jira story, not prose; nothing verified the run was even in the right repository; "build passes" could stand in for "story done". Zero new dispatches / states / tiers / binaries — all driver bookkeeping plus fields on existing artifacts |
 
 **Rule count.** v4.3 adds R-127–R-130, taking the protocol from **129** to **133** distinct rule IDs. The count is derived, never hand-kept: the suffix-aware pattern `grep -ohE '\*\*R-[0-9]+[a-z]?' protocol/*.md | sed 's/\*\*//' | sort -u | wc -l` counts every ID including the lettered R-0a, R-0b, R-103a (a suffix-blind pattern silently drops those three and under-counts by two — the defect that produced a wrong figure during this run's planning). README and this row state 133; both re-derive from that pattern, so the number cannot hand-drift in either direction.
+
+---
+
+## Appendix F.4 — Changes in v4.4
+
+| Change | Rules | Addresses |
+|---|---|---|
+| Context brief at intake: the driver derives a file-level context brief (primary repo, tooling evidence, domain terms, relevant files per repo, additional repos) at STANDARD/FULL intake and hands it to the PLANNER as advisory input; capped STANDARD review output shape extends R-126's proven cap mechanism from LIGHT to STANDARD reviews | R-131, R-132; core §2.5 (`context_brief`), §0.5 (STANDARD-row pointer), orchestrator §9.9, planner §3.2.5, reviewer §3.4.3 | Every PLANNER re-derived the repo tree from scratch and a plan spanning repositories had no protocol-level input at all; STANDARD review artifacts were unbounded prose and the review cluster was the measured 40% of a run's wall. Zero new dispatches / states / tiers / counters / binaries — driver shell work plus one output-shape rule; evidence stays exempt (R-65/R-68 in full, ledger uncapped) so shorter never means thinner proof |
+
+**Version header.** v4.4 corrects a stale version header: `protocol/core.md` (and the generated `PROTOCOL.md`) read `Version: 4.2` through v4.3; the header is bumped to 4.4 here with the Supersedes line updated.
+
+**Rule count.** v4.4 adds R-131–R-132, taking the protocol from **133** to **135** distinct rule IDs. Derived by the same suffix-aware pattern `grep -ohE '\*\*R-[0-9]+[a-z]?' protocol/*.md | sed 's/\*\*//' | sort -u | wc -l` (the `[a-z]?` class is load-bearing — a suffix-blind pattern drops R-0a/R-0b/R-103a and under-counts by two). README and this row state 135; both re-derive from that pattern, never hand-kept.

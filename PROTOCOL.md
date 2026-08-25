@@ -8,9 +8,9 @@ Loaded by: every dispatch, all states. Section/rule numbers are global to the pr
 
 # Heatwave — AI Development & Verification Protocol
 
-**Version:** 4.2
+**Version:** 4.4
 **Status:** Active
-**Supersedes:** v4.1 (intake cascade), v4.0, v3.1 (open-source release) — Appendix F
+**Supersedes:** v4.3 (Jira mode), v4.2 (two-dispatch LIGHT), v4.1 (intake cascade), v4.0, v3.1 (open-source release) — Appendix F
 
 Heatwave is a tool-agnostic protocol for AI-performed software development. It works with any coding agent — Claude Code, Codex, Gemini CLI, Cursor, or a plain chat session — because it governs *contexts and artifacts*, not any vendor's features. See `README.md` for installation and the per-tool adapters.
 
@@ -66,7 +66,7 @@ Ceremony scales to the change; independent verification does not. Every tier exc
 |---|---|---|---|
 | **EXPRESS** *(v4)* | A single obvious edit: copy, label, color, config value, typo. No new surface. | None — no Planning Document. | No PLAN_REVIEW. IMPLEMENTER makes the change; one independent EXPRESS_CHECK (deterministic machine gate + fresh-context confirmation glance) gates APPROVED. Any failure promotes to LIGHT — EXPRESS never loops. |
 | **LIGHT** | Single-file (or a few closely-related same-subsystem) fixes, copy changes, config tweaks with no new surface | **LIGHT Plan** (R-124): problem statement, tier, change class, change surface, acceptance criteria (may be a single AC-F), review scope, tooling declaration — at most 25 non-blank lines, written by the IMPLEMENTER as §1 of its Implementation Package before it edits (R-123). No PLANNER dispatch; no other §3.2 sections; no `N/A` rows. | No PLAN_REVIEW state: the separate REVIEWER reviews the plan inside one combined FULL+FINAL pass (full evaluation of plan and code, per-criterion acceptance status, readiness checklist — R-125) on the LIGHT output shape (R-126). A combined pass that fails behaves as a FINAL_REVIEW failure: → FIXING, increments `final_iterations`, next review is the combined pass again (R-14). Two role dispatches on the happy path. |
-| **STANDARD** | A feature, or a bugfix larger than a single bounded fix, touching one subsystem | All sections; N/A allowed per R-20. | Full state machine. |
+| **STANDARD** | A feature, or a bugfix larger than a single bounded fix, touching one subsystem | All sections; N/A allowed per R-20. | Full state machine; review reports take the capped `templates/review-report.md` shape (R-132). |
 | **FULL** | Cross-cutting changes: schema migrations, auth, new services, anything touching money or user data | All sections, no collapsed entries; non-functional criteria mandatory. | Full state machine; FINAL_REVIEW checklist (8.3) item-by-item. |
 
 **R-0a.** The plan author — the PLANNER, or at LIGHT the IMPLEMENTER (R-123) — proposes the tier in the Planning Document with one line of justification; the REVIEWER MAY raise it (never lower it) at PLAN_REVIEW or at the LIGHT combined pass (R-125).
@@ -286,13 +286,14 @@ run_config:
   repo_ownership: {}        # v4.3: repository-ownership verdict recorded before any dispatch (R-128); absent = current-repo default (correct)
   autonomy: autopilot      # v4.3 ACTIVE (R-129): autopilot | gated — gated = one pre-code OWNER GO checkpoint; default gated for jira source, autopilot for text (interactive still RESERVED, G/H)
   scope: single_repo       # RESERVED (G): single_repo | multi_repo — recorded only, no branching (YAGNI)
+  context_brief: ""        # v4.4 (R-131): emitted | skipped-<reason> — STANDARD/FULL driver-derived context brief; absent = pre-4.4 (no brief)
 ```
 
 **R-106 (driver half).** *(v4)* At intake the driver resolves `design_doc` from config (`ask` | `always` | `never`; unset defaults: existing repo → `never`, greenfield/new area → `ask`, asked once) and records it in `run_config`. It applies to STANDARD/FULL only; EXPRESS and LIGHT never generate one. *(The planner half — emitting the document — is §3.2.3.)*
 
 **R-114.** *(v4)* At intake the driver records `change_class` in `run_config`: `bugfix` when the task's purpose is to correct defective existing behavior, else `feature`. The plan author (PLANNER; at LIGHT the IMPLEMENTER, R-123) declares the authoritative class in the Planning Document with one line of justification and MAY correct the driver's value (the correction is recorded in the Run Record). EXPRESS runs never carry a change class — EXPRESS has no plan. Misclassification is a valid REVIEWER finding. Only `bugfix` alters behavior (R-113); a record without the field reads `feature`.
 
-Behavior-driving fields: `tier`, `tier_justification`, `design_doc`, `change_class`, and — from v4.3 — `source`, `repo_ownership`, and `autonomy` (the Jira-mode intake path: ticket source R-127, repository-ownership gate R-128, GO checkpoint R-129; the GO itself is recorded top-level as `go:` in the Run Record, not in `run_config`). `scope` stays RESERVED for sub-project G: recorded with a default that reproduces current behavior, consulted by nothing (YAGNI). A Run Record without a `run_config` block (pre-v4) is read as `tier` from `state.yaml`, `design_doc: false`, `autonomy: autopilot`, `scope: single_repo`, `change_class: feature`; a v4.3 field absent from a v4–v4.2 record reads as the text-mode default — `source: {kind: text}`, `repo_ownership: {verdict: correct}`, `autonomy: autopilot` — so pre-4.3 runs behave byte-identically.
+Behavior-driving fields: `tier`, `tier_justification`, `design_doc`, `change_class`, and — from v4.3 — `source`, `repo_ownership`, and `autonomy` (the Jira-mode intake path: ticket source R-127, repository-ownership gate R-128, GO checkpoint R-129; the GO itself is recorded top-level as `go:` in the Run Record, not in `run_config`); and — from v4.4 — `context_brief` (R-131: the driver-derived context brief's outcome, `emitted | skipped-<reason>`; absent = pre-4.4, no brief). `scope` stays RESERVED for sub-project G: recorded with a default that reproduces current behavior, consulted by nothing (YAGNI). A Run Record without a `run_config` block (pre-v4) is read as `tier` from `state.yaml`, `design_doc: false`, `autonomy: autopilot`, `scope: single_repo`, `change_class: feature`; a v4.3 field absent from a v4–v4.2 record reads as the text-mode default — `source: {kind: text}`, `repo_ownership: {verdict: correct}`, `autonomy: autopilot` — so pre-4.3 runs behave byte-identically.
 
 ---
 
@@ -487,6 +488,10 @@ Conforming: *"AC-N-01: p95 latency for `GET /notes` ≤ 200ms at 50 rps, measure
 **R-130 (planner half).** *(v4.3)* A Jira-sourced Planning Document (and, at LIGHT, the LIGHT Plan) MUST carry a `jira_ac_map`: every `J-AC-i` from the brief mapped to one or more plan acceptance-criteria ids. The map MUST cover every J-AC; the plan MUST NOT narrow or redefine a J-AC (the requirement is the ticket's, not the plan's — reviewer half, R-130 in the reviewer shard, makes an unmapped or redefined J-AC a Major). A plan AC with **no** J-AC source is tagged `derived` and justified — ambiguity is surfaced (Unknowns / the GO checkpoint), never resolved by invention. Text runs carry no `jira_ac_map`; it is a required-iff-Jira field, not an N/A row on every plan.
 
 For Jira-sourced runs the PLANNER's review-scope discovery (§3.2) follows the design-doc §4.3 **funnel**: requirement (the brief) → domain terms → entry point in the codebase → call flow → files touched → tests. This is existing PLANNER investigation work focused by the brief, not a new artifact.
+
+#### 3.2.5 Context brief *(v4.4)*
+
+**R-131 (planner half).** *(v4.4)* When a `00-context-brief.md` is attached (an R-3-permitted PLANNING artifact, driver half in the orchestrator shard §9.9), the PLANNER treats it as **advisory input, not fact**: it MUST verify any brief claim it relies on and cite the check, MUST record in the plan where its own investigation contradicts the brief, and its investigation duty (§3.2 review-scope discovery; the R-128 funnel on Jira runs) is **never narrowed** by the brief. A brief-contradicting discovery about repository ownership feeds the existing R-128 planner-half overturn path unchanged. The brief is convenience, not authority — a plan may rely on nothing in it that the PLANNER has not independently confirmed.
 
 ---
 
@@ -756,14 +761,16 @@ Produced by REVIEWER in `PLAN_REVIEW`, `FULL_REVIEW`, `TARGETED_REVIEW`, `FINAL_
 3. Scope changes     — per 5.2; explicit "None" if none
 4. Reconciliation    — per 5.6; required from iteration 2 onward
 5. Acceptance status — per criterion; required in FINAL_REVIEW
-6. Findings          — summary per finding; canonical Appendix-A detail lives in the findings ledger (R-109)
+6. Findings          — summary per finding; canonical Appendix-A detail lives in the findings ledger (R-109). *(v4.4, R-132: at STANDARD, one line each pointing to the ledger where a ledger exists — FULL/TARGETED/FINAL; full Appendix-A blocks at PLAN_REVIEW, which has none.)*
 7. Verification log  — per 6.4; what was verified, how, what was not, why
-8. Summary narrative — free prose, ≤ 400 words, no findings introduced here
+8. Summary narrative — free prose, ≤ 400 words, no findings introduced here. *(v4.4, R-132: FULL-tier only — not written at STANDARD.)*
 ```
 
 *(v4.2)* At LIGHT the Review Report takes the shape `templates/light-review-report.md` (R-126): a one-line verdict, the plan-check table (R-125), the machine-evidence table, the per-criterion acceptance table, one-line findings pointing to the ledger, reconciliation from iteration 2, and the §8.3 readiness table — no summary narrative.
 
-**R-29.** Findings MUST use the Appendix A schema, carried in the findings ledger from v4 (R-109); the report's Findings section summarizes and references it. Narrative belongs in §8 and MUST NOT introduce a finding. A concern that does not merit a structured finding is not a finding and MUST NOT gate approval.
+*(v4.4)* At STANDARD the Review Report takes the capped shape `templates/review-report.md` fixes (R-132): the same tables, findings one-line-to-ledger where a ledger exists (Appendix-A blocks at PLAN_REVIEW), and no summary narrative — evidence exempt in R-126's exact terms.
+
+**R-29.** Findings MUST use the Appendix A schema, carried in the findings ledger from v4 (R-109); the report's Findings section summarizes and references it. Narrative belongs in §8 and MUST NOT introduce a finding. A concern that does not merit a structured finding is not a finding and MUST NOT gate approval. *(v4.4: at STANDARD the §8 summary narrative is not written — R-132 makes §8 FULL-tier only; this rule's no-finding-in-narrative and "a concern that is not a finding does not gate" clauses are unchanged and tier-independent.)*
 
 > **Rationale for R-29.** v2 said free-form comments were "discouraged," which is not an enforceable rule — reviewers produce prose, and prose concerns then float in an undefined state where they neither block nor get tracked. Giving narrative a sanctioned home with an explicit no-findings rule resolves this without pretending reviewers won't write prose.
 
@@ -778,6 +785,12 @@ Produced by REVIEWER in `PLAN_REVIEW`, `FULL_REVIEW`, `TARGETED_REVIEW`, `FINAL_
 **R-111.** *(v4)* Ladder verdicts (R-110) convert to findings mechanically, recorded in the ledger with `origin: machine` and their `rung`: a failing declared test is a machine finding of severity Blocker; a high-severity SAST result on changed lines is a machine finding, default Major; a surviving mutant on changed lines is a machine finding — `tests inadequate for <file>`, naming what to cover — default Major. Default categories: a failing test takes the category of the acceptance criterion it verifies, else `verification-integrity`; a SAST hit takes the matching Security category from Appendix C; a surviving mutant takes `verification-integrity`. The REVIEWER MAY reclassify a machine finding's default severity or category per R-5 with recorded reason; it MUST NOT discard one silently. All other Appendix A semantics apply, including stable IDs (R-55). The LLM review that follows covers what machines cannot — logic, design, plan conformance — and MUST NOT restate as prose findings what a rung already verified.
 
 **R-112.** *(v4)* Refute-or-promote: before any candidate finding of severity Major or Blocker enters the ledger as `open`, the REVIEWER MUST attempt to refute it — is it actually reachable, actually wrong, not already handled? — and record the attempt and outcome in the finding's `refutation` field. A finding that survives is promoted (`status: open`) and gates per Section 8; one that is refuted is recorded with `status: refuted` and the refuting reason, MUST NOT enter FIXING, and MUST NOT gate (R-77 excludes it from "open"). Minors and Nits are exempt. A machine finding's refutation attempt is re-running its rung and checking the result is attributable to the change under review rather than a pre-existing baseline failure. Refuted findings remain in the ledger — visible, reconciled per 5.6, reopenable per R-59 — and are outside the set of findings R-31 obliges the FIXER to answer. Applies to ledger-producing reviews (R-109); PLAN_REVIEW findings are unaffected.
+
+#### 3.4.3 STANDARD review output shape *(v4.4)*
+
+**R-132.** *(v4.4)* At STANDARD every REVIEWER-authored Review Report — PLAN_REVIEW, FULL_REVIEW, TARGETED_REVIEW, FINAL_REVIEW — takes the shape `templates/review-report.md` fixes: a one-line verdict with severity counts; scope evaluated as a line and scope changes per R-49; the reconciliation table (R-58) from iteration 2; the per-criterion acceptance table with evidence references (R-27); the machine-evidence table (R-110); findings as **one line each pointing to the ledger** where a ledger exists (FULL/TARGETED/FINAL, R-109) and as full Appendix-A blocks at PLAN_REVIEW, which has none; the verification log as tables. The free-prose **Summary narrative** (§3.4 structure item 8) is **FULL-tier only** — not written at STANDARD.
+
+The cap binds **narrative only; evidence is never cut to fit** — exactly as R-126: R-65 and R-68 hold in full, long command output MAY be trimmed to the relevant lines **with the total line count stated** and MUST NOT be replaced by a prose summary, and the findings ledger (R-109) is uncapped and carries every finding's full Appendix-A detail. What the cap removes is the *duplicate* prose rendering of what the ledger already carries, plus the free-form summary narrative. A missing required element is a **Blocker** (R-16 — the artifact is incomplete). Surplus narrative is a **Minor** (`Category: over-engineering`), recorded, never gating — a reviewer is never penalized for attaching *more evidence*, only for wrapping the report in unrequested prose. **Prose the driver's dispatch explicitly directed — an operator's standing instruction, such as a required plain-language opening section — is not "surplus narrative": the Minor targets unrequested narrative only.** FULL-tier reports, the findings-ledger schema (R-109), the Implementation Package, and the Fix Report are unchanged.
 
 ---
 
@@ -1149,6 +1162,24 @@ The run **never modifies a second repository** (multi-repo implementation stays 
 
 A killed session resumes (R-88) at the recorded verdict/GO and never re-fetches the ticket — the brief is a completed, immutable artifact (R-89).
 
+### 9.9 Context brief *(v4.4)*
+
+The context brief is a file-level intake artifact the driver derives so the PLANNER starts from a map of the work instead of rediscovering the tree. It rides the same intake pass as the R-128 repository gate, at **zero role dispatches**, and is the same class of driver work R-127 established as normalization, not planning (R-83 intact). It has a planner half in the planner shard.
+
+**R-131 (driver half).** *(v4.4)* On a STANDARD or FULL run, after tier classification and the R-128 repository gate, the driver writes `00-context-brief.md` (template `templates/context-brief.md`) into the run dir **before the PLANNING dispatch**. Every line is derived from a **re-runnable command quoted in the brief** — nothing hand-kept:
+
+- **Primary repository** — path, normalized remote URL (the R-128 identity: lowercase `host/owner/name`, `.git` and protocol/user stripped; `no remote — path only` when the working tree has none), and the recorded `repo_ownership` verdict.
+- **Detected tooling evidence** — the manifest/CI files the R-99 evidence classes match, cited by path. This pre-feeds the PLANNER's tooling declaration with citable evidence; it never replaces the PLANNER's own detection.
+- **Domain terms** — the literal strings grepped, listed verbatim so term choice is auditable. Terms come from the task/brief text — the same normalization judgment R-127 grants the driver, never planning.
+- **Relevant files** — per repo, the quoted `git grep -lF -e <term>` command and its matched paths, **≤ 30 paths per repo** with the total match count stated when truncated; an empty result is stated honestly, never padded.
+- **Additional repositories** — identity + path + a trusted/untrusted flag. **The additional-repository set is exactly the repository identities named in the task/brief text as resolved by the R-128 ladder — the driver never enumerates the filesystem, `$HOME`, or any directory tree to discover repositories the task did not name.** File-level listing is produced only for the primary repo and for a named additional repo whose remote owner is inside the R-128 derived trusted-owner set (authenticated login + orgs + the explicit `jira.trusted_owners` allowlist). A repo outside that set — including one merely present on disk — is identified (path + URL) and flagged, **never file-listed**. **Trust derives from operator identity, never disk presence** — the R-128 invariant, extended from cloning to reading. Where GitHub access is unavailable the trusted-owner set degrades **fail-closed** to the explicit `jira.trusted_owners` allowlist alone: an owner whose membership cannot be established is treated as outside-set — flagged, not listed.
+
+Untrusted-input discipline: domain terms are passed as **fixed-string, single-quoted arguments** (`git grep -lF -e <term>`), never interpolated into shell syntax, so a hostile term lands as a literal search string with no execution. The brief carries **paths and counts only — never a file-body excerpt from any repo** — and the driver takes no action based on brief content. The brief is **≤ 40 non-blank lines**.
+
+Recording and skips, recorded never silent: the driver records `run_config.context_brief: emitted | skipped-<reason>`. No brief is written for **LIGHT or EXPRESS** (no PLANNER consumes it), when the working directory is **not a git repo** (`skipped-not-a-git-repo`), or when config sets `context_brief: never` (`skipped-config`). A LIGHT or EXPRESS run **promoted into PLANNING** (R-104/R-105) gets its brief emitted at promotion, before the PLANNING dispatch. On a **Jira-sourced** run the context brief is written after `00-requirement-brief.md` and the repository gate; the two share the `00` intake prefix deliberately (R-86 pair precedent). A killed session resumes on the brief already on disk — immutable (R-89), never re-derived. The brief adds **no role dispatch, no state, no counter**.
+
+Intake ordering with the brief: **detect → fetch (Jira) → repository gate → context brief → tier entry state → GO checkpoint.**
+
 
 ---
 
@@ -1215,3 +1246,15 @@ Loaded by: never dispatched — rendered into the full generated spec only.
 | Jira mode: ticket-sourced intake (source + Requirement Brief), repository-ownership gate with a safe missing-repo ladder, one pre-code OWNER GO checkpoint, Jira-AC traceability | R-127–R-130; core §2.5 (`source`, `repo_ownership`, `autonomy` activated); §9.8 | A developer's unit of work is a Jira story, not prose; nothing verified the run was even in the right repository; "build passes" could stand in for "story done". Zero new dispatches / states / tiers / binaries — all driver bookkeeping plus fields on existing artifacts |
 
 **Rule count.** v4.3 adds R-127–R-130, taking the protocol from **129** to **133** distinct rule IDs. The count is derived, never hand-kept: the suffix-aware pattern `grep -ohE '\*\*R-[0-9]+[a-z]?' protocol/*.md | sed 's/\*\*//' | sort -u | wc -l` counts every ID including the lettered R-0a, R-0b, R-103a (a suffix-blind pattern silently drops those three and under-counts by two — the defect that produced a wrong figure during this run's planning). README and this row state 133; both re-derive from that pattern, so the number cannot hand-drift in either direction.
+
+---
+
+## Appendix F.4 — Changes in v4.4
+
+| Change | Rules | Addresses |
+|---|---|---|
+| Context brief at intake: the driver derives a file-level context brief (primary repo, tooling evidence, domain terms, relevant files per repo, additional repos) at STANDARD/FULL intake and hands it to the PLANNER as advisory input; capped STANDARD review output shape extends R-126's proven cap mechanism from LIGHT to STANDARD reviews | R-131, R-132; core §2.5 (`context_brief`), §0.5 (STANDARD-row pointer), orchestrator §9.9, planner §3.2.5, reviewer §3.4.3 | Every PLANNER re-derived the repo tree from scratch and a plan spanning repositories had no protocol-level input at all; STANDARD review artifacts were unbounded prose and the review cluster was the measured 40% of a run's wall. Zero new dispatches / states / tiers / counters / binaries — driver shell work plus one output-shape rule; evidence stays exempt (R-65/R-68 in full, ledger uncapped) so shorter never means thinner proof |
+
+**Version header.** v4.4 corrects a stale version header: `protocol/core.md` (and the generated `PROTOCOL.md`) read `Version: 4.2` through v4.3; the header is bumped to 4.4 here with the Supersedes line updated.
+
+**Rule count.** v4.4 adds R-131–R-132, taking the protocol from **133** to **135** distinct rule IDs. Derived by the same suffix-aware pattern `grep -ohE '\*\*R-[0-9]+[a-z]?' protocol/*.md | sed 's/\*\*//' | sort -u | wc -l` (the `[a-z]?` class is load-bearing — a suffix-blind pattern drops R-0a/R-0b/R-103a and under-counts by two). README and this row state 135; both re-derive from that pattern, never hand-kept.

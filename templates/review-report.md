@@ -1,6 +1,10 @@
 # Review Report
 
-<!-- LIGHT uses templates/light-review-report.md (R-126); this file serves PLAN_REVIEW / FULL / TARGETED / FINAL and the STANDARD/FULL combined view. -->
+<!-- LIGHT uses templates/light-review-report.md (R-126); this file serves PLAN_REVIEW / FULL / TARGETED / FINAL.
+     STANDARD reports are CAPPED (R-132): all tables below, findings one-line-to-ledger where a ledger exists
+     (Appendix-A blocks at PLAN_REVIEW), and NO Summary narrative — the Summary section is FULL-tier only.
+     Evidence is never cut to fit: R-65/R-68 hold in full; trim long output to the relevant lines WITH the
+     total line count stated, never a prose summary. Missing required element = Blocker; surplus narrative = Minor. -->
 
 task_id: | artifact_type: review-report | iteration: | review_type: PLAN_REVIEW | FULL_REVIEW | TARGETED_REVIEW | FINAL_REVIEW | FULL_FINAL_REVIEW (LIGHT) | produced_by: REVIEWER (<model>) | timestamp:
 
@@ -36,7 +40,8 @@ Late findings: <per R-60, or "None">
 |---|---|---|---|
 
 ## Findings
-<summary per finding; canonical detail lives in NN-findings-K.yaml (R-109)>
+<STANDARD/FULL: one line each pointing to NN-findings-K.yaml (R-109) where a ledger exists — FULL/TARGETED/FINAL;
+ at PLAN_REVIEW (no ledger) full Appendix-A blocks in-report. Canonical detail always lives in the ledger.>
 
 ## Verification Log
 
@@ -51,4 +56,6 @@ Not verified:
 |---|---|---|
 
 ## Summary
+<!-- FULL tier only (R-132). NOT written at STANDARD. Operator-directed prose (e.g. a required
+     plain-language opening section) is not surplus narrative and is exempt from the R-132 Minor. -->
 <≤ 400 words prose; introduces no findings (R-29)>
