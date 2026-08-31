@@ -8,11 +8,85 @@
 set -eu
 
 SRC=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
+
+# --- User-global session-hygiene setup (machine-wide, NOT per-project) ---------
+# Installs the session-age nudge hook, statusline, and fresh-tasks loop into
+# ~/.claude so every NEW Claude Code session on this machine gets them. This is a
+# once-per-machine, user-global concern — deliberately separate from the
+# per-project install below, which must never mutate ~/.claude as a side effect.
+install_session_hygiene() {
+  src=$1
+  cc="$HOME/.claude"
+  mkdir -p "$cc/hooks" "$cc/scripts"
+  cp "$src/session-hygiene/session-age.sh" "$cc/hooks/session-age.sh"
+  cp "$src/session-hygiene/statusline.sh"  "$cc/statusline.sh"
+  cp "$src/session-hygiene/fresh-tasks.sh" "$cc/scripts/fresh-tasks.sh"
+  chmod +x "$cc/hooks/session-age.sh" "$cc/statusline.sh" "$cc/scripts/fresh-tasks.sh"
+  echo "copied session-hygiene scripts into ~/.claude"
+  if command -v python3 >/dev/null 2>&1; then
+    python3 - "$cc/settings.json" <<'PYEOF'
+import json, os, sys
+path = sys.argv[1]
+home = os.path.expanduser("~")
+try:
+    with open(path) as f: cfg = json.load(f)
+except FileNotFoundError:
+    cfg = {}
+except json.JSONDecodeError as e:
+    # Never rewrite a file we could not parse — that would destroy the user's settings.
+    print(f"warning: {path} is not valid JSON ({e}) — session-hygiene NOT installed. Fix the file and re-run.")
+    sys.exit(0)
+if not isinstance(cfg, dict) or not isinstance(cfg.get("hooks", {}), dict):
+    print(f"warning: {path} has an unexpected shape — session-hygiene NOT installed. Fix the file and re-run.")
+    sys.exit(0)
+changed = False
+# Statusline — only set if absent or already ours; never clobber a custom one.
+sl = {"type": "command", "command": f"bash {home}/.claude/statusline.sh", "refreshInterval": 10}
+existing = cfg.get("statusLine")
+if existing is None or (isinstance(existing, dict) and "statusline.sh" in (existing.get("command") or "")):
+    if existing != sl:
+        cfg["statusLine"] = sl; changed = True
+else:
+    print("note: a custom statusLine is set — left as-is (the context trigger needs statusline.sh's token write; wire it in yourself if wanted)")
+# Hooks — append alongside whatever is already there (e.g. the protocol gate).
+hooks = cfg.setdefault("hooks", {})
+for ev in ("SessionStart", "UserPromptSubmit"):
+    entries = hooks.get(ev, [])
+    if not isinstance(entries, list):
+        print(f"warning: {path} 'hooks.{ev}' is not a list — session-hygiene NOT installed. Fix the file and re-run.")
+        sys.exit(0)
+    hooks[ev] = entries
+    if not any("session-age.sh" in (h.get("command") or "")
+               for e in entries if isinstance(e, dict)
+               for h in e.get("hooks", []) if isinstance(h, dict)):
+        entries.append({"hooks": [{"type": "command",
+                                   "command": f"bash {home}/.claude/hooks/session-age.sh {ev}",
+                                   "timeout": 10, "statusMessage": "Session hygiene"}]})
+        changed = True
+if changed:
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    with open(path, "w") as f: json.dump(cfg, f, indent=2); f.write("\n")
+    print("installed session-hygiene statusline + hooks in ~/.claude/settings.json")
+else:
+    print("skipped session-hygiene settings (already installed)")
+PYEOF
+  else
+    echo "note: python3 not found — wire ~/.claude/settings.json manually (see session-hygiene/README.md)"
+  fi
+  echo "session-hygiene installed — active in every NEW session (restart or open /hooks to load it now)"
+}
+
+if [ "${1:-}" = "--session-hygiene" ]; then
+  install_session_hygiene "$SRC"
+  exit 0
+fi
+
 TARGET=${1:-}
 ADAPTER=${2:-generic}
 
 usage() {
   echo "Usage: $0 /path/to/project [claude|codex|gemini|cursor|copilot|windsurf|cline|zed|amp|opencode|aider|generic]" >&2
+  echo "       $0 --session-hygiene    (user-global: install session-age nudge + statusline into ~/.claude)" >&2
   exit 1
 }
 
@@ -163,6 +237,7 @@ PYEOF
     echo "  browser evidence:     claude mcp add playwright -- npx @playwright/mcp@latest"
     echo "  runtime debugging:    claude mcp add chrome-devtools -- npx chrome-devtools-mcp@latest"
     echo "  current library docs: claude mcp add context7 -- npx -y @upstash/context7-mcp"
+    echo "machine-wide (run once, not per-project): ./install.sh --session-hygiene  — session-age nudge + statusline to keep sessions short and context small"
     ;;
   codex)
     append_once "$TARGET/AGENTS.md" "$SRC/adapters/codex/AGENTS.md"
