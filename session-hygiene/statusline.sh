@@ -11,14 +11,14 @@ m = d.get("model") or {}
 model = m.get("display_name") if isinstance(m, dict) else (m or "?")
 
 cw = d.get("context_window") or {}
-used  = int(cw.get("used") or 0)
-total = int(cw.get("total") or cw.get("max_tokens") or 0)
-pct   = cw.get("percentage")
+used  = int(cw.get("total_input_tokens") or 0) + int(cw.get("total_output_tokens") or 0)
+total = int(cw.get("context_window_size") or 0)
+pct   = cw.get("used_percentage")
 if pct is None and used and total:
     pct = round(100 * used / total)
 
 cost = d.get("cost") or {}
-usd  = cost.get("cost_usd") or cost.get("total_cost_usd") or 0
+usd  = cost.get("total_cost_usd") or cost.get("cost_usd") or 0
 dur  = int(cost.get("total_duration_ms") or 0)
 
 sid = d.get("session_id")
