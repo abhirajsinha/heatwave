@@ -19,9 +19,9 @@
 # coding model implements). On another stack, substitute your own model ids or
 # re-comment this block for zero-config session-model behavior.
 roles:
-  planner:     { preferred: claude-fable-5, fallback: ["claude-opus-4-8[1m]"] }
-  implementer: { preferred: "claude-opus-4-8[1m]", fallback: [claude-opus-4-8, claude-opus-5] }
-  reviewer:    { preferred: claude-fable-5, fallback: ["claude-opus-4-8[1m]"] }
+  planner:     { preferred: "claude-opus-4-8[1m]", fallback: [claude-opus-4-8] }
+  implementer: { preferred: "claude-opus-4-8[1m]", fallback: [claude-opus-4-8] }
+  reviewer:    { preferred: "claude-opus-4-8[1m]", fallback: [claude-opus-4-8] }
 
 # --- Test tooling (default: auto-detected from the project) ------------------
 # Set an entry only when detection gets it wrong, or for tools that leave no
@@ -101,6 +101,11 @@ roles:
 
 # --- Speed / token engine (v4, R-116–R-118) — ALL optional; unset = today's ---
 # --- behavior: every stage on the session/role model, fresh contexts.      ---
+cheap_model: "claude-haiku-4-5"      # R-116: mechanical stages only (never PLAN/FULL/FINAL_REVIEW)
+small_diff_threshold: 150
+stage_models:
+  EXPRESS_CHECK: "claude-haiku-4-5"
+  TARGETED_REVIEW: "claude-haiku-4-5"
 # cheap_model: ""              # opt-in second model for MECHANICAL stages ONLY (R-116):
 #                              # EXPRESS_CHECK, driver-side summarization, and TARGETED_REVIEW
 #                              # of a small delta. FULL_REVIEW, FINAL_REVIEW, and PLAN_REVIEW of
