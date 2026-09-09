@@ -1,0 +1,12 @@
+id: h01-refund-idempotency
+type: feature
+trap: double-refund
+difficulty: hard
+module: refund.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: idempotency
+expected_catch_role: reviewer
+tier_expected: STANDARD
+risk_reason: money ledger mutation, public function contract, no new dependency

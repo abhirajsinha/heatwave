@@ -1,0 +1,12 @@
+id: h09-legacy-record-loader
+type: feature
+trap: missing-field
+difficulty: hard
+module: loader.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: backwards-compat
+expected_catch_role: reviewer
+tier_expected: STANDARD
+risk_reason: loading legacy persisted-record shapes, tolerant read, public function

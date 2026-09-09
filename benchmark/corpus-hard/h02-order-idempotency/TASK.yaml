@@ -1,0 +1,12 @@
+id: h02-order-idempotency
+type: feature
+trap: retried-order
+difficulty: hard
+module: orders.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: idempotency retry
+expected_catch_role: reviewer
+tier_expected: STANDARD
+risk_reason: money order line-items, retried request path, public contract

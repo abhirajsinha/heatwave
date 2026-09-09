@@ -6,7 +6,7 @@ set -eu
 
 BENCH=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 REPO=$(dirname "$BENCH")
-ARM= TASKS=8 TRIALS=1 ONLY=
+ARM= TASKS= TRIALS=1 ONLY=
 RAW_DEADLINE=${RAW_DEADLINE:-900} HW_DEADLINE=${HW_DEADLINE:-2700}  # seconds; NFR-2. Env-overridable: stub tests use tiny values.
 CLAUDE_BIN=${CLAUDE_BIN:-claude}   # self-test seam: stub binary for zero-cost forced-outcome tests (disclosed in METHODOLOGY)
 HW_MODEL=${HW_MODEL:-}             # optional disclosed model for the heatwave arm (FR-6); unset = session model
@@ -29,6 +29,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 case "$ARM" in raw|heatwave|fixture-good|fixture-bad) ;; *) echo "bad --arm (raw|heatwave|fixture-good|fixture-bad)" >&2; exit 1 ;; esac
+: "${TASKS:=$(ls -d "$BENCH/$CORPUS"/*/ 2>/dev/null | wc -l | tr -d ' ')}"  # default: run the whole selected corpus (was hardcoded 8); --tasks N still wins
 
 meta() { sed -n "s/^$1: //p" "$2/TASK.yaml"; }
 manifest() { (cd "$BENCH/$CORPUS" && find . -type f | LC_ALL=C sort | xargs shasum -a 256); }

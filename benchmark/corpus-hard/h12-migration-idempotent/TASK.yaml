@@ -1,0 +1,12 @@
+id: h12-migration-idempotent
+type: feature
+trap: double-migrate
+difficulty: hard
+module: migrate.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: migration-safety
+expected_catch_role: reviewer
+tier_expected: FULL
+risk_reason: idempotent lossless data migration, shape transform, re-run safety

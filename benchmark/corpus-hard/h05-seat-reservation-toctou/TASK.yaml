@@ -1,0 +1,12 @@
+id: h05-seat-reservation-toctou
+type: feature
+trap: lost-update
+difficulty: hard
+module: seats.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: race concurrency security
+expected_catch_role: reviewer
+tier_expected: STANDARD
+risk_reason: seat reservation invariant under a lost update, atomic-primitive contract, public function

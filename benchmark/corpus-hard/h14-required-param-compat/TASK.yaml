@@ -1,0 +1,12 @@
+id: h14-required-param-compat
+type: feature
+trap: dropped-return-key
+difficulty: hard
+module: invoices.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: api-compat
+expected_catch_role: reviewer
+tier_expected: STANDARD
+risk_reason: preserving an existing caller contract (optional param and documented return keys), public API

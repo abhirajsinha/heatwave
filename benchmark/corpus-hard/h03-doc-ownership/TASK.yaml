@@ -1,0 +1,12 @@
+id: h03-doc-ownership
+type: feature
+trap: missing-owner-check
+difficulty: hard
+module: docs.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: authorization security
+expected_catch_role: reviewer
+tier_expected: STANDARD
+risk_reason: user-owned document access, ownership boundary, public contract

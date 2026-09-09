@@ -1,0 +1,12 @@
+id: h10-booking-overlap-boundary
+type: feature
+trap: adjacency
+difficulty: hard
+module: booking.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: validation
+expected_catch_role: planner+reviewer
+tier_expected: STANDARD
+risk_reason: half-open interval boundary rule, adjacency correctness, public function

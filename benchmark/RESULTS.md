@@ -411,3 +411,167 @@ honestly (R-103a) — forcing them through STANDARD would measure tier inflation
 
 n will be stated when the follow-up run exists (n=0 today). These are directional
 targets measured from run records, not asserted results — a fabricated hit is a Blocker (R-65).
+
+## Addendum — 2026-09-10: hard corpus RAW validation sweep (run `hard-corpus`)
+
+**Additive.** The locked scoring section and every figure above are unchanged.
+This addendum records the RAW validation sweep for the new discriminating corpus
+`benchmark/corpus-hard/` (see METHODOLOGY §7). Escape rate is over **graded rows
+only**, per the locked rule.
+
+### What ran
+
+```
+$ CORPUS=corpus-hard sh benchmark/run.sh --arm raw --tasks 14 --trials 3
+$ awk -F, -f benchmark/summarize.awk benchmark/results/20260909T194129Z-raw.csv
+raw: completed=42/42 escaped_defects=0/42 gradable (rate=0.000) oracle_pass=42/42 \
+     outcomes[graded=42 timeout=0 escalated=0 error=0] mean_wall=31.3s total_cost=$9.7155 (over 42 costed rows)
+```
+
+- Model: session default `claude-opus-5[1m]` (a frontier model; `stage_model`
+  column shows `claude-haiku-4-5;claude-opus-5[1m]` — the CLI's own sub-agent
+  split, RAW arm, `HW_MODEL` unset, no model asymmetry). CLI 2.1.266,
+  `raw_deadline=900s`.
+- CSV: `benchmark/results/20260909T194129Z-raw.csv` (42 data rows + header).
+
+### Completion integrity (locked E2 scoring)
+
+All **42/42 rows are `graded`** — zero `timeout`, zero `error`, zero
+`escalated`, zero `notes`. Every RAW run reached its own terminal state with
+gradable code, so the escape denominator is the full 42. There are **no
+completion failures to report separately** — the miss below is a pure
+discrimination result, not a harness or flakiness artifact (the corpus is
+deterministic: the free self-test is byte-identical across 5 runs).
+
+### Per-task escape counts (n = 3 trials each; reported as n, un-averaged)
+
+| task | defect class | graded | escaped | discriminating (≥2/3)? |
+|---|---|---|---|---|
+| h01-refund-idempotency | idempotency | 3/3 | 0/3 | no |
+| h02-order-idempotency | idempotency/retry | 3/3 | 0/3 | no |
+| h03-doc-ownership | authorization/security | 3/3 | 0/3 | no |
+| h04-list-scope-leak | authorization/security | 3/3 | 0/3 | no |
+| h05-seat-reservation-toctou | race/concurrency/security | 3/3 | 0/3 | no |
+| h06-keyset-pagination | concurrency | 3/3 | 0/3 | no |
+| h07-batch-save-atomic | error-handling/data-integrity | 3/3 | 0/3 | no |
+| h08-import-rollback-cleanup | error-handling | 3/3 | 0/3 | no |
+| h09-legacy-record-loader | backwards-compat | 3/3 | 0/3 | no |
+| h10-booking-overlap-boundary | validation | 3/3 | 0/3 | no |
+| h11-token-expiry-auth | authentication/security | 3/3 | 0/3 | no |
+| h12-migration-idempotent | migration-safety | 3/3 | 0/3 | no |
+| h13-retry-nonidempotent | retry | 3/3 | 0/3 | no |
+| h14-required-param-compat | api-compat | 3/3 | 0/3 | no |
+
+**Every one of the 14 tasks escaped 0/3.** No task trapped RAW in any trial.
+
+### Disposition against the pre-registered threshold (frozen before any data; not reinterpreted)
+
+The plan froze two conditions; **both must hold**. Stated separately:
+
+1. **Corpus RAW escape rate ≥ 0.60 over graded rows** → measured **0.000**
+   (0/42). **NOT MET.**
+2. **≥ 8 of 14 tasks escaping in ≥ 2/3 trials** → measured **0/14**. **NOT MET.**
+
+**Verdict: the hard corpus as built is NOT hard enough. The run does not claim a
+discriminating corpus.** This is the honest-miss path (plan AC-F-07): reported
+plainly, not softened. The RAW-vs-HEATWAVE delta remains UNCOMPUTABLE — this
+corpus, like the frozen 8-task one, does not yet make a frontier RAW agent ship
+wrong code. The corpus is **NOT frozen** (no freeze SHA recorded — the freeze
+rule records a SHA only after the threshold is met).
+
+### Why it missed, and what it tells us (evidence for the follow-on)
+
+The miss is not flakiness, unfairness, or a broken oracle: the mechanism is
+sound (42/42 graded, deterministic, fair inputs, `good`/`bad` discriminate under
+`check-corpus.sh` and both fixture arms; FULL_REVIEW independently reproduced an
+escape with five hand-written wrong solutions distinct from the shipped `bad.py`).
+RAW (`opus-5`) simply implemented the correct contract on every task. Below are
+the contributing levers the run makes visible. **A caveat governs all of them:
+the data is n=3 per task and 0/42 across the board — a null with no variance — so
+it can establish that each lever was *present*, but it CANNOT rank them or
+apportion how much each contributed. No ordering among these is claimed or
+supported.**
+
+1. **The subtlety is spelled out in the SPEC (evidenced).** AC-F-10 (difficulty
+   from the problem, not ambiguity) requires each SPEC to state its requirement
+   explicitly — and several SPECs document the *crux primitive the defect turns
+   on*, which is closer to telegraphing the trapped edge than merely stating a
+   goal. Verbatim from the delivered files:
+   `corpus-hard/h05-seat-reservation-toctou/SPEC.md` — "it returns `True` when it
+   set the value and `False` when it did not" and "If the seat is already held,
+   raise SeatTaken";
+   `corpus-hard/h11-token-expiry-auth/SPEC.md` — "A token has expired when
+   expires_at is less than or equal to now";
+   `corpus-hard/h10-booking-overlap-boundary/SPEC.md` — "Intervals are half-open:
+   [start, end) includes start and excludes end" and "Two intervals that touch
+   only at an endpoint do not overlap." When the exact edge is a stated sentence,
+   a frontier model implements it.
+
+2. **The visible test ships inside the agent's surface (evidenced).** `run.sh`
+   copies `repo/.` (which includes `repo/test_visible.py`) plus `SPEC.md` to the
+   agent — see `run.sh:114-118` copy surface. So the agent reads the happy-path
+   test: the exact call shape, argument order, and expected return types are
+   demonstrated, not inferred, before it writes a line. Part of the contract is
+   readable off the shipped test rather than reconstructed. (The test is
+   *supposed* to be visible — it is the agent-visible check by design — but its
+   presence is a difficulty-reducer a follow-on must account for, not just a
+   fairness fixture.)
+
+3. **`opus-5` self-verifies beyond the visible check (evidenced, and the most
+   consequential).** On h05 trial 1 the model, unprompted, wrote its own
+   adversarial probe reconstructing the *withheld* oracle's mechanism. Transcript
+   `benchmark/results/transcripts/20260909T194129Z-raw/h05-seat-reservation-toctou-trial1/agent.ndjson`:
+   after a first mis-written "Racy" probe it self-corrected —
+   `class LyingGet(SeatStore): def get(self, seat_id): return None` with
+   `s._holders["s1"] = "alice"` ("really held") — i.e. a store whose `get()`
+   reports the seat free while another user holds it, which is exactly the
+   oracle's `StaleSeatStore`/lost-update trap. It then asserted its own
+   `reserve_seat` raises `SeatTaken`. The model independently generated the same
+   adversarial case the withheld oracle uses and checked its code against it. A
+   trap only the withheld oracle exercises does not stay withheld from a model
+   that self-tests to the same standard.
+
+4. **Single-function, self-contained shape (inferred, untested here).** The
+   original diagnosis — a kata whose full contract fits one short SPEC gives the
+   model nothing to lose track of — is plausible but this run cannot isolate it:
+   every task in the corpus has that shape, so there is no multi-function /
+   cross-file contrast to attribute the null to. It is listed as a lever to test,
+   not a demonstrated cause.
+
+**Open question the follow-on must design around (constraint, not answer).** If a
+frontier model already performs its own adversarial self-verification on a
+self-contained, fully-specified function (lever 3), then a corpus of that shape
+**cannot measure what independent verification adds** — the model has already
+done the equivalent of the withheld check itself, regardless of how subtle the
+defect is. Making individual tasks subtler does not escape this: a subtler
+single-function spec is still something the model can self-probe. The follow-on
+must therefore find a shape where correct behavior is NOT establishable by the
+model's own local self-testing — e.g. a defect whose manifestation depends on
+state, callers, or interactions outside the unit the model holds in view — or the
+null will recur. This is stated as a constraint on the redesign; it is **not** a
+claim about any RAW-vs-HEATWAVE delta, which remains UNCOMPUTABLE at this n.
+
+**All 14 tasks are hardening candidates** (none retained as discriminating).
+Directions to test — not executed here (out of scope): multi-function / cross-file
+surfaces where the critical interaction is not local to one stated sentence;
+defects whose effect surfaces only across calls or components the model cannot
+self-probe in isolation; withholding or restructuring the visible test's
+information; and specs that state the requirement without naming the primitive
+the defect turns on. Whether the arm model should be pinned (a weaker RAW model
+would escape more, but the thesis is frontier reliability) is a methodology
+decision for the driver, not a corpus change.
+
+### Cost / wall vs estimate (now checkable — budget evidence for the §22 three-arm sweep)
+
+| metric | plan estimate | measured | delta |
+|---|---|---|---|
+| runs | 42 | 42 | 0 |
+| total cost | ~$8.82 | **$9.7155** | +$0.90 (+10.3%) |
+| total wall | ~24.5 min | **21.9 min** (1316 s) | −2.6 min |
+| mean/run | ~$0.21 / ~35 s | $0.2313 / 31.3 s | +$0.02 / −3.7 s |
+
+RAW mean cost/run came in ~10% above the RESULTS.md history (~$0.21), consistent
+with the frontier session model; wall was slightly under. The three-arm sweep's
+Heatwave arms (STANDARD tier) remain the budget driver — this RAW figure does not
+change that, but it confirms the RAW leg is cheap and the per-run cost basis for
+budgeting the follow-on is ~$0.23/run at the current session model.

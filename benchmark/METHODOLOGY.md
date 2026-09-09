@@ -231,3 +231,97 @@ awk -F, -f benchmark/summarize.awk benchmark/results/<run-id>.csv
 Scale up (more trials for confidence intervals): `--trials K` on any arm;
 subset: `--only <comma-separated ids>`; fewer tasks: `--tasks N` (lexical
 order). Fixture arms are deterministic; model arms are not — expect variance.
+
+## 7. The hard corpus (`benchmark/corpus-hard`) — discrimination instrument
+
+*Appended 2026-09-10 (run `hard-corpus`). This section is additive: the locked
+scoring section above (E2, locked) is unchanged — the hard corpus is scored by
+the same harness, the same `outcome` buckets, and the same escape-rate rule
+(escaped ÷ graded rows, per arm). It selects a different corpus root via the
+existing `CORPUS` knob; no new framework, no rescoring.*
+
+**Why it exists.** The frozen 8-task corpus does not discriminate: RAW completed
+8/8 with 0 escaped defects, so the RAW-vs-HEATWAVE escaped-defect delta is
+UNCOMPUTABLE (RESULTS.md headline). Those tasks are stub-implementation katas a
+frontier model solves reliably. The hard corpus is 14 tasks engineered so a
+competent coding agent ships a **specific wrong-but-plausible** solution that
+passes the agent-visible happy-path check yet violates a SPEC-stated requirement
+a withheld oracle enforces.
+
+**Construction (uniform shape).** Each task keeps the existing directory
+contract (`TASK.yaml`, `SPEC.md`, `repo/`, `oracle/`, `solutions/good.py`,
+`solutions/bad.py`) and is graded by `check-corpus.sh` unchanged: `good` passes
+the oracle, `bad` fails the oracle, `bad` passes the visible check. The function
+under test takes an **injected dependency** (a ledger/store/resource) documented
+in the SPEC; the agent-visible happy path uses a normal store, and the withheld
+oracle reproduces the adversarial interleaving or fault single-threaded. That is
+how every task grades **deterministically** — no real threads, no wall-clock, no
+unseeded RNG:
+
+- TOCTOU / lost update (h05): a spy store whose `get()` reports the seat free
+  while its internal state already records another holder; correct code honors
+  `compare_and_set`'s return, naive check-then-set does not.
+- idempotency / retry (h01, h02, h13): sequential re-invocation with a call
+  counter and an injected `sleeper` (no real sleep).
+- partial-write / rollback (h07, h08): an injected invalid record / raising
+  transform at a known index.
+- auth expiry (h11): explicit integer `now` / `expires_at` (no clock).
+- migration / backward-compat / api-compat (h12, h09, h14): mixed input shapes
+  and old-contract calls constructed by the oracle.
+
+**Founder §21 defect-class coverage.** 12 of the 13 classes are BUILT with a
+dedicated task; **performance (#12) is EXCLUDED** — a timing regression cannot be
+graded as a deterministic pass/fail on this oracle harness (the one thing the
+determinism rule forbids); a deterministic complexity-proxy is a named follow-on
+on a different harness. Security (#8) is BUILT by the authorization (h03/h04),
+TOCTOU (h05), and authentication (h11) tasks — those are themselves security
+defects, not proxies; the one un-buildable sub-flavor (generic injection/XSS)
+has no rendering/DB/serialization sink in a stdlib in-memory harness and is
+noted, not silently dropped. Each `TASK.yaml` carries advisory metadata for the
+downstream sweeps — `defect_class`, `expected_catch_role`, `tier_expected`,
+`risk_reason` — inert to the current harness (`meta()` reads only named keys).
+
+**Fairness.** Both arms receive identical inputs (`repo/` + `SPEC.md` only);
+`TASK.yaml`, `oracle/`, and `solutions/` are withheld and FATAL-asserted by the
+harness. SPECs state each subtle requirement as a functional contract and carry
+no verification nudge (no "watch for races", no "use the return value") — the
+difficulty is in connecting the documented primitive to the stated invariant,
+which is the design work a hasty agent skips, not ambiguity.
+
+### Pre-registered discrimination threshold (frozen before any sweep)
+
+Frozen in the approved Planning Document, quoted here so the corpus cannot be
+declared "hard enough" post-hoc:
+
+- **Per-task floor:** a task is *discriminating* iff RAW escapes it (visible-pass
+  + oracle-fail) in **≥ 2 of 3** trials.
+- **Primary kill criterion:** corpus RAW escape rate (escaped ÷ graded rows)
+  **≥ 0.60**. Below 0.60 → NOT hard enough → report honestly and iterate.
+- **Per-task-count criterion:** **≥ 8 of 14** tasks individually escape in
+  ≥ 2/3 trials.
+- **Floor on retained tasks:** after any drops, ≥ 8 discriminating tasks retained
+  (drop-headroom 6).
+
+Changing any threshold after observing sweep output to manufacture a pass is a
+Blocker (R-65).
+
+### Freeze rule
+
+Iterating on a task **before** the corpus is frozen is expected construction; a
+revised task is a new corpus version, re-swept. The freeze SHA is recorded in
+RESULTS.md **only after** a validation sweep meets the pre-registered threshold.
+The frozen `corpus/` and `corpus-tiering/` and all existing results are never
+modified by this corpus.
+
+### Reproduce (hard corpus)
+
+```sh
+# free self-tests
+CORPUS=corpus-hard sh benchmark/check-corpus.sh                 # 14/14 ALL TASKS PASS
+CORPUS=corpus-hard sh benchmark/run.sh --arm fixture-good       # oracle_pass=14/14, escapes 0
+CORPUS=corpus-hard sh benchmark/run.sh --arm fixture-bad        # escaped_defects=14/14
+
+# paid RAW validation sweep (42 runs = 14 tasks x 3 trials)
+CORPUS=corpus-hard sh benchmark/run.sh --arm raw --tasks 14 --trials 3
+awk -F, -f benchmark/summarize.awk benchmark/results/<run-id>.csv
+```

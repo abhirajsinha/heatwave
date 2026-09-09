@@ -1,0 +1,12 @@
+id: h11-token-expiry-auth
+type: feature
+trap: expiry-ignored
+difficulty: hard
+module: auth.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: authentication security
+expected_catch_role: reviewer
+tier_expected: STANDARD
+risk_reason: token signature and expiry validation, auth boundary, public contract

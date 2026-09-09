@@ -1,0 +1,12 @@
+id: h07-batch-save-atomic
+type: feature
+trap: partial-write
+difficulty: hard
+module: batch.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: error-handling data-integrity
+expected_catch_role: reviewer
+tier_expected: STANDARD
+risk_reason: all-or-nothing batch persistence, partial-write boundary, public contract

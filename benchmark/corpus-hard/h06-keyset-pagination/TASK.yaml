@@ -1,0 +1,12 @@
+id: h06-keyset-pagination
+type: feature
+trap: offset-paging
+difficulty: hard
+module: pager.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: concurrency
+expected_catch_role: planner+reviewer
+tier_expected: STANDARD
+risk_reason: pagination stability under insertion, cursor contract, public function
