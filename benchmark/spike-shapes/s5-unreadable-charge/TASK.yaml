@@ -1,0 +1,8 @@
+id: s5-unreadable-charge
+type: feature
+trap: unreadable-service-boundary
+module: charge.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: unreadable-invariant correctness

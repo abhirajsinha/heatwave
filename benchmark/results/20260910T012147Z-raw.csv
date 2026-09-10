@@ -1,0 +1,13 @@
+run_id,task,arm,trial,outcome,terminal,tier,stage_model,visible_pass,oracle_pass,escaped_defect,wall_secs,cost_usd,notes
+20260910T012147Z-raw,s1-email-normalization,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,24,0.21724150000000003,
+20260910T012147Z-raw,s1-email-normalization,raw,2,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,27,0.21947450000000002,
+20260910T012147Z-raw,s1-email-normalization,raw,3,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,24,0.2171745,
+20260910T012147Z-raw,s2-soft-delete-convention,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,23,0.20247,
+20260910T012147Z-raw,s2-soft-delete-convention,raw,2,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,23,0.2014175,
+20260910T012147Z-raw,s2-soft-delete-convention,raw,3,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,25,0.21122399999999997,
+20260910T012147Z-raw,s3-distant-caller,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,26,0.198012,
+20260910T012147Z-raw,s3-distant-caller,raw,2,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,27,0.20035750000000002,
+20260910T012147Z-raw,s3-distant-caller,raw,3,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,23,0.19540349999999998,
+20260910T012147Z-raw,s4-buried-seam,raw,1,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,31,0.24134750000000002,
+20260910T012147Z-raw,s4-buried-seam,raw,2,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,27,0.22386899999999998,
+20260910T012147Z-raw,s4-buried-seam,raw,3,graded,1,,claude-haiku-4-5-20251001;claude-opus-5[1m],1,1,0,27,0.23849800000000002,

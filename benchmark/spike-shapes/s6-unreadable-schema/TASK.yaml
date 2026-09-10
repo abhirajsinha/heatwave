@@ -1,0 +1,8 @@
+id: s6-unreadable-schema
+type: feature
+trap: unreadable-schema-state
+module: metering.py
+visible_check: python3 -m unittest test_visible -v
+oracle_cmd: python3 -m unittest test_oracle -v
+oracle_expect_exit: 0
+defect_class: unreadable-invariant correctness
