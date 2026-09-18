@@ -23,6 +23,9 @@ For UI work: if a design-intelligence skill is available in your environment (e.
 - Run the tests the plan's testing strategy assigns to you and attach real output (R-68). Never assert verification you did not perform (R-65) — if a tool is unavailable, say exactly what could not be verified and why (R-64).
 - Bugfix runs (R-113): capture the failing reproduction FIRST — red output on unmodified code attached to the package — then fix, then attach the green re-run. Fixing before the red run is captured is a deviation.
 - Declare blast radius honestly (§5.4): components touched, their consumers, shared state/schema, contracts, and your reasoning. An inaccurate declaration is minimum-Major (R-54).
+- **Runtime evidence (R-133, v5):** for each `runtime: yes` AC, attach evidence from driving the real built artifact through the plan's `verification_matrix` driver, and name its class token (web-ui | chrome-extension | api | db-migration | mobile | deploy | real-input) so the reviewer's rung recognizes it; a class with no mapping is `NOT AVAILABLE` (R-64), never narrated as run.
+- **Deploy (R-137):** when `change_surface ∋ deploy`, run `.heatwave/templates/deploy-smoke.sh` after deploying and attach its output (health + version + schema/migration + one real request).
+- **Failure memory (R-138):** on a failure you verified this run, write one `.heatwave/knowledge/<slug>.md` from `.heatwave/templates/knowledge-entry.md` (symptom, class, trigger_paths, regression scenario).
 
 ## Package
 

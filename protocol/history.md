@@ -73,3 +73,21 @@ Loaded by: never dispatched — rendered into the full generated spec only.
 **Version header.** v4.4 corrects a stale version header: `protocol/core.md` (and the generated `PROTOCOL.md`) read `Version: 4.2` through v4.3; the header is bumped to 4.4 here with the Supersedes line updated.
 
 **Rule count.** v4.4 adds R-131–R-132, taking the protocol from **133** to **135** distinct rule IDs. Derived by the same suffix-aware pattern `grep -ohE '\*\*R-[0-9]+[a-z]?' protocol/*.md | sed 's/\*\*//' | sort -u | wc -l` (the `[a-z]?` class is load-bearing — a suffix-blind pattern drops R-0a/R-0b/R-103a and under-counts by two). README and this row state 135; both re-derive from that pattern, never hand-kept.
+
+---
+
+## Appendix F.5 — Changes in v5.0 (the verification engine)
+
+| Change | Rules | Addresses |
+|---|---|---|
+| Product verification by an independent context (the "Tester"): the REVIEWER drives the real built artifact for `runtime: yes` acceptance criteria, mapped to project drivers by a fixed-class verification matrix; a deterministic `runtime-evidence` rung discriminates a real runtime class from a unit/grep sign-off | R-133; core §0.5, §2.5 | 26/28 audited post-APPROVED escapes were runtime/behavioural and 0 were catchable by plan or diff review; reviewers ran the product in 4–11% of tool calls. Folded into FULL/FINAL (and the LIGHT combined pass) as a swap for the R-39 whole-repo re-read — zero new frontier dispatch |
+| Exploratory owner-flow pass; observed runtime defect a non-deferrable Blocker; reproduce-before-planning for bugfixes | R-134, R-135, R-136 | Per-AC scripted checks proved necessary-but-not-sufficient (8 escapes after a real-Chrome gate existed); one runtime defect was caught, deferred, and shipped; a bugfix spent 4 plan rounds on a theory one real run refuted |
+| Deploy verification primitive (health + version + schema/migration + one real request), vendored generic; plain-file failure memory with a `knowledge-regression` completeness rung | R-137, R-138 | A total outage from an unapplied migration and a `dummy-e2e-client-id` dist both slipped a paper "config says preDeployCommand" check; learned failures had nowhere to live to be re-checked |
+| Paperwork findings capped below Major; one PLAN_REVIEW round for non-sensitive STANDARD UI/bugfix runs with explicit escalate-on-first-failure; reviewer input shape narrowed to ACs + changed files + evidence | R-139, R-140, R-141 | ~40% of gating findings were paperwork; 24/57 runs looped ≥2 plan rounds; the whole-repo re-read is what the runtime duty replaces to hold dispatches flat |
+| Plain-language reports on every report type (plain opener + "For the engineer" split), enforced by templates and a banned-token check | R-142 | OWNER: "a non-tech person reading it should understand what the issue was" — reports nobody could read |
+
+**Zero new** dispatches, states, counters, tiers, roles, or dependencies: the Tester is a folded REVIEWER duty; the three new checks and `deploy-smoke.sh` are POSIX sh + git/grep/sed (+ runtime-probed curl); the verification matrix, exploratory flows, and knowledge memory are optional config and plain files whose absence reproduces pre-v5 behavior on the non-runtime path. Vaani's 62-run audit is the evidence; no project-specific rule ships — the protocol names evidence classes, projects map them to tools.
+
+**Version header.** `protocol/core.md` (and generated `PROTOCOL.md`) move from `Version: 4.4` to `Version: 5.0`, Supersedes updated.
+
+**Rule count.** v5.0 adds R-133–R-142 (ten rules), taking the protocol from **135** to **145** distinct rule IDs. Derived by the same suffix-aware pattern `grep -ohE '\*\*R-[0-9]+[a-z]?' protocol/*.md | sed 's/\*\*//' | sort -u | wc -l` (the `[a-z]?` class is load-bearing — a suffix-blind pattern drops R-0a/R-0b/R-103a and under-counts by two). README and this row state 145; both re-derive from that pattern, never hand-kept.

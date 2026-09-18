@@ -15,6 +15,8 @@ run_config:            # written by the driver at intake (core §2.5); absent in
   autonomy: autopilot      # v4.3 ACTIVE (R-129): autopilot | gated — gated = one pre-code OWNER GO checkpoint; default gated for jira source, autopilot for text (interactive still RESERVED, G/H)
   scope: single_repo       # RESERVED (G): single_repo | multi_repo — recorded only, no branching (YAGNI)
   context_brief: ""        # v4.4 (R-131): emitted | skipped-<reason> — STANDARD/FULL driver-derived context brief; absent = pre-4.4 (no brief)
+  verification_matrix: {}  # v5.0 (R-133): { <class>: <driver> } for each runtime class the run uses (web-ui|chrome-extension|api|db-migration|mobile|deploy|real-input); absent/empty = no runtime class mapped
+  exploratory_flows: []    # v5.0 (R-134): project-declared real user/operator flows the REVIEWER exercises for the touched surface; absent = none declared
 roles:
   planner:     { configured: , resolved: , substitution_reason: }
   implementer: { configured: , resolved: , substitution_reason: }
@@ -55,3 +57,7 @@ escalations: []
   # - { trigger: , decision: , resume_state: , counters_reset: , timestamp: }
 backlog: []
   # - { finding_id: , severity: , summary: }
+verification: []           # v5.0 (R-133/R-134/R-138/R-142): per-review runtime/flow/check verdicts the driver copies from review artifacts; absent = pre-v5 (no runtime engine)
+  # - { review: FULL_REVIEW, runtime_evidence: pass, knowledge_regression: pass, plain_language: pass,
+  #     runtime_acs: [ { ac: AC-F-01, class: web-ui, verdict: satisfied, evidence: } ],
+  #     flows: [ { flow: cold-start-signed-out, verdict: pass, evidence: } ] }

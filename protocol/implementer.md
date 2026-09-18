@@ -56,7 +56,13 @@ At LIGHT the Implementation Package takes the shape `templates/light-implementat
 
 **R-38.** The IMPLEMENTER MUST NOT expand functional scope beyond the acceptance criteria. Additional work identified during implementation is a Deviation Record requesting plan change, not a unilateral addition.
 
-**R-113 (implementer half).** *(v4)* For a `change_class: bugfix` run (R-114), the IMPLEMENTER MUST capture the failing reproduction FIRST: run the plan's reproduction check against unmodified code and attach the red output to the Implementation Package, then fix, then re-run the same check and attach the green output. Red-then-green is the verification evidence for the reproduction criterion; a fix authored before the red run is captured is a deviation (3.2.1).
+**R-113 (implementer half).** *(v4)* For a `change_class: bugfix` run (R-114), the IMPLEMENTER MUST capture the failing reproduction FIRST: run the plan's reproduction check against unmodified code and attach the red output to the Implementation Package, then fix, then re-run the same check and attach the green output. Red-then-green is the verification evidence for the reproduction criterion; a fix authored before the red run is captured is a deviation (3.2.1). *(v5.0)* On a bugfix run the plan's reproduction was already captured red on the real build at/before PLANNING (R-136); the IMPLEMENTER's red-then-green is that same executable check.
+
+**R-133 (implementer half).** *(v5.0)* For each `runtime: yes` acceptance criterion, the IMPLEMENTER attaches the runtime evidence produced by driving the real built artifact through the class's `verification_matrix` driver, and the attached evidence **names its runtime class token** (one of `web-ui`, `chrome-extension`, `api`, `db-migration`, `mobile`, `deploy`, `real-input`) so the REVIEWER's `runtime-evidence` rung can recognize it. A class with no project mapping is declared `NOT AVAILABLE` (R-64), naming the ACs it leaves unverified — never narrated as run (R-65). The REVIEWER re-drives the product to accept; the IMPLEMENTER's evidence is the record, not the gate.
+
+**R-137 (implementer half).** *(v5.0)* When `change_surface ∋ deploy`, the IMPLEMENTER runs `templates/deploy-smoke.sh` after deploying and attaches its output (health + version + schema/migration status + one real request) against the deploy acceptance criterion. `curl` unavailable → `NOT AVAILABLE` (R-64).
+
+**R-138 (implementer half).** *(v5.0)* On a failure the IMPLEMENTER verified during the run, it writes one `.heatwave/knowledge/<slug>.md` entry from `templates/knowledge-entry.md` (symptom, class, `trigger_paths`, regression scenario) so the class is re-checked on future diffs that touch those paths — the plain-file failure memory (R-138), no service, no dependency.
 
 ### 4.8 EXPRESS_IMPLEMENTING *(v4)*
 

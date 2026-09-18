@@ -2,6 +2,17 @@
 
 task_id: | artifact_type: escalation-report | iteration: | produced_by: REVIEWER (<model>) | state: | counters: plan=N fix=N final=N | timestamp:
 
+## In plain English (read this part first)
+<!-- R-142: everyday words, short sentences. No rule/AC/finding IDs, file paths, file:line, or code here.
+     Checked by `heatwave-report-check.sh plain-language`. -->
+**Result: the run has stopped and needs a decision from you.**
+
+<what went wrong in plain terms, why it matters, and the one decision you are being asked to make>
+
+---
+
+## For the engineer
+
 ## Trigger
 <which §7.1 condition fired; which counter, if applicable>
 

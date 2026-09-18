@@ -7,7 +7,7 @@ review_type:        # FULL_REVIEW | TARGETED_REVIEW | FINAL_REVIEW | FULL_FINAL_
 produced_by:
 verdict:            # GATE_MET | GATE_NOT_MET
 machine_evidence: []   # v4 (R-110/R-111) — ladder rung verdicts, recorded BEFORE any LLM finding; [] on EXPRESS and plan reviews; absent = pre-v4-B ledger
-  # - rung: tests              # tests | sast | mutation | secrets | dynamic — per the tier rigor table (core §0.5); secrets R-121, dynamic R-119
+  # - rung: tests              # tests | sast | mutation | secrets | dynamic | runtime-evidence | knowledge-regression — per the tier rigor table (core §0.5); secrets R-121, dynamic R-119, runtime-evidence R-133, knowledge-regression R-138
   #   tool: "npm test"         # as declared in the plan's tooling declaration (§6.1)
   #   verdict: pass            # pass | fail | NOT_AVAILABLE
   #   evidence_ref: <command output reference>
@@ -15,7 +15,7 @@ machine_evidence: []   # v4 (R-110/R-111) — ladder rung verdicts, recorded BEF
 findings: []
   # - id: F-<task_id>-001        # stable for the task's lifetime (R-55)
   #   severity: Blocker          # Blocker | Major | Minor | Nit
-  #   category: business-logic   # Appendix C, or blast-radius | acceptance-criteria | over-engineering
+  #   category: business-logic   # Appendix C, or blast-radius | acceptance-criteria | over-engineering | paperwork (R-139, ≤ Minor, never gates)
   #   origin: reviewer           # reviewer | machine (R-111); absent = reviewer
   #   file: src/x.ts
   #   line: 42

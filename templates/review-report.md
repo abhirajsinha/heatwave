@@ -8,6 +8,19 @@
 
 task_id: | artifact_type: review-report | iteration: | review_type: PLAN_REVIEW | FULL_REVIEW | TARGETED_REVIEW | FINAL_REVIEW | FULL_FINAL_REVIEW (LIGHT) | produced_by: REVIEWER (<model>) | timestamp:
 
+## In plain English (read this part first)
+
+<!-- R-142: everyday words, short sentences. NO rule IDs / AC IDs / finding IDs / file paths / file:line / code.
+     Runs through `heatwave-report-check.sh plain-language`. This opener is required prose, not surplus (R-132). -->
+
+**Result: <the verdict in one plain sentence — did it pass, and what that means for the work>.**
+
+<then each issue: what is wrong → why it matters to a user → what happens next. If nothing to fix, say so.>
+
+---
+
+## For the engineer
+
 ## Verdict
 
 GATE_MET | GATE_NOT_MET
@@ -37,6 +50,13 @@ Late findings: <per R-60, or "None">
      a J-AC with no verified AC blocks APPROVED (R-66). Omit for text runs. -->
 
 | J-AC | AC | Evidence | Status |
+|---|---|---|---|
+
+## Exploratory Flows (R-134)
+<!-- The subset of the plan's exploratory_flows whose surface the change touches, driven on the real product
+     before APPROVED. Omit only when the plan declares none. -->
+
+| Flow | Driven on | Verdict (pass / fail / NOT AVAILABLE) | Evidence |
 |---|---|---|---|
 
 ## Findings

@@ -30,3 +30,5 @@ If a non-terminal run exists for the task the user mentions, resume at its recor
 Exempt: conversational turns, and spikes explicitly labeled as such at the outset (§0.4).
 
 Jira mode (v4.3): when a task names a Jira issue — a key like `NAV-1234` as its first token, or an `atlassian.net/browse/<KEY>` URL — the driver fetches the ticket read-only through the Atlassian MCP and works from a structured Requirement Brief; if the MCP is absent it reports `NOT AVAILABLE` with the install pointer and asks you to paste the ticket, never a silent fall-through to free text (R-127–R-130).
+
+- v5 (R-133 / R-142): the REVIEWER drives the real built product for every runtime acceptance criterion before APPROVED — a code read is never enough; and every report (plan review, review, final, escalation, express, LIGHT, run summary) opens with a plain-language section a non-technical reader understands, moving rule IDs and file:line into a "For the engineer" part below.

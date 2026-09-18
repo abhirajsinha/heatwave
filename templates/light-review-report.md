@@ -5,6 +5,17 @@
 
 task_id: | artifact_type: review-report | iteration: | review_type: FULL_FINAL_REVIEW (LIGHT) | produced_by: REVIEWER (<model>) | timestamp:
 
+## In plain English (read this part first)
+<!-- R-142: one plain sentence for the result, then each issue as what is wrong → why it matters → what happens next.
+     No rule/AC/finding IDs, file paths, file:line, or code here. Checked by `heatwave-report-check.sh plain-language`. -->
+**Result: <plain one-sentence verdict>.**
+
+<each issue in everyday words, or "nothing to fix">
+
+---
+
+## For the engineer
+
 ## Verdict
 GATE_MET | GATE_NOT_MET — Blockers: N open | Majors: N open | Minor: N | Nit: N
 

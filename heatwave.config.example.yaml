@@ -79,6 +79,31 @@ roles:
 # hands it to the planner as advisory input. Zero AI calls; paths and counts only.
 # context_brief: auto      # auto | never. never = skip it (recorded skipped-config).
 
+# --- Verification engine (v5.0, R-133–R-138) — ALL optional; unset = today's -----
+# --- behavior on the non-runtime path (no runtime rung, no flow pass, no deploy). ---
+# The protocol names evidence CLASSES; you map each class your project uses to a
+# concrete driver. A runtime: yes acceptance criterion whose class has no mapping is
+# NOT AVAILABLE (R-64) and blocks APPROVED without an OWNER waiver. Vaani is evidence,
+# not spec — nothing here is hard-coded to one project.
+# verification_matrix:            # class -> the command/tool that drives the real product (R-133)
+#   web-ui: "playwright test"
+#   chrome-extension: "load-unpacked dist in real Chrome"
+#   api: "curl"
+#   db-migration: "prisma migrate status"
+#   mobile: "ios simulator / android emulator"
+#   deploy: "sh .heatwave/templates/deploy-smoke.sh"
+#   real-input: "run on the owner's real content"
+# exploratory_flows:              # real user/operator flows the reviewer drives before APPROVED (R-134)
+#   - "cold start, signed out"
+#   - "reload / extension reload"
+#   - "scroll while content loads"
+# deploy:                         # consumed by deploy-smoke.sh (R-137) when change_surface ∋ deploy
+#   health_url: ""                #   HEALTH_URL — expect 200
+#   request_url: ""               #   REQUEST_URL — one real request, expect 200
+#   version_url: ""               #   VERSION_URL — optional
+#   schema_cmd: ""                #   SCHEMA_CMD — exits 0 when migrations are current
+# knowledge_dir: ".heatwave/knowledge"   # failure-memory entries (R-138); default shown, plain files
+
 # --- Jira mode (v4.3, R-127–R-130) — ALL optional; unset = today's behavior ---
 # Ticket-sourced runs: a Jira key or browse URL in the task makes the driver fetch
 # the ticket read-only via the Atlassian MCP into a Requirement Brief, verify the

@@ -55,9 +55,13 @@ Change class: <bugfix | feature> — <one-line justification> (R-114; bugfix tri
 
 ### Functional
 
-AC-F-01 | <observable behavior> | Verification: <method>
+AC-F-01 | <observable behavior> | runtime: <yes | no> | Verification: <method>
 
-<bugfix runs: one functional criterion MUST be the failing reproduction — red on pre-fix code, green after (R-113)>
+<runtime: yes (R-133) when the criterion is only truly verifiable by driving the real built artifact —
+ its accepting evidence must name a verification_matrix class (web-ui | chrome-extension | api |
+ db-migration | mobile | deploy | real-input); the runtime-evidence rung checks this (R-110).>
+<bugfix runs: one functional criterion MUST be the failing reproduction — red on the REAL build at/before
+ PLANNING (R-136), re-run green after the fix (R-113)>
 
 ### Non-functional
 
@@ -97,5 +101,10 @@ Not applicable
 | Mutation (FULL, with timeout ceiling) | <tool> | REVIEWER | confirmed — <evidence> / NOT AVAILABLE — <affected ACs> (R-110) |
 | Secrets (FINAL rung) | <tool> | REVIEWER | confirmed — <evidence> / NOT AVAILABLE (R-121) |
 | UI evidence (change_surface ∋ ui) | <MCP/tool> | REVIEWER | confirmed / NOT AVAILABLE (R-120) |
+| Runtime evidence (per runtime: yes AC) | <verification_matrix driver per class> | REVIEWER | confirmed / NOT AVAILABLE — <affected ACs> (R-133) |
+| Deploy (change_surface ∋ deploy) | deploy-smoke.sh (HEALTH_URL/REQUEST_URL/SCHEMA_CMD) | REVIEWER | confirmed / NOT AVAILABLE (R-137) |
 
 change_surface: <subset of {auth, payments, external-input, new-endpoint, ui, deps, secrets, api-surface} or none> — <one line> (R-122)
+
+verification_matrix: <class -> driver, per required runtime class, or "none — no runtime AC"> (R-133)
+exploratory_flows: <real user/operator flows the REVIEWER exercises for the touched surface, or "none declared"> (R-134)

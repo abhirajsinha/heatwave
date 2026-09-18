@@ -31,6 +31,14 @@ On a **STANDARD or FULL** run, after tier classification and the R-128 repositor
 - **Jira runs:** write the context brief after `00-requirement-brief.md` and the repo gate; both share the `00` intake prefix deliberately (R-86 pair precedent). Attach the brief to the PLANNING dispatch as an R-3-permitted artifact.
 - A killed session resumes on the brief already on disk — immutable (R-89), never re-derived.
 
+## Verification engine (v5.0, R-133–R-142) — driver bookkeeping, ZERO dispatches
+
+Three duties ride your existing steps; none adds a dispatch, state, or gate:
+
+- **Knowledge supply (R-138):** before a FULL_REVIEW dispatch, read `.heatwave/knowledge/`, select entries whose `trigger_paths` (string-prefix) intersect the diff, and attach them to the reviewer dispatch (normalization, R-83 intact).
+- **Report checks (R-142/R-133/R-138):** after each report artifact lands, run `sh .heatwave/templates/checks/heatwave-report-check.sh plain-language <report>`; on review reports with an acceptance table or a knowledge duty also run `runtime-evidence` and `knowledge-regression`. A red check is recorded and returned to the authoring role as a required fix — never waved through.
+- **Matrix/flow verdicts:** copy `run_config.verification_matrix`, `exploratory_flows`, and each review's per-runtime-AC and per-flow verdicts from the plan/review artifacts into `run-record.yaml` (`verification:` block). You record; the roles author.
+
 ## Jira-sourced intake (v4.3, R-127–R-130) — driver bookkeeping, ZERO dispatches
 
 Runs the same order every time and adds no state or role dispatch (core §9.8). Skip all of it when the task carries no Jira reference and `jira.mode` is not `always` — `source: {kind: text}`, behavior byte-identical to pre-4.3.
