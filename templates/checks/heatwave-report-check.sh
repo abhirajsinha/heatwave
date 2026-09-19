@@ -57,9 +57,18 @@ plain_language() {
 
   # Plain section = lines strictly between the plain heading and the engineer heading,
   # with HTML comments (<!-- ... -->) stripped: they are invisible to the reader, so template
-  # guidance and authoring notes are not scanned — only reader-facing prose is. Keep HTML
-  # comments on their own lines (the delete range is line-based).
-  section=$(sed -n "$((plain_ln+1)),$((eng_ln-1))p" "$report" | sed '/<!--/,/-->/d')
+  # guidance and authoring notes are not scanned — only reader-facing prose is. We slurp the
+  # section into one pattern space and delete each comment SPAN (not its whole line), so a
+  # visible sentence sharing a line with an inline comment is still scanned, and multi-line
+  # comments are removed too. `[^-]` matches embedded newlines in the slurped buffer, and the
+  # `-[^-]` inner branch lets single dashes live inside a comment while stopping at the `-->`.
+  section=$(sed -n "$((plain_ln+1)),$((eng_ln-1))p" "$report" | sed '
+:a
+$!{
+N
+ba
+}
+s/<!--[^-]*\(-[^-][^-]*\)*-->//g')
 
   rc=0
   for pair in "rule-id=$BANNED_RULE" "AC-id=$BANNED_AC" "finding-id=$BANNED_FINDING" \
@@ -96,8 +105,14 @@ runtime_evidence() {
   plan=$1; table=$2; need_file "$plan"; need_file "$table"
 
   allow="(^|[^A-Za-z-])($RUNTIME_CLASSES)([^A-Za-z-]|\$)"
-  # AC ids the plan marks runtime: yes (id and tag on the same line).
-  ids=$(grep -iE 'runtime:[[:space:]]*yes' "$plan" | grep -oE 'AC-[FN]-[0-9]+' | sort -u || true)
+  # AC ids the plan marks runtime: yes. Scope to acceptance-criteria ROWS (a line that starts
+  # with the AC id, allowing a leading table pipe/dash) AND require the runtime TAG form —
+  # the tag is delimited by `(` or `|` (e.g. "(runtime: yes)", "| runtime: yes |"), whereas
+  # prose says "a `runtime: yes` AC" (backtick-preceded). This stops an AC row whose tag is
+  # runtime:no but whose description merely mentions runtime:yes from a spurious RED.
+  ids=$(grep -iE '^[[:space:]]*[|-]?[[:space:]]*AC-[FN]-[0-9]+' "$plan" \
+        | grep -iE '[(|][[:space:]]*runtime:[[:space:]]*yes' \
+        | grep -oE 'AC-[FN]-[0-9]+' | sort -u || true)
   if [ -z "$ids" ]; then
     echo "GREEN runtime-evidence: plan declares no runtime:yes acceptance criteria"; return 0
   fi
@@ -143,9 +158,16 @@ knowledge_regression() {
 
     intersect=0
     for P in $tp; do
+      p=${P%/}
       for F in $changed; do
-        case "$F" in "$P"*) intersect=1 ;; esac
-        case "$P" in "$F"*) intersect=1 ;; esac
+        f=${F%/}
+        # Exact path, or one is a directory prefix of the other at a "/" boundary — so
+        # src/margin.ts does not match src/margin.tsx, and src/pan does not match src/panel/.
+        if [ "$f" = "$p" ]; then intersect=1
+        else
+          case "$f" in "$p"/*) intersect=1 ;; esac
+          case "$p" in "$f"/*) intersect=1 ;; esac
+        fi
       done
     done
     [ "$intersect" -eq 1 ] || continue
