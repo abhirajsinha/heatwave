@@ -575,3 +575,46 @@ with the frontier session model; wall was slightly under. The three-arm sweep's
 Heatwave arms (STANDARD tier) remain the budget driver — this RAW figure does not
 change that, but it confirms the RAW leg is cheap and the per-run cost basis for
 budgeting the follow-on is ~$0.23/run at the current session model.
+
+## v5.1 context/token engine — before/after measurement (run v5-context, 2026-09-19)
+
+Binding measurement for the v5.1 context/token engine (R-143–R-147). Before = base `380330f` (git worktree); after = branch `heatwave-v5-context` @ `643dd2e`. Heatwave arm, real `claude` CLI (2.1.277, session-default model `claude-opus-5[1m]` on both arms — the only difference between arms is the installed protocol version). Token classes read from `modelUsage` (the whole-run figure that reconciles to `total_cost_usd` and includes subagent/sidechain spend) via `benchmark/token-usage.py`; top-level `usage` is NOT the source (it is ~2.0×–3.6× smaller — a main-thread partial).
+
+**Declared harness deviation (provenance):** `benchmark/run.sh` line 14 changed from `CUM_COST_CAP=60` to `CUM_COST_CAP=${CUM_COST_CAP:-60}` (additive; default 60 preserved for all other sweeps; touches only `break_tripped()`, not scoring/corpus/tier/CSV/cost-recording). This run invoked with `CUM_COST_CAP=40`. Cost was reported on every trial (dollar cap live); a manual between-run cost read was the backstop. Cumulative spend $19.79 of the ~$40 ceiling.
+
+### Fixture lt01-progress-cap (LIGHT bugfix) — n = 2 before + 2 after
+
+| condition | trial | cache-read | total tokens | cost (USD) | wall (s) | outcome (terminal / oracle) |
+|---|---|---|---|---|---|---|
+| before 380330f | 1 | 1,275,726 | 1,426,995 | 1.6989 | 173.5 | graded / oracle pass |
+| before 380330f | 2 | 1,272,998 | 1,403,005 | 1.6170 | 166.1 | graded / oracle pass |
+| after 643dd2e | 1 | 1,157,546 | 1,300,830 | 1.6000 | 170.8 | graded / oracle pass |
+| after 643dd2e | 2 | 808,479 | 923,242 | 1.2612 | 149.4 | graded / oracle pass |
+
+**Cross-checks (both reported, per trial):** `sum(modelUsage.costUSD) == total_cost_usd` — OK on every trial (±$0.01); per-message dedup-by-`message.id` cache-read reported alongside `modelUsage` in `token-usage.py` output (e.g. after-t2 modelUsage cache-read 808,479 vs per-message dedup 742,903).
+
+**Per-trial-dominance verdict (win = after ≤ before on EVERY trial of the fixture):**
+- cache-read: max after (1,157,546) ≤ min before (1,272,998) → holds.
+- total tokens: max after (1,300,830) ≤ min before (1,403,005) → holds.
+- cost: max after (1.6000) ≤ min before (1.6170) → holds.
+- wall: max after (170.8) > min before (166.1) → does NOT dominate; wall is flat, within noise (reported as measured, not assumed).
+- correctness: non-regressed — all four graded, oracle pass.
+
+Median cache-read 1,274,362 → 983,013 (**−22.9%**); median cost 1.658 → 1.431 (**−13.7%**).
+
+**lt01 verdict: WIN (token + cost), scoped to lt01, at n=2 per condition.** Slicing (R-143/R-144) did not trigger on this small fixture (expected); the saving is from the repo map (R-146) + lean driver (R-145) — the after-lt01 transcript invokes `repo-map.sh` 14×, so the attribution is causal, not asserted. Wall is direction-only.
+
+### Fixture t03-log-summary — n = 1 before + 1 after (direction-only; never a win at n=1)
+
+| condition | cache-read | total tokens | cost (USD) | wall (s) | outcome (terminal / oracle) |
+|---|---|---|---|---|---|
+| before 380330f | 3,382,531 | 3,648,599 | 4.4921 | 513.7 | graded / oracle pass |
+| after 643dd2e | 7,171,683 | 7,683,051 | 9.1175 | 967.7 | ESCALATED (final_iterations budget) / oracle pass |
+
+`sum(modelUsage.costUSD) == total_cost_usd` OK on both. **t03 verdict: INCONCLUSIVE (direction-only; here a directional loss on the after side), not claimed.** At n=1 it cannot be a win by rule. The comparison is not apples-to-apples: the after run took two fix cycles and hit the `final_iterations` budget → ESCALATED, consuming ~2.1× the cache-read of the single-pass before run; the after-t03 transcript shows no handoff written and no slice dispatched, so this is protocol-loop run-to-run variance, not the v5.1 mechanism (which was not triggered at this size). Correctness (oracle) is non-regressed — both sides graded oracle-pass; only the terminal outcome differed.
+
+**Data-integrity disclosure (t03 before-arm):** the t03 before-arm harness log carries the detective-control warning `WARNING: possible oracle/corpus reference in agent evidence — investigate before using results`. This is a further reason t03 is excluded from any quantitative claim; it does not touch the lt01 conclusion (separate fixture, separate transcripts, no warning on lt01).
+
+### Ship decision (plan Rollout)
+
+The measured saving on lt01 is real and honest, so the repo map + lean driver ship enabled (they are protocol guidance, always on). Slicing ships **opt-in**: `implementer_token_budget` unset by default (plan-step-boundary degrade), because the small benchmark fixtures do not exercise it and it is not cost-measured here. The `CUM_COST_CAP` parameterization ships with its default 60 unchanged; the $40 value is a per-run invocation, not a shipped default.

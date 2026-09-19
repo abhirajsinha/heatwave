@@ -23,7 +23,7 @@ cd "$TOP"
 CACHE="$TOP/.heatwave/cache/repo-map.md"
 
 # ---- cache key -------------------------------------------------------------
-head_sha=$(git rev-parse HEAD 2>/dev/null || echo "no-head")
+head_sha=$(git rev-parse --verify HEAD 2>/dev/null || echo "no-head")   # --verify: unborn HEAD → clean single-line "no-head" (F-102), never "HEAD\nno-head"
 content_hash=$(git ls-files -z | xargs -0 shasum 2>/dev/null | shasum | cut -d' ' -f1)
 key="HEAD=$head_sha CONTENT=$content_hash"
 
