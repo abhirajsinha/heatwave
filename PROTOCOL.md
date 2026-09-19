@@ -8,9 +8,9 @@ Loaded by: every dispatch, all states. Section/rule numbers are global to the pr
 
 # Heatwave — AI Development & Verification Protocol
 
-**Version:** 5.0
+**Version:** 5.1
 **Status:** Active
-**Supersedes:** v4.4 (context brief + capped STANDARD reports), v4.3 (Jira mode), v4.2 (two-dispatch LIGHT), v4.1 (intake cascade), v4.0, v3.1 (open-source release) — Appendix F. v5.0 adds the verification engine (R-133–R-142): the REVIEWER drives the real built product for runtime acceptance criteria, and every report opens in plain language.
+**Supersedes:** v5.0 (verification engine), v4.4 (context brief + capped STANDARD reports), v4.3 (Jira mode), v4.2 (two-dispatch LIGHT), v4.1 (intake cascade), v4.0, v3.1 (open-source release) — Appendix F. v5.0 adds the verification engine (R-133–R-142): the REVIEWER drives the real built product for runtime acceptance criteria, and every report opens in plain language. v5.1 adds the context/token engine (R-143–R-147): the IMPLEMENTER slices long builds behind compact handoffs, the driver routes from status lines and on-disk state rather than artifact bodies, a cached LLM-free repo map is handed to planner and implementer, and all roles write stall-proof.
 
 Heatwave is a tool-agnostic protocol for AI-performed software development. It works with any coding agent — Claude Code, Codex, Gemini CLI, Cursor, or a plain chat session — because it governs *contexts and artifacts*, not any vendor's features. See `README.md` for installation and the per-tool adapters.
 
@@ -316,6 +316,8 @@ Behavior-driving fields: `tier`, `tier_justification`, `design_doc`, `change_cla
 **R-18.** Every artifact MUST carry: `task_id`, `artifact_type`, `iteration`, `produced_by` (role + resolved model), `timestamp`.
 
 Artifact skeletons are the files in `templates/`; they are normative. *(v4: replaces Appendix D, which duplicated them.)*
+
+**R-147.** *(v5.1)* **Stall-proof writing — all roles.** A watchdog stall (no progress for the host's kill window, e.g. 600 s) is a resumable event, never a restart (R-88). To stay under it, every role MUST: **(a)** write a long artifact incrementally — a small first write, then appends — never one giant write; **(b)** bound any slow command with a portable timeout, since macOS has no `timeout(1)` — `perl -e 'alarm N; exec @ARGV' <cmd>`; **(c)** cite long command output **by file path** rather than pasting it into an artifact (R-68 evidence is the file, not a wall of text); **(d)** on a stall, resume from the recorded on-disk state (R-88/R-87), never re-enter a prior state or regenerate an existing artifact. This is writing guidance, not a reliability control — the `perl` alarm is a stall guard, not a network timeout.
 
 **R-126.** *(v4.2)* **LIGHT output shape.** At LIGHT every artifact MUST take the shape its LIGHT template fixes, and the REVIEWER checks the shape. The Implementation Package (`templates/light-implementation-package.md`) is: the LIGHT Plan; a touched-file table with a diff reference the REVIEWER can resolve; the machine evidence; and a five-line change note — `change`, `blast_radius`, `deviations`, `known_limitations`, `tooling_gaps`, one line each, `None` written explicitly (R-28, R-53, R-64, R-93) — with no change-summary prose and no walkthrough. The Review Report (`templates/light-review-report.md`) is: a one-line verdict; the plan-check table (R-125); the machine-evidence table (R-110); the per-criterion acceptance table (R-27); findings as one line each pointing to the ledger (R-109); reconciliation from iteration 2 (R-58); the §8.3 readiness table; scope changes (R-49) — with no summary narrative. The Fix Report is the §3.5 per-finding blocks with executed evidence (R-32), a restated LIGHT Plan only when a plan finding was fixed, and notes of at most three lines. Caps bind narrative only: evidence is never cut to fit — R-65 and R-68 hold in full; long command output MAY be trimmed to the relevant lines with the total line count stated and MUST NOT be replaced by a prose summary. A missing required element is a Blocker (R-16 — the artifact is incomplete); surplus narrative is a Minor (`Category: over-engineering`), recorded, never gating. EXPRESS, STANDARD and FULL artifact shapes are unchanged.
 
@@ -709,6 +711,17 @@ Produced by IMPLEMENTER in `IMPLEMENTING`. Consumed by REVIEWER.
 **R-124.** *(v4.2)* **LIGHT Plan.** The LIGHT Plan is the §0.5 LIGHT-minimum Planning Document in a fixed shape of at most **25 non-blank lines**: `problem` (1–3 lines); `tier: LIGHT — <one-line justification>`; `change_class: bugfix | feature — <one line>` (R-114); `change_surface: <subset or none> — <one line>` (R-122); acceptance criteria one line each — at least one `AC-F` (for a bugfix run one of them is the failing-reproduction criterion, R-113) and either at least one `AC-N` or `AC-N: none — <reason>` (R-23) — each with its verification method (R-27); `review_scope`: the files to be touched plus the applicable Appendix C categories on one line (`plan-conformance` and `verification-integrity` always apply and are not listed); `tooling`: the test command(s), each with the project evidence that proves it exists (R-99), and a `secrets` entry or `NOT AVAILABLE` (R-121). No other §3.2 section is written and no `N/A` rows are written — R-19 and R-20 apply to the fields above only. Every field is a claim the REVIEWER finds against.
 
 At LIGHT the Implementation Package takes the shape `templates/light-implementation-package.md` fixes (R-126): the LIGHT Plan as §1 (written to disk before the first source edit, R-123), a touched-file table with a diff reference the REVIEWER can resolve, the machine evidence (a bugfix run's red→green reproduction, R-113), and a five-line change note — `change`, `blast_radius`, `deviations`, `known_limitations`, `tooling_gaps`, one line each, `None` written explicitly. No change-summary prose, no walkthrough. On the R-105 scope-exceeded path the diff and machine-evidence blocks are replaced by `Result: scope_exceeded — <reason>`.
+
+#### 3.3.2 Implementer slicing and handoff *(v5.1)*
+
+**R-143.** *(v5.1)* **Slice-and-handoff.** The IMPLEMENTER MAY work a long build or fix as a sequence of bounded **slices** so no single context re-reads a growing history. The boundary is one of two, in this order:
+
+- When `implementer_token_budget` (config) is set **and** the host can observe its own context token count, the IMPLEMENTER writes the handoff and stops on crossing the budget.
+- Otherwise — the **honest degrade** (R-64), because most hosts cannot read their own token count — it hands off at a plan-step or acceptance-criterion-group boundary. `implementer_token_budget` unset reproduces pre-v5.1 behavior: one context runs the stage to completion, no slice occurs.
+
+The handoff is `templates/implementer-handoff.md` and carries **exactly** these fields, paths and names only, **no code bodies**: done acceptance criteria; files changed (paths); failing checks (names); current hypothesis (≤ 2 lines); next action (≤ 2 lines). Anything not in these fields is re-derivable by the next slice from the plan, the repo map (R-145), and the diff.
+
+**R-144.** *(v5.1)* **A slice is a re-dispatch of the same state, not a new stage.** The driver dispatches the fresh IMPLEMENTER context with **artifacts only** — the plan, the repo map, the latest handoff, and any prior review/fix reports — **never a transcript** (R-85). The fresh context is the IMPLEMENTER role in the same state it left (`IMPLEMENTING` or `FIXING`); the R-1/R-2 authorship boundary and the REVIEWER's non-sharing are unchanged, and no new state, tier, or counter is introduced. Slices **do not** increment `fix_iterations` or `final_iterations` — they are one stage continuing. The driver appends a `slice: <n>` marker to the Run Record per re-dispatch; a fresh slice handed a transcript is an R-85 violation and a REVIEWER finding.
 
 ---
 
@@ -1232,6 +1245,22 @@ Recording and skips, recorded never silent: the driver records `run_config.conte
 
 Intake ordering with the brief: **detect → fetch (Jira) → repository gate → context brief → tier entry state → GO checkpoint.**
 
+
+### 9.10 Lean driver *(v5.1)*
+
+**R-145.** *(v5.1)* **The driver routes from the status line and `state.yaml`, never from artifact bodies.** Every role handback returns `<artifact path> + one-line status`, and that status line **is** the report's one-line Verdict. For a review report the Verdict MUST carry, in a form the driver can read without opening the report: the **gate verdict** (`GATE_MET` | `GATE_NOT_MET`), the **open Blocker count**, the **open Major count**, and any **escalation / counter-exhaustion signal**. "Open" excludes approved-deferred, waived, and refuted findings (R-77), so a deferral is ledger state the driver never needs a body to read. The driver transitions on that line plus `state.yaml`:
+
+- `GATE_NOT_MET` with an open Blocker or Major → `FIXING`.
+- Any counter at budget (2.3) → `ESCALATED` (§7.1).
+- `GATE_MET`, 0 open Blockers, 0 open Majors → the next state in §2.2.
+
+The driver MUST NOT load full artifact bodies for this bookkeeping — the Verdict line is complete for routing, so driver cost does not scale with artifact size. Cross-session: the driver MAY rotate its own context between transitions and resume from `state.yaml` + the latest artifact path (R-88), recording `driver_session: <n>` on the transition; it re-reads a body only when a role reads one for its own work (R-3), never for routing.
+
+### 9.11 Repo map *(v5.1)*
+
+**R-146.** *(v5.1)* **A cached, LLM-free, command-derived per-repo map.** At intake, and whenever the cache is stale, the driver runs the generator `templates/repo-map.sh` (zero model calls) and hands the result — `.heatwave/cache/repo-map.md` — to the PLANNER and to every IMPLEMENTER context, fresh slices included (R-144), so a new context does not re-explore the tree. The map lists **paths and counts only** (manifests found, entry points, test commands read from manifests/CI, top directory roles with file counts) — never a file-body excerpt (the R-131 context-brief discipline it extends, not replaces: the brief stays advisory intake; the map is the cached, reused tree summary).
+
+**Cache key = `HEAD sha` + a hash of the working-tree content of every tracked file** (`git ls-files -z | xargs -0 shasum`), stored in the file header. Hashing working-tree content — not the index (`git ls-files -s` reflects only staged blobs) — means an **unstaged** content edit to a tracked file changes the hash and forces regeneration even without a HEAD move or a `git add`; a HEAD move (e.g. amend) regenerates via the sha half even when content is unchanged. Regenerate when either half changes; an unparseable header forces regeneration, never a stale read. A generator command unavailable on a stack emits a `NOT AVAILABLE` line for that section and continues — the map is advisory (planner/implementer verify per R-131), so a partial map never blocks. Generation is time-bounded and completes cold within a few seconds on a normal repo.
 
 ---
 

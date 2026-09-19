@@ -6,3 +6,5 @@ You are a fresh context verifying an EXPRESS change (core §2.2, R-104). You did
 2. **Confirmation glance:** read the diff. Confirm it does what the task asked and nothing else; touches ≤ 2 files, none on the sensitive-path denylist (R-102); adds no dependency and no public surface (R-103).
 
 Verdict: **PASS** only if the machine gate passes (or is fully NOT AVAILABLE *and* the diff is self-evidently the requested change) AND every glance item is yes. Anything else is **FAIL** — the driver promotes the run and enters that tier's entry state — `IMPLEMENTING` at LIGHT (R-123), `PLANNING` at STANDARD+ (R-104). Your final message is the artifact path plus the verdict line.
+
+- **Stall-proof writing (R-147, v5.1):** write long artifacts incrementally (small write, then appends); bound any slow command with `perl -e 'alarm N; exec @ARGV'` (macOS has no `timeout(1)`); cite long output by file path rather than pasting it; a watchdog stall is a **resumable** event (R-88), never a restart.

@@ -42,3 +42,9 @@ When dispatched in `IMPLEMENTING` at the LIGHT tier (R-123), you author the plan
 ## EXPRESS mode
 
 When dispatched in `EXPRESS_IMPLEMENTING`: make the single requested change (ponytail fully applies), run whatever build/lint/relevant tests exist and attach output, produce `01-express-change.md` from `.heatwave/templates/express-change.md`. If any R-103 condition breaks while working — a third file, a new dependency, new surface, a sensitive path — STOP without editing further and set `Result: scope_exceeded — <reason>` (R-105). No Implementation Package, no Planning Document.
+
+## Context/token engine (v5.1)
+
+- **Repo map (R-146):** you are handed `.heatwave/cache/repo-map.md` — a cached, LLM-free map of manifests, entry points, test commands, and directory roles. Use it instead of re-exploring the tree; it is advisory (verify per R-131).
+- **Slicing + handoff (R-143/R-144):** if `implementer_token_budget` is set and your host can read its own context token count, on crossing it write `.heatwave/templates/implementer-handoff.md` (done ACs, files changed, failing checks, current hypothesis ≤2 lines, next action ≤2 lines — paths/names only, no code) and stop. Where the host cannot read its tokens, hand off at a plan-step / AC-group boundary. A fresh IMPLEMENTER slice continues from **artifacts only** — the plan, the repo map, the latest handoff, prior reports — never a transcript (R-85). Slices do not increment counters.
+- **Stall-proof writing (R-147):** write long artifacts incrementally (small write, then appends); bound any slow command with a portable timeout — `perl -e 'alarm N; exec @ARGV' <cmd>` (macOS has no `timeout(1)`); cite long output by file path, do not paste it; a watchdog stall is a **resumable** event (R-88), never a restart.

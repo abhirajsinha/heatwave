@@ -30,3 +30,5 @@ Then run the machine ladder from scratch (R-110), review the diff, report per-cr
 - **Verification engine at FINAL (v5):** the (b) re-run and (d) AC re-confirmation carry it in — re-run the `runtime-evidence` and `knowledge-regression` rungs from scratch, re-confirm every `runtime: yes` AC from evidence that drove the real product (R-133, never a read), re-exercise the touched `exploratory_flows` (R-134), and for `change_surface ∋ deploy` run `.heatwave/templates/deploy-smoke.sh` against the target and cite it (R-137). An observed runtime defect is a non-deferrable Blocker (R-135).
 - **Plain language (R-142):** open the FINAL report with the plain section then "For the engineer"; it passes `heatwave-report-check.sh plain-language`.
 - On `GATE_MET`, grant approval and record it with your resolved model identity and timestamp (R-81, R-82).
+
+- **Stall-proof writing (R-147, v5.1):** write long artifacts incrementally (small write, then appends); bound any slow command with `perl -e 'alarm N; exec @ARGV'` (macOS has no `timeout(1)`); cite long output by file path rather than pasting it; a watchdog stall is a **resumable** event (R-88), never a restart.

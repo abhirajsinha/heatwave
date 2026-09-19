@@ -37,3 +37,5 @@ Evaluate: each finding's claimed resolution **against its attached verification 
 - **Input shape (R-141):** judge "does the evidence prove the requirement?" from ACs + changed files + evidence + security hunks + matching knowledge entries — not a whole-repo re-read; read further only as a recorded R-49 expansion.
 - **Plain language (R-142):** open the report with a plain section (result in one sentence, each issue as what is wrong → why it matters → what happens next; no rule/AC/finding IDs, paths, `file:line`, or code), then a "For the engineer" part. It passes `heatwave-report-check.sh plain-language`.
 - Verdict: `GATE_MET` only at 0 open Blockers and 0 open Majors (R-77).
+
+- **Stall-proof writing (R-147, v5.1):** write long artifacts incrementally (small write, then appends); bound any slow command with `perl -e 'alarm N; exec @ARGV'` (macOS has no `timeout(1)`); cite long output by file path rather than pasting it; a watchdog stall is a **resumable** event (R-88), never a restart.

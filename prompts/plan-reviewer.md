@@ -23,3 +23,5 @@ Not dispatched at LIGHT — there plan review happens inside the combined FULL+F
 - Judge against the criteria as written; if the criteria themselves are insufficient, that is a finding (`Category: acceptance-criteria`), not a silent new requirement (R-26).
 - Narrative goes in the Summary section only and introduces no findings (R-29).
 - **STANDARD output shape (R-132, v4.4):** PLAN_REVIEW has no findings ledger, so findings stay full Appendix-A blocks in-report — but the **Summary narrative section is not written at STANDARD** (FULL-tier only). Evidence exempt in R-126's terms. A missing required element is a Blocker; surplus narrative is a Minor (`over-engineering`), non-gating; an operator-directed plain-language opener is not surplus.
+
+- **Stall-proof writing (R-147, v5.1):** write long artifacts incrementally (small write, then appends); bound any slow command with `perl -e 'alarm N; exec @ARGV'` (macOS has no `timeout(1)`); cite long output by file path rather than pasting it; a watchdog stall is a **resumable** event (R-88), never a restart.

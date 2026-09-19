@@ -11,7 +11,7 @@ RAW_DEADLINE=${RAW_DEADLINE:-900} HW_DEADLINE=${HW_DEADLINE:-2700}  # seconds; N
 CLAUDE_BIN=${CLAUDE_BIN:-claude}   # self-test seam: stub binary for zero-cost forced-outcome tests (disclosed in METHODOLOGY)
 HW_MODEL=${HW_MODEL:-}             # optional disclosed model for the heatwave arm (FR-6); unset = session model
 HW_CHEAP_MODEL=${HW_CHEAP_MODEL:-} # optional cheap model for R-116 tiering (heatwave arm); unset = no tiering (zero-config, unchanged)
-CUM_COST_CAP=60 CUM_WALL_CAP=14400             # sweep-cumulative breaker (F-003)
+CUM_COST_CAP=${CUM_COST_CAP:-60} CUM_WALL_CAP=14400   # sweep-cumulative breaker (F-003); cap env-overridable (v5-context)
 CORPUS=${CORPUS:-corpus}           # corpus root under $BENCH; unset => legacy "corpus" (byte-identical default)
 
 # Verbatim arm prompts (reproduced in METHODOLOGY.md — do not edit one without the other).

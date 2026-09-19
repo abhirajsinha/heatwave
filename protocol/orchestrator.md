@@ -167,3 +167,19 @@ Recording and skips, recorded never silent: the driver records `run_config.conte
 
 Intake ordering with the brief: **detect → fetch (Jira) → repository gate → context brief → tier entry state → GO checkpoint.**
 
+
+### 9.10 Lean driver *(v5.1)*
+
+**R-145.** *(v5.1)* **The driver routes from the status line and `state.yaml`, never from artifact bodies.** Every role handback returns `<artifact path> + one-line status`, and that status line **is** the report's one-line Verdict. For a review report the Verdict MUST carry, in a form the driver can read without opening the report: the **gate verdict** (`GATE_MET` | `GATE_NOT_MET`), the **open Blocker count**, the **open Major count**, and any **escalation / counter-exhaustion signal**. "Open" excludes approved-deferred, waived, and refuted findings (R-77), so a deferral is ledger state the driver never needs a body to read. The driver transitions on that line plus `state.yaml`:
+
+- `GATE_NOT_MET` with an open Blocker or Major → `FIXING`.
+- Any counter at budget (2.3) → `ESCALATED` (§7.1).
+- `GATE_MET`, 0 open Blockers, 0 open Majors → the next state in §2.2.
+
+The driver MUST NOT load full artifact bodies for this bookkeeping — the Verdict line is complete for routing, so driver cost does not scale with artifact size. Cross-session: the driver MAY rotate its own context between transitions and resume from `state.yaml` + the latest artifact path (R-88), recording `driver_session: <n>` on the transition; it re-reads a body only when a role reads one for its own work (R-3), never for routing.
+
+### 9.11 Repo map *(v5.1)*
+
+**R-146.** *(v5.1)* **A cached, LLM-free, command-derived per-repo map.** At intake, and whenever the cache is stale, the driver runs the generator `templates/repo-map.sh` (zero model calls) and hands the result — `.heatwave/cache/repo-map.md` — to the PLANNER and to every IMPLEMENTER context, fresh slices included (R-144), so a new context does not re-explore the tree. The map lists **paths and counts only** (manifests found, entry points, test commands read from manifests/CI, top directory roles with file counts) — never a file-body excerpt (the R-131 context-brief discipline it extends, not replaces: the brief stays advisory intake; the map is the cached, reused tree summary).
+
+**Cache key = `HEAD sha` + a hash of the working-tree content of every tracked file** (`git ls-files -z | xargs -0 shasum`), stored in the file header. Hashing working-tree content — not the index (`git ls-files -s` reflects only staged blobs) — means an **unstaged** content edit to a tracked file changes the hash and forces regeneration even without a HEAD move or a `git add`; a HEAD move (e.g. amend) regenerates via the sha half even when content is unchanged. Regenerate when either half changes; an unparseable header forces regeneration, never a stale read. A generator command unavailable on a stack emits a `NOT AVAILABLE` line for that section and continues — the map is advisory (planner/implementer verify per R-131), so a partial map never blocks. Generation is time-bounded and completes cold within a few seconds on a normal repo.

@@ -100,3 +100,10 @@ Run the loop continuously to a terminal state. You stop ONLY at: (1) APPROVED / 
 - A context that produced an artifact never reviews it (R-1, R-2).
 - `ESCALATED` waits for the human. Record their Owner Decision Record (§7.3) verbatim, apply its resume state and counter resets, continue.
 - Completed artifacts are immutable (R-89).
+
+## Context/token engine (v5.1)
+
+- **Lean routing (R-145):** transition from the role's one-line Verdict/status (gate verdict + open Blocker count + open Major count + escalation/counter-exhaustion signal) plus `state.yaml` — never load full artifact bodies for bookkeeping. You may rotate your own context between transitions and resume from `state.yaml` + the latest artifact path (R-88); record `driver_session: <n>`.
+- **Repo map (R-146):** at intake and on staleness, run `.heatwave/templates/repo-map.sh` (zero model calls) and hand `.heatwave/cache/repo-map.md` to the PLANNER and every IMPLEMENTER context, fresh slices included (R-144). It is keyed on HEAD sha + working-tree content hash; regeneration is automatic when either changes.
+- **Slice re-dispatch (R-144):** dispatch a fresh IMPLEMENTER slice with **artifacts only** — plan, repo map, latest handoff, prior reports — never a transcript (R-85); append a `slice: <n>` marker, do not touch counters.
+- **Stall-proof (R-147):** a watchdog stall is a **resumable** event (R-88), never a restart; bound slow commands with `perl -e 'alarm N; exec @ARGV'`.

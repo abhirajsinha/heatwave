@@ -46,6 +46,17 @@ Produced by IMPLEMENTER in `IMPLEMENTING`. Consumed by REVIEWER.
 
 At LIGHT the Implementation Package takes the shape `templates/light-implementation-package.md` fixes (R-126): the LIGHT Plan as §1 (written to disk before the first source edit, R-123), a touched-file table with a diff reference the REVIEWER can resolve, the machine evidence (a bugfix run's red→green reproduction, R-113), and a five-line change note — `change`, `blast_radius`, `deviations`, `known_limitations`, `tooling_gaps`, one line each, `None` written explicitly. No change-summary prose, no walkthrough. On the R-105 scope-exceeded path the diff and machine-evidence blocks are replaced by `Result: scope_exceeded — <reason>`.
 
+#### 3.3.2 Implementer slicing and handoff *(v5.1)*
+
+**R-143.** *(v5.1)* **Slice-and-handoff.** The IMPLEMENTER MAY work a long build or fix as a sequence of bounded **slices** so no single context re-reads a growing history. The boundary is one of two, in this order:
+
+- When `implementer_token_budget` (config) is set **and** the host can observe its own context token count, the IMPLEMENTER writes the handoff and stops on crossing the budget.
+- Otherwise — the **honest degrade** (R-64), because most hosts cannot read their own token count — it hands off at a plan-step or acceptance-criterion-group boundary. `implementer_token_budget` unset reproduces pre-v5.1 behavior: one context runs the stage to completion, no slice occurs.
+
+The handoff is `templates/implementer-handoff.md` and carries **exactly** these fields, paths and names only, **no code bodies**: done acceptance criteria; files changed (paths); failing checks (names); current hypothesis (≤ 2 lines); next action (≤ 2 lines). Anything not in these fields is re-derivable by the next slice from the plan, the repo map (R-145), and the diff.
+
+**R-144.** *(v5.1)* **A slice is a re-dispatch of the same state, not a new stage.** The driver dispatches the fresh IMPLEMENTER context with **artifacts only** — the plan, the repo map, the latest handoff, and any prior review/fix reports — **never a transcript** (R-85). The fresh context is the IMPLEMENTER role in the same state it left (`IMPLEMENTING` or `FIXING`); the R-1/R-2 authorship boundary and the REVIEWER's non-sharing are unchanged, and no new state, tier, or counter is introduced. Slices **do not** increment `fix_iterations` or `final_iterations` — they are one stage continuing. The driver appends a `slice: <n>` marker to the Run Record per re-dispatch; a fresh slice handed a transcript is an R-85 violation and a REVIEWER finding.
+
 ---
 
 ### 4.3 IMPLEMENTING
