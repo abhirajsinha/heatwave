@@ -112,6 +112,14 @@ cp "$SRC/COMPANIONS.md" "$HW/COMPANIONS.md"
 cp "$SRC/keep-awake.sh" "$HW/keep-awake.sh"
 chmod +x "$HW/keep-awake.sh"
 
+# The repo-map/task-packet cache is derived, per-checkout, never shared — ignore it (R-146/R-148).
+GI="$TARGET/.gitignore"
+if [ ! -f "$GI" ] || ! grep -qxF '.heatwave/cache/' "$GI"; then
+  [ -f "$GI" ] && printf '\n' >> "$GI"
+  printf '.heatwave/cache/\n' >> "$GI"
+  echo "updated $GI (.heatwave/cache/)"
+fi
+
 # Agent Skills standard directory (agentskills.io) — Codex, Gemini CLI, and other
 # compliant tools auto-discover skills here; ponytail rides along for free.
 mkdir -p "$TARGET/.agents/skills"

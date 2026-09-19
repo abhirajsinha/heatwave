@@ -618,3 +618,47 @@ Median cache-read 1,274,362 → 983,013 (**−22.9%**); median cost 1.658 → 1.
 ### Ship decision (plan Rollout)
 
 The measured saving on lt01 is real and honest, so the repo map + lean driver ship enabled (they are protocol guidance, always on). Slicing ships **opt-in**: `implementer_token_budget` unset by default (plan-step-boundary degrade), because the small benchmark fixtures do not exercise it and it is not cost-measured here. The `CUM_COST_CAP` parameterization ships with its default 60 unchanged; the $40 value is a per-run invocation, not a shipped default.
+
+## Run v5-retrieval — task packet + richer repo map (STANDARD, feature)
+
+**What shipped:** a new LLM-free generator `templates/task-packet.sh` (task-scoped retrieval packet, R-148) and five best-effort relationship sections added to `templates/repo-map.sh` (import graph, test↔source map, API/route, schema/migration, deploy/runtime). Zero new dependencies. The packet ships **opt-in** (`context_packet: never` default; `auto` turns it on).
+
+**This run's claim is NOT a value (token or correctness) comparison.** Per the plan (F-001, path b), neither value dimension is measurable on any in-repo fixture, so both are **deferred** (see below). The binding claim is **retrieval quality + determinism + genericness + safety**, all proven deterministically, for **$0, with no agent invoked**.
+
+### Binding: retrieval quality on s4-buried-seam (precision/recall, $0, no agent)
+
+Generator: `sh task-packet.sh <run> --role implementer --terms 'to_record serialize txn amount record' --module serialize.py --budget 12`, run on the s4 tree git-inited as a scratch (evidence: `.heatwave/runs/v5-retrieval/evidence/ac-s4-precision-recall.txt`).
+
+Ground truth (plan AC-N-03): `{ serialize.py, report.py, test_visible.py }`.
+
+| metric | value |
+|---|---|
+| ranked packet size \|packet\| | 7 |
+| \|packet ∩ truth\| | 3 |
+| **recall** | **3/3 = 1.000** |
+| precision (full capped set) | 3/7 = 0.429 |
+| precision@3 (top-\|truth\| cut) | 3/3 = 1.000 |
+| rank of the buried seam report.py | **#1** (5/5 terms) |
+
+**Verdict: PASS on retrieval quality.** Recall is 1.0 — all three ground-truth files are surfaced and occupy ranks 1–3; the buried seam `report.py` (the distant consumer that makes the correct fix non-obvious) ranks #1. Full-set precision is 0.429 because ranks 4–7 are **genuine** term-neighbours, not fabrications (`export_csv.py` imports `to_record`; `models.py`/`validators.py`/`ledger.py` reference `txn`/`amount`); the generator lists real matches only and never invents a path.
+
+### Binding: determinism, genericness, safety
+
+- **Determinism (AC-F-08):** two consecutive generations on the unchanged s4 tree are byte-identical excluding the timestamp/role line (`diff` empty; `evidence/ac-determinism.txt`).
+- **Genericness (AC-F-04):** on the non-web s4 scratch and on this repo, the route/schema/deploy relationship sections print honest `NOT DETECTED — <sought>` rather than guessing, while import-graph and test↔source populate where present (`evidence/ac-genericness.txt`).
+- **Safety (AC-F-05):** the packet is a starting point, not a gate — R-148 states out-of-packet reads are legal and recorded via R-49, and no correctness gate references packet completeness (shard text + role-prompt lines).
+- **Timing (AC-N-01):** cold repo-map + task-packet max 1.33s on this repo (≤10s), 0.34s on s4 (≤5s) over 3 runs each (`evidence/ac-timing.txt`).
+- **Self-check (AC-F-03/F-09):** `task-packet.sh --check` PASS — distant importer ranked in, distractor ranked out, named-module tie-break annotated, intersecting failure-memory surfaced, budget cap honored, bad/absent budget → default 12, determinism (`evidence/ac-selfcheck.txt`).
+
+### DEFERRED value dimensions (on record)
+
+- **Token value → DEFERRED to run 3** (the real-repo 3-arm benchmark). Measured reason: every in-repo fixture is tiny (largest spike-shape ~2 KB) while `protocol/core.md` alone is ~50 KB (~12.6K tokens) loaded every dispatch, and run-2 trials show ~1.27M cache-read per trial varying ~2× run-to-run. The packet's avoided-rediscovery saving on a ≤ few-KB tree is orders of magnitude below that variance; a token win cannot fire above the noise in-repo.
+- **Correctness value → DEFERRED to a future mechanism-(1) fixture.** Measured reason: the packet-off (RAW) agent is already at the correctness ceiling on s4 — `docs/specs/2026-09-10-spike-what-traps-raw.md` records a **0/12** null (no in-repo trap defeats a RAW agent) and the RAW arm scores `oracle_pass=1, escaped_defect=0` on all 3 s4 trials (`benchmark/results/*raw*.csv`). A packet-off vs packet-on correctness comparison on s4 is a near-certain tie, so the **paid comparison is DROPPED** (foregone conclusion; ~$0 spent). The claim belongs to a fixture whose deciding invariant is physically absent from the handed surface — the only construction the spike found is not defeated by `cat *.py`.
+
+### Non-binding directional input-size figure (NOT a token claim, $0, no agent)
+
+On `psf/requests` (Apache-2.0), tag **v2.31.0** — annotated-tag-object SHA **`0106aced5faa299e6ede89d1230bd6784f2c3660`** (`git ls-remote --tags`), which dereferences to commit `147c8511ddbfa5e8f71bbf5c18ede0c4ceb3bba4` — fetched via `git clone --depth 1 --branch v2.31.0` to a scratch path **outside** the Heatwave tree and **never committed**: whole tracked-tree = 5,139,322 bytes across 100 files; task-packet + repo-map = 3,869 bytes = **0.08%** of the tree (`evidence/oss-requests-size.txt`). Directional only — an input-size hint for run 3, explicitly **not** a token measurement and **not** this run's binding claim.
+
+### Ship decision (plan Rollout + declared deviation)
+
+Retrieval quality passed (recall 1.0, buried seam #1), so the generators and R-148 ship. The map extension ships enabled (protocol guidance, always on, like the R-146 map). The **packet ships opt-in** — `context_packet` default `never`; `auto` turns it on — a **declared deviation** from the plan's `auto` default, taken under the OWNER roadmap rule "build each layer only when the benchmark proves it": the packet's token/correctness value is deferred, so it stays off-by-default until run 3 proves the saving. The cheap-model ranking hook ships OFF. Measurement spend this run ≈ $0; no paid agent run occurred; the ≤ $40 cap was not exercised.

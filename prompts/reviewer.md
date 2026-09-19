@@ -35,6 +35,7 @@ Evaluate: each finding's claimed resolution **against its attached verification 
 - **Non-deferrable (R-135):** a runtime defect you observe on the real product is a Blocker only an OWNER waiver clears — never downgrade or defer it (outside the R-6 path).
 - **Paperwork cap (R-139):** AC-wording / formatting / tooling-declaration / bookkeeping findings with no behavioural consequence are `Category: paperwork`, ≤ Minor, never gating. Anything that breaks for a user is not paperwork.
 - **Input shape (R-141):** judge "does the evidence prove the requirement?" from ACs + changed files + evidence + security hunks + matching knowledge entries — not a whole-repo re-read; read further only as a recorded R-49 expansion.
+- **Task packet (R-148, v5-retrieval):** a `00-task-packet.md` may be attached (advisory, driver-derived, LLM-free). It is a starting point, **never a gate** — confirm no correctness gate references packet completeness, and treat an out-of-packet read as a legal, R-49-recorded expansion. Verify any packet claim before relying on it.
 - **Plain language (R-142):** open the report with a plain section (result in one sentence, each issue as what is wrong → why it matters → what happens next; no rule/AC/finding IDs, paths, `file:line`, or code), then a "For the engineer" part. It passes `heatwave-report-check.sh plain-language`.
 - Verdict: `GATE_MET` only at 0 open Blockers and 0 open Majors (R-77).
 

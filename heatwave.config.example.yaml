@@ -116,6 +116,20 @@ roles:
 # .heatwave/cache/repo-map.md, keyed on HEAD sha + working-tree content hash, handed to planner
 # and implementer. LLM-free, paths and counts only.
 
+# --- Task packet (v5-retrieval, R-148) — task-scoped retrieval; OPT-IN, default OFF -----
+# The driver derives a task-scoped packet (00-task-packet.md) from the cached repo map:
+# ranked relevant files, their tests, import neighbours, an ACs pointer, and matching
+# failure-memory. LLM-free, paths/counts/line-hints only, and NEVER a gate (out-of-packet
+# reads stay legal and are recorded via R-49). Its token/correctness value is deferred to a
+# future benchmark, so per the OWNER "build each layer only when the benchmark proves it"
+# rule it ships opt-in: unset/`never` skips it (recorded skipped-config); `auto` turns it on.
+# context_packet: never       # auto | never. auto = emit the packet; never (default) = skip it.
+# context_budgets:            # per-role cap on the packet's ranked-file list; absent/invalid → 12.
+#   planner: 12
+#   implementer: 12
+#   reviewer: 12
+#   fixer: 12
+
 # --- Jira mode (v4.3, R-127–R-130) — ALL optional; unset = today's behavior ---
 # Ticket-sourced runs: a Jira key or browse URL in the task makes the driver fetch
 # the ticket read-only via the Atlassian MCP into a Requirement Brief, verify the

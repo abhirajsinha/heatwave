@@ -80,6 +80,10 @@ For Jira-sourced runs the PLANNER's review-scope discovery (§3.2) follows the d
 
 **R-131 (planner half).** *(v4.4)* When a `00-context-brief.md` is attached (an R-3-permitted PLANNING artifact, driver half in the orchestrator shard §9.9), the PLANNER treats it as **advisory input, not fact**: it MUST verify any brief claim it relies on and cite the check, MUST record in the plan where its own investigation contradicts the brief, and its investigation duty (§3.2 review-scope discovery; the R-128 funnel on Jira runs) is **never narrowed** by the brief. A brief-contradicting discovery about repository ownership feeds the existing R-128 planner-half overturn path unchanged. The brief is convenience, not authority — a plan may rely on nothing in it that the PLANNER has not independently confirmed.
 
+#### 3.2.6 Task packet *(v5-retrieval)*
+
+**R-148 (planner half).** *(v5-retrieval)* When a `00-task-packet.md` is attached (an R-3-permitted artifact, driver half in the orchestrator shard §9.12), the PLANNER treats it exactly as it treats the context brief and the repo map: **advisory starting point, not fact and not a boundary.** It ranks the files the task most likely touches, their tests, their import neighbours, and any matching failure-memory — to spare the PLANNER re-discovering the tree — but the PLANNER verifies any packet claim it relies on, records where its own investigation contradicts the packet, and **never lets the packet narrow §3.2 review-scope discovery.** Reading a file the packet did not rank is expected and legal; the packet is never a gate on completeness. A plan may rely on nothing in the packet the PLANNER has not independently confirmed.
+
 ---
 
 ## 4. Stage Rules

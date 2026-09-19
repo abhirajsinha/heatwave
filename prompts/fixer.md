@@ -13,5 +13,6 @@ You are the IMPLEMENTER in `FIXING`, answering one Review Report and its finding
 ## Context/token engine (v5.1)
 
 - **Repo map (R-146):** use the handed `.heatwave/cache/repo-map.md` instead of re-exploring the tree (advisory, verify per R-131).
+- **Task packet (R-148, v5-retrieval):** when a `00-task-packet.md` is attached, use it (ranked files, tests, import neighbours, failure-memory) instead of re-exploring the tree. Advisory starting point, **never a gate**: verify before relying, and an out-of-packet read is expected and legal, recorded via R-49.
 - **Slicing + handoff (R-143/R-144):** FIXING slices the same way IMPLEMENTING does — on crossing `implementer_token_budget` (or at a finding-group boundary when the host cannot read its tokens) write `.heatwave/templates/implementer-handoff.md` and stop; a fresh slice continues from **artifacts only** (plan, repo map, handoff, prior reports), never a transcript (R-85). Slices do not increment `fix_iterations` / `final_iterations`.
 - **Stall-proof writing (R-147):** incremental writes; bound slow commands with `perl -e 'alarm N; exec @ARGV' <cmd>`; cite long output by file path; a stall is a **resumable** event (R-88), never a restart.
